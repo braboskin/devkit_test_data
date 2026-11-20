@@ -1,0 +1,8 @@
+repo/
+worktrees/
+.devkit/
+.env
+.env.*
+graphify-out/
+node_modules/
+.devkit-tmp/

@@ -1,0 +1,8 @@
+version: 1
+project:
+  slug: "testproject"
+  name: "Тестовый проект"
+repos:
+  - name: "atlas"
+    url: "https://github.com/xaylpq/atlas.git"
+    branch: "main"

@@ -1,0 +1,30 @@
+{
+  "templateVersion": "585a6ed2f2045491f2ceb5fa0d73f8ec20ee093c9b2a62fb9cc4a3783cb2bf88",
+  "files": {
+    "prompts/analyst.md": "d295d6223431977b78e7316134aa5757ed9eb4ff7b4c1142b95afe48a13740c2",
+    "prompts/architect.md": "9ec7974106c24f7315b3392da9fa076b3ad10f93bf5d4153f536aa4fe545c7e2",
+    "prompts/backend-engineer.md": "de22cb3a75b03f017761a06d2c431af60e557d59ea80294e4a83cc22374a53dc",
+    "prompts/designer.md": "8d93486aebdf95f01f67e35dbaffef55b05901a73b4af893ba5f3d468c16b72a",
+    "prompts/frontend-engineer.md": "aa49fcc32d91a8cfa8724af4a947f06dd20d5b7162ef3fb840f35e1e17d8d41b",
+    "prompts/skeptic.md": "089eaabcf9223b1522b74626b937434a57d7cebb5245c2a1a16c427cda6b9e3a",
+    "prompts/techwriter.md": "59a26adbbf4409955190ebef24e0840b3708c6143a76be00a3bac7eea8c86b30",
+    "prompts/test-engineer.md": "ef38936f159d4e2b2c1d383286bd1f9c1b9a47d80043262d13a7e3f7b61b5fa8",
+    "skills/devkit-epic-plan/SKILL.md": "4272d32ed916eb5659706cc84a7b9692292cfc48fd1048671c283ca1b5474024",
+    "skills/devkit-git/SKILL.md": "e70594ab1b9065ca02bb0df849c3854e700ba2f13e37d15f5bbe2c3e42e461f4",
+    "skills/devkit-just-do/SKILL.md": "f98da34b8551d5ca290785b3dcfed5ecc7ed8ee5e5b9e2596a22a85b99f30228",
+    "skills/devkit-lifecycle/SKILL.md": "27e28a47772bbfffedc9fc6f26ebe83cbc40387e9585cc2b677e0eaa76ce32db",
+    "skills/devkit-profile-setup/SKILL.md": "1ec33fc842d4a62bb95f4c46a0f3eab7da916699c7f956e890ce88c7ddc5679c",
+    "skills/devkit-replan/SKILL.md": "49bea1934671452f6fd103bfafbf1e60f1dd69386d911162d3b9179e2a7fbcbb",
+    "skills/devkit-sandbox/SKILL.md": "e5718aa551fb0572a7f0582fef4c18fc7132b062613902119c5a330969b6808d",
+    "skills/devkit-task-plan/SKILL.md": "8157d93cf128ff32995a560becf470dd7be07fea127c114b58eed97c154aa84d",
+    "skills/devkit-task-ship/SKILL.md": "ae43e5d59af945e7fd9895a1a90fd805ced7c5835a1c6ec2148803a7ef4841cf",
+    "skills/devkit-task-verify/SKILL.md": "e46167a797af84de987beab9d2ae1478e1873a704d215cc7df256bcb5b7231ac",
+    "skills/devkit-task/SKILL.md": "e7e0c09edd7143b444c852c98d26b475c7816e1b67da4fc96cd535e36d97974f",
+    "skills/devkit-team-brief/SKILL.md": "f4fa0874410a3ee7fe97894f8f878ebabb588df11799bb3ec1ea24a3a7083f77",
+    "skills/devkit-team-check/SKILL.md": "883030ab59cbba940ca9298ecb752c20a02885cb0d6df2ee89c69bf7ef8268cc",
+    "skills/devkit-team-escalate/SKILL.md": "c6819b77d82e4191bba551700dcbe5571d1405571be81d55488b4ec04bc469ac",
+    "skills/devkit-team-run/SKILL.md": "f4f09b8d1b622843daec29c1160668251e292d75641e66e205fc147fdda7d493",
+    "skills/devkit-team-sync/SKILL.md": "c3d21dbf1a48d0f4aefffea9c34f692989fe5584b8d3f0b93605d8a839813335"
+  },
+  "agentsBlockHash": "b2fab0c11c87f4f611f0abdcb78d72c3702cf58ae3a8072a508dbf411223873d"
+}
