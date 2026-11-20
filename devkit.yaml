@@ -1,8 +1,85 @@
 version: 1
 project:
-  slug: "testproject"
-  name: "Тестовый проект"
+  slug: testproject
+  name: Тестовый проект
 repos:
-  - name: "atlas"
-    url: "https://github.com/xaylpq/atlas.git"
-    branch: "main"
+  - name: atlas
+    url: https://github.com/xaylpq/atlas.git
+    branch: main
+profile:
+  app:
+    name: atlas
+    description: "Atlas — личная ОС знаний: ingestion, поиск, MCP, FastAPI-бэкенд аккаунтов"
+    stack:
+      - python
+      - fastapi
+      - sqlalchemy
+      - qdrant
+  commands:
+    verification:
+      - name: unit-tests
+        required: true
+        run:
+          windows: .venv\Scripts\python.exe -m unittest tests.test_app_auth
+            tests.test_chunking tests.test_eval tests.test_import_obsidian
+            tests.test_ingest.IngestTests.test_blank_image_needs_review
+            tests.test_ingest.IngestTests.test_documents_processed
+            tests.test_ingest.IngestTests.test_empty_body_needs_review
+            tests.test_ingest.IngestTests.test_rerun_is_idempotent
+            tests.test_triage
+          darwin: .venv/bin/python -m unittest tests.test_app_auth tests.test_chunking
+            tests.test_eval tests.test_import_obsidian
+            tests.test_ingest.IngestTests.test_blank_image_needs_review
+            tests.test_ingest.IngestTests.test_documents_processed
+            tests.test_ingest.IngestTests.test_empty_body_needs_review
+            tests.test_ingest.IngestTests.test_rerun_is_idempotent
+            tests.test_triage
+          linux: .venv/bin/python -m unittest tests.test_app_auth tests.test_chunking
+            tests.test_eval tests.test_import_obsidian
+            tests.test_ingest.IngestTests.test_blank_image_needs_review
+            tests.test_ingest.IngestTests.test_documents_processed
+            tests.test_ingest.IngestTests.test_empty_body_needs_review
+            tests.test_ingest.IngestTests.test_rerun_is_idempotent
+            tests.test_triage
+        cwd: X:\devkit_instance\testproject\repo\atlas
+        timeoutSec: 600
+      - name: ingest-fixtures
+        required: false
+        run:
+          windows: .venv\Scripts\python.exe -m unittest
+            tests.test_ingest.IngestTests.test_fixtures_processed
+          darwin: .venv/bin/python -m unittest
+            tests.test_ingest.IngestTests.test_fixtures_processed
+          linux: .venv/bin/python -m unittest
+            tests.test_ingest.IngestTests.test_fixtures_processed
+        cwd: X:\devkit_instance\testproject\repo\atlas
+        timeoutSec: 300
+      - name: schema-check
+        required: false
+        run:
+          windows: powershell -NoProfile -ExecutionPolicy Bypass -Command "$o = (&
+            .\scripts\validate-schema.ps1) 2>&1 | Out-String; Write-Host $o; if
+            ($o -match 'ERROR:') { exit 1 }"
+        cwd: X:\devkit_instance\testproject\repo\atlas
+        timeoutSec: 600
+    setup:
+      - name: create-venv
+        required: false
+        run:
+          windows: C:\ProgramData\anaconda3\python.exe -m venv .venv
+          darwin: python3 -m venv .venv
+          linux: python3 -m venv .venv
+        cwd: X:\devkit_instance\testproject\repo\atlas
+        timeoutSec: 300
+      - name: install-requirements
+        required: false
+        run:
+          windows: .venv\Scripts\python.exe -m pip install -r requirements.txt
+          darwin: .venv/bin/python -m pip install -r requirements.txt
+          linux: .venv/bin/python -m pip install -r requirements.txt
+        cwd: X:\devkit_instance\testproject\repo\atlas
+        timeoutSec: 1800
+  docs:
+    readme: repo/atlas/README.md
+    agents: AGENTS.md
+    schema: repo/atlas/docs/SCHEMA.md
