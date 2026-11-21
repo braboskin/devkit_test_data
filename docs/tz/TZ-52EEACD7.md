@@ -2,9 +2,9 @@
 id: TZ-52EEACD7
 type: tz
 title: "ТЗ: Atlas — второй мозг с агентом-помощником (v1)"
-status: draft
+status: final
 created_at: 2026-11-21T00:06:18.409Z
-updated_at: 2026-11-21T08:47:10.510Z
+updated_at: 2026-11-21T08:59:56.472Z
 ---
 
 ---
