@@ -18,7 +18,7 @@ plan_version: 5
 report: docs/reports/T-B317AFAE.md
 assignee: owner
 created_at: 2026-11-21T00:07:17.803Z
-updated_at: 2026-11-21T19:27:13.686Z
+updated_at: 2026-11-21T19:33:10.555Z
 ---
 
 # M3: агент — LLM-ключи, чат, предложения, онбординг, конструктор агентов
