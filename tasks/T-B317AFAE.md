@@ -3,7 +3,7 @@ id: T-B317AFAE
 project: testproject
 epic: E-46E212B4
 title: "M3: агент — LLM-ключи, чат, предложения, онбординг, конструктор агентов"
-status: inbox
+status: planned
 type: feature
 size: L
 priority: high
@@ -18,7 +18,7 @@ plan_version: 3
 report: docs/reports/T-B317AFAE.md
 assignee: null
 created_at: 2026-11-21T00:07:17.803Z
-updated_at: 2026-11-21T17:42:20.076Z
+updated_at: 2026-11-21T17:42:59.809Z
 ---
 
 # M3: агент — LLM-ключи, чат, предложения, онбординг, конструктор агентов
