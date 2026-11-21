@@ -4,8 +4,8 @@ type: report
 title: UI + A15/A16 report
 task: T-CA6FF8E2
 status: final
-created_at: 2026-11-21T20:21:48.323Z
-updated_at: 2026-11-21T20:21:48.323Z
+created_at: 2026-11-21T20:27:28.359Z
+updated_at: 2026-11-21T20:27:28.359Z
 ---
 
 # Отчёт T-CA6FF8E2 — UI агента + A15/A16
@@ -82,10 +82,21 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
 
 ## Гейты
 
-Выдаются заново на `2cfd8b1` независимыми ролями (`code`, `test`,
-`architecture`, `security` — XL) после исправлений; гейты на предыдущей
-ревизии (test/security approve, code/architecture changes) инвалидированы
-сменой коммита. Автор вердикт не выдаёт.
+Все на ревизии `895daf9…` (`2cfd8b1`), независимые роли, автор вердиктов не
+выдавал:
+
+| kind | id | verdict | роль |
+| --- | --- | --- | --- |
+| code | `G-3092102dc80c` | approve | architect |
+| architecture | `G-ffad86c78080` | approve | architect |
+| test | `G-f9cb8d0202c9` | approve | test-engineer |
+| security | `G-87c12d5d2c11` | approve | skeptic |
+
+Первые гейты на `acf198c…` дали `code/architecture = changes` (internal-агенты
+как обычные, 500 при удалении агента с трейсом, неатомарный resume) и
+`test/security = approve`; после фиксов `2cfd8b1` все четыре перевыпущены.
+`agent_calls` без ретенции и 409 при удалении агента с трейсом — принятые
+ограничения (owner-only, кросс-доступа нет; нужен follow-up на purge/retention).
 
 ## Отклонения и границы
 
