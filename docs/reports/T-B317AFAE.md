@@ -4,8 +4,8 @@ type: report
 title: M3 report
 task: T-B317AFAE
 status: final
-created_at: 2026-11-21T19:33:10.555Z
-updated_at: 2026-11-21T19:33:10.555Z
+created_at: 2026-11-21T19:33:58.948Z
+updated_at: 2026-11-21T19:33:58.948Z
 ---
 
 # Отчёт T-B317AFAE — M3: агент — LLM-ключи, чат, предложения, онбординг, конструктор агентов
@@ -155,25 +155,24 @@ sanitizer 422, security-фикс), `tests/{test_migrations,test_isolation}.py`.
 
 ## Live smoke (реальный DeepSeek)
 
-Прогон владельца, 2026-11-21, 
-epo/atlas HEAD 87094eb (codeSha c210681…),
-модель deepseek-chat, https://api.deepseek.com/v1, скрипт
-.tmp/smoke_agent_llm.py (временная SQLite/хранилище, .tmp вне git).
+Прогон владельца, 2026-11-21, `repo/atlas` HEAD `87094eb` (codeSha `c210681…`),
+модель `deepseek-chat`, `https://api.deepseek.com/v1`, скрипт
+`.tmp/smoke_agent_llm.py` (временная SQLite/хранилище, `.tmp` вне git).
 
 **22/22 проверок PASS**:
 
 | Что | Факт |
 | --- | --- |
-| POST /api/settings/llm/check | 200 ok=true, 0.76 с |
+| `POST /api/settings/llm/check` | 200 `ok=true`, 0.76 с |
 | Стрим чата (SSE) | ответ с цитатой из «Анализы» (1 citation); **первый токен 0.62 с** (≤ 8 с) |
-| Предложение | propose_create_task → pending → apply 200, задача создана, udit записан |
+| Предложение | `propose_create_task` → `pending` → apply 200, задача создана, `audit` записан |
 | Тест агента «Врач» (только сфера «Здоровье») | ответ по документу; история чатов/сообщений не изменилась |
 | Онбординг | 15 ответов → профиль (15 тем + сводка) сохранён |
 | Секреты | ключ маскирован в API, в БД только шифр, в ответах API не встречается |
 
 Ограничения прогона: эмбеддинги fake (поиск лексический на SQLite), поэтому
 проверены LLM + API + tool-calling + цитаты, но не BGE-M3/Qdrant и не
-прод-PostgreSQL; UI не проверялся (T-CA6FF8E2).
+прод-PostgreSQL; UI не проверялся (`T-CA6FF8E2`).
 
 ## Что не проверено / дальше
 
