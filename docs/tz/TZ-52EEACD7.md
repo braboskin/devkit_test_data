@@ -4,7 +4,7 @@ type: tz
 title: "ТЗ: Atlas — второй мозг с агентом-помощником (v1)"
 status: draft
 created_at: 2026-11-21T00:06:18.409Z
-updated_at: 2026-11-21T08:24:26.311Z
+updated_at: 2026-11-21T08:25:50.420Z
 ---
 
 ---
