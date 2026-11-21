@@ -19,7 +19,7 @@ plan_version: 2
 report: docs/reports/T-CA6FF8E2.md
 assignee: owner
 created_at: 2026-11-21T17:41:36.092Z
-updated_at: 2026-11-21T21:45:47.698Z
+updated_at: 2026-11-21T21:51:55.153Z
 ---
 
 # M3 follow-up: UI — чат, конструктор агентов, онбординг, предложения
