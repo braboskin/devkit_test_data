@@ -14,11 +14,11 @@ verification:
   - unit-tests
 depends_on:
   - T-D4E44939
-plan_version: 3
+plan_version: 4
 report: docs/reports/T-B317AFAE.md
 assignee: owner
 created_at: 2026-11-21T00:07:17.803Z
-updated_at: 2026-11-21T18:18:44.167Z
+updated_at: 2026-11-21T18:23:43.492Z
 ---
 
 # M3: агент — LLM-ключи, чат, предложения, онбординг, конструктор агентов
