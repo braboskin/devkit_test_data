@@ -1,7 +1,7 @@
 # Отчёт T-CA6FF8E2 — UI агента + A15/A16
 
-Ветка: `devkit/T-CA6FF8E2` от `main@b897d53` (M3 shipped). HEAD: `52bb1d3`.
-Ревизия devkit: `acf198ce10c3e1a1ec8c590227a45c172219d9d1`.
+Ветка: `devkit/T-CA6FF8E2` от `main@b897d53` (M3 shipped). HEAD: `2cfd8b1`.
+Ревизия devkit: `895daf90d0d5f4cbf68e24a08bbd66b5c7136454`.
 План: `plans/T-CA6FF8E2/v2.md` (approved). Эпик `E-46E212B4`.
 Scope фактический: UI M3 + backend A15 (пауза сценария) + A16 (сабагенты).
 Карточка задачи не редактируется (web/CLI): остаётся `L`/`viewer-*` при плане
@@ -29,45 +29,53 @@ Scope фактический: UI M3 + backend A15 (пауза сценария) 
   тест-вопрос); онбординг-интервью с продолжением и профиль; настройки LLM
   (маска, проверка, удаление) и профиль; «Сегодня» — запуск сценариев,
   `awaiting_apply` с «Продолжить/Отменить», список предложений.
-- API: `GET /api/agents/tools`, `GET /api/agent-calls?chat_id=`,
+- API: `GET /api/agents/tools`, `GET /api/agent-calls?chat_id=`
+  (обработчик в `routers/scenarios.py`, отдельного роутера нет),
   `use_critic/use_editor` в `AgentOut/In/Patch`, `GET /api/scenario-runs`,
   `POST /api/scenario-runs/{id}/resume`.
+- **Исправления по гейтам** (`2cfd8b1`): внутренние агенты запрещены для чатов/
+  сценариев (404/422); удаление агента с трейсом → 409; `resume` — атомарный
+  CAS; чужой `chat_id` в трейсе → 404; сабагент получает доступ родителя в
+  промпте; в UI работает `AbortController.abort()` после серверного cancel,
+  человеческие тексты для 409/422, подсказка «пусто = все инструменты»,
+  редактор `profile.data` (JSON). Downgrade `0005` покрыт тестом.
 
 ## Изменения
 
-24 файла, **+3178/−84** (`git diff main..HEAD`), база `b897d53`, 5 коммитов:
+23 файла, **+3365/−91** (`git diff main..HEAD`), база `b897d53`, 6 коммитов:
 `dfe411a` (миграция 0005/agent_calls), `3c89cbb` (A16 сабагенты/трейс/флаги),
 `49f0f94` (A15 пауза/resume/cancel), `e12e799` (UI: чат/агенты/онбординг/
-«Сегодня»/настройки), `52bb1d3` (тест списка прогонов).
+«Сегодня»/настройки), `52bb1d3` (тест списка прогонов), `2cfd8b1` (фиксы гейтов).
 
 Файлы: `app/backend/{models}.py`, `alembic/versions/0005_agent_calls.py`,
 `app/backend/agent/{presets,subagents,chat,scenarios,tools}.py`,
-`app/backend/routers/{agents,chats,scenarios,agent_calls}.py`;
+`app/backend/routers/{agents,chats,scenarios}.py`;
 `viewer/src/{api.ts,App.tsx,styles.css}`, `viewer/src/pages/{Chat,Agents,
 Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
-`test_agent_scenario_runs.py`, правки `test_agent_*`, `test_migrations`,
-`test_isolation`, `test_web_build`; data-репо `devkit.yaml` (модули в
-`unit-tests`).
+`test_agent_scenario_runs.py`, правки `test_migrations`, `test_isolation`,
+`test_web_build`; data-репо `devkit.yaml` (модули в `unit-tests`).
 
 ## Проверки
 
-Ревизия `52bb1d3`; `devkit profile test`:
+Ревизия `2cfd8b1`; `devkit profile test`:
 
 | Проверка | Результат | Доказательство |
 | --- | --- | --- |
-| `unit-tests` (required) | passed, 164 с | `CH-c2615116d7bb`: **308 тестов OK** |
-| `web-build` | passed | `CH-4bb862b8692a` (tsc + vite) |
-| `ingest-fixtures` | passed | `CH-c52c2dd46ff5` |
-| `schema-check` | passed | `CH-329545b80243` |
+| `unit-tests` (required) | passed, 162 с | `CH-cac35c392243`: **311 тестов OK** |
+| `web-build` | passed | `CH-b6b75e6fc579` (tsc + vite) |
+| `ingest-fixtures` | passed | `CH-dcbc29814b61` |
+| `schema-check` | passed | `CH-f39bbd5a1f94` |
 
-Новые тесты: `test_agent_subagents` 6, `test_agent_scenario_runs` 4,
-`test_web_build` +1 (вкладки в бандле), миграции/изоляция — правки.
+Новые тесты: `test_agent_subagents` 9, `test_agent_scenario_runs` 4,
+`test_migrations` +деградация `0005`, `test_web_build` +1 (вкладки в бандле),
+`test_isolation` — маршрут resume.
 
 ## Гейты
 
-Пока **не выданы**: нужны независимые роли (`code`, `test`, `architecture`,
-`security` — XL) с task-токенами `T-CA6FF8E2`; токенов у задачи нет. Автор
-вердикт не выдаёт.
+Выдаются заново на `2cfd8b1` независимыми ролями (`code`, `test`,
+`architecture`, `security` — XL) после исправлений; гейты на предыдущей
+ревизии (test/security approve, code/architecture changes) инвалидированы
+сменой коммита. Автор вердикт не выдаёт.
 
 ## Отклонения и границы
 
@@ -93,8 +101,9 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
 - Пауза сценария хранится в `state` прогона; повторный `resume` защищён
   статусом (409), но гонка двух `resume` под нагрузкой не тестировалась (PG).
 - UI без браузерных тестов: регрессии вёрстки/потока ловятся только руками.
-- `agent_calls` растёт без ретенции (трейс) — чистка не реализована.
-- Миграция `0005` проверена SQLite+PG upgrade; PG-downgrade не гонялся.
+- `agent_calls` растёт без ретенции (трейс) — чистка не реализована (принято).
+- Миграция `0005` проверена upgrade (SQLite+PG) и downgrade (SQLite-тест);
+  PG-downgrade отдельно не гонялся.
 
 ## Sync: план → acceptance → факт
 
@@ -105,9 +114,9 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
 | A15.3 | cancel из ожидания → cancelled | `test_agent_scenario_runs` | выполнен |
 | A15.4 | чужой прогон → 404, state изолирован | `test_agent_scenario_runs` | выполнен |
 | A16.1 | «Врач» → «Критик»: `agent_calls`, замечание учтено | `test_agent_subagents` | выполнен |
-| A16.2 | сабагенты скрыты, без чатов/сообщений | `test_agent_subagents` | выполнен |
+| A16.2 | сабагенты скрыты, без чатов/сообщений, internal-id нельзя использовать для чата/сценария | `test_agent_subagents` | выполнен |
 | A16.3 | «Редактор» не меняет citations | `test_agent_subagents` | выполнен |
-| A16.4 | флаги off → нет вызовов; изоляция трейса | `test_agent_subagents` | выполнен |
+| A16.4 | флаги off → нет вызовов; трейс изолирован, чужой `chat_id` → 404 | `test_agent_subagents` | выполнен |
 | UI.1 | сборка, вкладки в бандле | `web-build`, `test_web_build` | выполнен |
 | UI.2–UI.7 | чат/предложения/конструктор/онбординг/ключ/«Сегодня» | ручной чек владельца | **не проверен** |
 | M1 | `0005` upgrade/downgrade, `agent_calls` с owner_id | `test_migrations` | выполнен |
@@ -119,4 +128,5 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
   `uvicorn app.backend.main:app` на временной БД).
 - Живой прогон A15/A16: пауза/продолжение сценария с реальным DeepSeek и
   вызов «Критика/Редактора» — по желанию владельца; ключ и стенд есть.
-- Независимые гейты 4 ролей (нужны токены задачи) → `needs_review` → ship.
+- Независимые гейты 4 ролей (перевыпуск на `2cfd8b1`) → `needs_review` → ship.
+- Ретенция `agent_calls` — принятое ограничение (трейс растёт), отдельная задача.
