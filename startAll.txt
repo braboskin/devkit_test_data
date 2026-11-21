@@ -1,0 +1,6 @@
+powershell -NoProfile -ExecutionPolicy Bypass -File .\start-runner.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\start-atlas.ps1
+
+
+powershell -NoProfile -ExecutionPolicy Bypass -File .\start-runner.ps1 -Status   # запущен ли, есть ли конфиг
+powershell -NoProfile -ExecutionPolicy Bypass -File .\start-runner.ps1 -Stop     # остановить раннер
