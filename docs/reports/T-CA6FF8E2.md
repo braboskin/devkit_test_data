@@ -4,14 +4,14 @@ type: report
 title: UI + A15/A16 report
 task: T-CA6FF8E2
 status: final
-created_at: 2026-11-21T20:38:04.219Z
-updated_at: 2026-11-21T20:38:04.219Z
+created_at: 2026-11-21T20:49:35.948Z
+updated_at: 2026-11-21T20:49:35.948Z
 ---
 
 # Отчёт T-CA6FF8E2 — UI агента + A15/A16
 
-Ветка: `devkit/T-CA6FF8E2` от `main@b897d53` (M3 shipped). HEAD: `3505d5a`.
-Ревизия devkit: `ef4cc3bdbd6256e8b91d14cf861a222968ac67f8`.
+Ветка: `devkit/T-CA6FF8E2` от `main@b897d53` (M3 shipped). HEAD: `7b19234`.
+Ревизия devkit: `45a6ac72a48d8252d9ad6951cb3c4de7e379ab6b`.
 План: `plans/T-CA6FF8E2/v2.md` (approved). Эпик `E-46E212B4`.
 Scope фактический: UI M3 + backend A15 (пауза сценария) + A16 (сабагенты).
 Карточка задачи не редактируется (web/CLI): остаётся `L`/`viewer-*` при плане
@@ -22,11 +22,12 @@ Scope фактический: UI M3 + backend A15 (пауза сценария) 
 - **A16 — внутренние сабагенты.** `agent_calls` (миграция `0005_agent_calls`),
   `agent/subagents.py`: «Критик»/«Редактор» на ключе владельца, без чата и
   истории; запись трейса `parent/child/chat/input/output`; «Врач»/«Юрист»/
-  «Финансист» имеют `use_critic` по умолчанию. Для агентов с
-  `use_critic`/`use_editor` ответ собирается нестримингово: черновик (tool-loop)
-  → «Критик» (замечание учитывается в переписанном ответе) → «Редактор»
-  (формулировки, цитаты не меняются) → один `delta`+`done`. Внутренние агенты
-  скрыты из `GET /api/agents` и недоступны через patch/delete.
+  «Финансист» имеют `use_critic` по умолчанию. Ответ у таких агентов собирается
+  так: черновик **стримится сразу** (`delta`), затем «Критик» (замечание
+  учитывается в переписанном ответе) и «Редактор» (формулировки; цитаты не
+  меняются), после чего клиент получает `replace` с финальным текстом и `done`.
+  Внутренние агенты скрыты из `GET /api/agents` и недоступны через
+  patch/delete/чат/сценарий.
 - **A15 — пауза сценария.** Шаг, породивший предложение, переводит прогон в
   `awaiting_apply` (`state.awaiting` с индексами шагов и `proposal_ids`);
   `POST /api/scenario-runs/{id}/resume` продолжает с сохранённого шага и
@@ -63,12 +64,13 @@ Scope фактический: UI M3 + backend A15 (пауза сценария) 
 
 ## Изменения
 
-25 файлов, **+3572/−103** (`git diff main..HEAD`), база `b897d53`, 7 коммитов:
+26 файлов, **+3665/−141** (`git diff main..HEAD`), база `b897d53`, 8 коммитов:
 `dfe411a` (миграция 0005/agent_calls), `3c89cbb` (A16 сабагенты/трейс/флаги),
 `49f0f94` (A15 пауза/resume/cancel), `e12e799` (UI: чат/агенты/онбординг/
 «Сегодня»/настройки), `52bb1d3` (тест списка прогонов), `2cfd8b1` (фиксы гейтов),
 `3505d5a` (стриминг черновика/`replace`, usage и off-peak, дефолты модели,
-подсказки Яндекс.Диска и очереди ПК).
+подсказки), `7b19234` (fallback `stream_options`, позитивные тесты
+`replace`/`usage`).
 
 Файлы: `app/backend/{models}.py`, `alembic/versions/0005_agent_calls.py`,
 `app/backend/agent/{presets,subagents,chat,scenarios,tools}.py`,
@@ -80,14 +82,14 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
 
 ## Проверки
 
-Ревизия `3505d5a`; `devkit profile test`:
+Ревизия `7b19234`; `devkit profile test`:
 
 | Проверка | Результат | Доказательство |
 | --- | --- | --- |
-| `unit-tests` (required) | passed | `CH-cb4137d5b46b`: **312 тестов OK** |
-| `web-build` | passed | `CH-7cf44f5be1a9` (tsc + vite) |
-| `ingest-fixtures` | passed | `CH-c5f5829bd80b` |
-| `schema-check` | passed | `CH-2bd64980ba56` |
+| `unit-tests` (required) | passed | `CH-0ba3fed4f562`: **313 тестов OK** |
+| `web-build` | passed | `CH-0e66d55d5a29` (tsc + vite) |
+| `ingest-fixtures` | passed | `CH-f6348fbfb68a` |
+| `schema-check` | passed | `CH-af0f657cd68e` |
 
 Новые тесты: `test_agent_subagents` 9, `test_agent_scenario_runs` 4,
 `test_migrations` +деградация `0005`, `test_web_build` +1 (вкладки в бандле),
@@ -95,14 +97,16 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
 
 ## Гейты
 
-Перевыпускаются на ревизии `ef4cc3b` (`3505d5a`) после правок ручного чека
-(стриминг черновика/`replace`, `usage`, подсказки); гейты на `895daf9`
-инвалидированы сменой коммита. Независимые роли (`code`, `test`,
-`architecture`, `security` — XL), автор вердикт не выдаёт.
+Перевыпускаются на ревизии `45a6ac7` (`7b19234`): гейты на `3505d5a` дали
+`code/architecture = changes` из-за безусловного `stream_options` — добавлен
+retry без него при 400/422 (чат работает у любого OpenAI-совместимого
+провайдера, `usage` при этом отсутствует) и позитивные тесты `replace`/`usage`.
+Независимые роли (`code`, `test`, `architecture`, `security` — XL), автор
+вердикт не выдаёт.
 
-Ранее на `895daf9` (`2cfd8b1`) все четыре были `approve` (`G-3092102dc80c`,
-`G-ffad86c78080`, `G-f9cb8d0202c9`, `G-87c12d5d2c11`); после правок общий
-цикл повторяется.
+Ранее на `895daf9` (`2cfd8b1`) все четыре были `approve`; на `3505d5a`
+`test`/`security` — approve, `code`/`architecture` — changes (блокер выше,
+исправлен в `7b19234`).
 
 ## Отклонения и границы
 
@@ -118,6 +122,16 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
    критик в тест-эндпоинте пишется с `chat_id=null`.
 4. **Новые маршруты вне минимума §6 ТЗ** (`GET /api/scenario-runs`,
    `GET /api/agents/tools`, `GET /api/agent-calls`) — нужны UI/трейсу.
+5. **SSE-контракт расширен** (`replace`, `usage`) сверх списка плана v2 —
+   `replace` нужен для правок «Критика/Редактора», `usage` для токенов; старая
+   схема (`delta/citation/proposal/done/cancelled/error/start`) сохранена.
+6. **`stream_options.include_usage`** уходит любому OpenAI-совместимому
+   провайдеру, но при 400/422 чат **повторяет запрос без него** (usage
+   отсутствует, ответ работает) — покрыто тестом
+   `test_provider_without_stream_options_falls_back`.
+7. **Оценка стоимости** — только по черновику: `usage` вызовов
+   «Критика/Редактора» не учитывается (в UI это подписано); `usage` не
+   персистится.
 5. **A2/A4/A10/A14** поведение не менялось, кроме: нестриминговый путь для
    агентов с флагами и пауза сценариев.
 
@@ -131,9 +145,8 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
 - `agent_calls` растёт без ретенции (трейс) — чистка не реализована (принято).
 - Миграция `0005` проверена upgrade (SQLite+PG) и downgrade (SQLite-тест);
   PG-downgrade отдельно не гонялся.
-- **Токены/стоимость** — оценка по публичным тарифам DeepSeek (могут меняться),
-  off-peak окно 16:30–00:30 UTC; `usage` не сохраняется в БД — виден в UI после
-  ответа и теряется при перезагрузке (персистентность — отдельная задача).
+- Токены/стоимость: `usage` — числа от провайдера, цена — оценка по публичным
+  тарифам DeepSeek; off-peak окно 16:30–00:30 UTC; не биллинг, не персистится.
 
 ## Sync: план → acceptance → факт
 
