@@ -3,7 +3,7 @@ id: T-CA6FF8E2
 project: testproject
 epic: E-46E212B4
 title: "M3 follow-up: UI — чат, конструктор агентов, онбординг, предложения"
-status: planned
+status: in_progress
 type: feature
 size: L
 priority: high
@@ -17,9 +17,9 @@ depends_on:
   - T-B317AFAE
 plan_version: 2
 report: docs/reports/T-CA6FF8E2.md
-assignee: null
+assignee: owner
 created_at: 2026-11-21T17:41:36.092Z
-updated_at: 2026-11-21T19:45:10.660Z
+updated_at: 2026-11-21T19:45:11.155Z
 ---
 
 # M3 follow-up: UI — чат, конструктор агентов, онбординг, предложения
