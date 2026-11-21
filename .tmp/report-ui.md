@@ -2,8 +2,7 @@
 
 Ветка: `devkit/T-CA6FF8E2` от `main@b897d53` (M3 shipped). HEAD: `6ca7c40`.
 Ревизия devkit: `6194e4b52a2efbce321744fc289f8ef3ba4b818e`.
-План: `plans/T-CA6FF8E2/v3.md` (зарегистрирован, ждёт подтверждения владельца;
-v2 approved).
+План: `plans/T-CA6FF8E2/v3.md` (approved, `planVersion=3`; v2 superseded).
 Scope фактический: UI M3 + backend A15 (пауза сценария) + A16 (сабагенты),
 плюс второй раунд по ручному чеку (usage сабагентов, конфиг OAuth Яндекса,
 инлайн-обработка текстовых PDF) — план v3.
@@ -49,7 +48,7 @@ Scope фактический: UI M3 + backend A15 (пауза сценария) 
   `usage` суммируется в UI, `agent_calls.tokens` заполняется); у Яндекс.Диска
   появился `GET /api/settings/yadisk/config` — в UI видно, настроен ли OAuth
   на сервере, и какие env-переменные нужны (`YANDEX_CLIENT_ID/SECRET`),
-  кнопка блокируется до настройки; текстовые PDF до **200 страниц / 100 МБ**
+  кнопка блокируется до настройки; текстовые PDF до **200 страниц / 50 МБ**
   (env `ATLAS_PDF_INLINE_MAX_PAGES/BYTES`) обрабатываются на сервере сразу,
   без воркера; в «Документах» уточнён текст, что Яндекс.Диск не влияет и
   ждут только сканы/OCR/сверхбольшие PDF. Для серверного OCR/кнопки
@@ -80,11 +79,13 @@ Scope фактический: UI M3 + backend A15 (пауза сценария) 
 
 Файлы: `app/backend/{models}.py`, `alembic/versions/0005_agent_calls.py`,
 `app/backend/agent/{presets,subagents,chat,scenarios,tools}.py`,
-`app/backend/routers/{agents,chats,scenarios}.py`;
+`app/backend/routers/{agents,chats,scenarios,settings_yadisk}.py`,
+`app/backend/knowledge/pipeline.py` (env-лимиты inline-PDF);
 `viewer/src/{api.ts,App.tsx,styles.css}`, `viewer/src/pages/{Chat,Agents,
-Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
+Onboarding,Today,Settings,Documents}.tsx`; тесты `test_agent_subagents.py`,
 `test_agent_scenario_runs.py`, правки `test_migrations`, `test_isolation`,
-`test_web_build`; data-репо `devkit.yaml` (модули в `unit-tests`).
+`test_web_build`, `test_knowledge`, `test_yadisk`; data-репо `devkit.yaml`
+(модули в `unit-tests`), план v3/отчёт.
 
 ## Проверки
 
@@ -97,22 +98,32 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
 | `ingest-fixtures` | passed | `CH-092960899f64` |
 | `schema-check` | passed | `CH-24617c912d20` |
 
-Новые тесты: `test_agent_subagents` 9, `test_agent_scenario_runs` 4,
+Новые тесты: `test_agent_subagents` 11, `test_agent_scenario_runs` 4,
 `test_migrations` +деградация `0005`, `test_web_build` +1 (вкладки в бандле),
-`test_isolation` — маршрут resume.
+`test_isolation` — маршрут resume; `test_knowledge` +3 (DOC.1: дефолты/ env/
+байты), `test_yadisk` +1 (UI.8: false/true, секрет не в ответе).
 
 ## Гейты
 
-Ревизия `368138e…` (`cf4de27`): `security` — `approve` (валиден).
-`code`/`architecture`/`test` нужно перевыпустить после подтверждения владельцем
-плана v3 (архитектор заблокировал v2 за выход scope на документы/OAuth).
+Ревизия `6194e4b…` (`6ca7c40`), все независимые роли — `approve`:
+
+| kind | id | verdict | роль |
+| --- | --- | --- | --- |
+| code | `G-22f9b813a606` | approve | architect |
+| architecture | `G-0fbc06a43f3b` | approve | architect |
+| test | `G-6b32045b0e94` | approve | test-engineer |
+| security | `G-fe16e912895c` | approve | skeptic |
+
+История: на `7b19234` все четыре approve; `3505d5a` — code/arch changes
+(stream_options, исправлено); `52bfcdf` — test changes (DOC.1/UI.8 не доказаны,
+исправлено в `6ca7c40`) и code/arch changes (scope вне v2 — закрыто планом v3).
 Независимые роли (`code`, `test`, `architecture`, `security` — XL), автор
 вердикт не выдаёт.
 
 ## Отклонения и границы
 
 1. **Карточка задачи** остаётся `L`/`viewer-*`: правка scope/size недоступна в
-   web и CLI; контракт — план v2 (`XL`, backend+UI), расхождение метаданных
+   web и CLI; контракт — план v3 (`XL`, backend+UI), расхождение метаданных
    фиксируется здесь и на гейтах (не выдаём за расширение «по факту»).
 2. **Браузерного E2E нет**: UI-пункты UI.2–UI.7 подтверждаются сборкой,
    smoke-тестом вкладок и ручным чеком владельца; Playwright не добавлялся
@@ -122,7 +133,7 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
    тест-эндпоинте пишется с `chat_id=null`.
 4. **Новые маршруты вне минимума §6 ТЗ** (`GET /api/scenario-runs`,
    `GET /api/agents/tools`, `GET /api/agent-calls`) — нужны UI/трейсу.
-5. **SSE-контракт расширен** (`replace`, `usage`) сверх списка плана v2 —
+5. **SSE-контракт расширен** (`replace`, `usage`) сверх базового списка —
    `replace` нужен для правок «Критика/Редактора», `usage` для токенов; старая
    схема (`delta/citation/proposal/done/cancelled/error/start`) сохранена.
 6. **`stream_options.include_usage`** уходит любому OpenAI-совместимому
@@ -134,7 +145,7 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
    персистится — цена оценочная, не биллинг.
 8. **Сканы/OCR на сервере** не реализованы: изображения и PDF без текстового
    слоя по-прежнему обрабатывает воркер на ПК (VPS 4 ГБ); для этого создана
-   задача **`T-46BE9A0F`**. Текстовые PDF до 200 стр/100 МБ идут на сервере.
+   задача **`T-46BE9A0F`**. Текстовые PDF до 200 стр/50 МБ идут на сервере.
 9. **Выбор моделей** у провайдеров — базовый список DeepSeek + ручной ввод;
    расширенный каталог оставлен на будущее (решение владельца).
 10. **A2/A4/A10/A14** поведение не менялось, кроме: стриминг черновика и
@@ -169,6 +180,10 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
 | A16.2 | сабагенты скрыты, без чатов/сообщений, internal-id нельзя использовать для чата/сценария | `test_agent_subagents` | выполнен |
 | A16.3 | «Редактор» не меняет citations | `test_agent_subagents` | выполнен |
 | A16.4 | флаги off → нет вызовов; трейс изолирован, чужой `chat_id` → 404 | `test_agent_subagents` | выполнен |
+| A16.5 | usage всех вызовов суммируется, `agent_calls.tokens` заполнен | `test_agent_subagents` | выполнен |
+| A16.6 | черновик стримится, финал — `replace`, сохранённый текст = финалу; отмена → cancelled | `test_agent_subagents` | выполнен |
+| UI.8 | `GET /api/settings/yadisk/config` → `oauth_configured`; false/true без/с env, секрет не отдаётся | `test_yadisk`, ручной чек | выполнен (API), ручной — в UI.2–UI.7 |
+| DOC.1 | 200 стр/50 МБ дефолты, env-override, 30 МБ inline / 60 МБ defer | `test_knowledge` | выполнен |
 | UI.1 | сборка, вкладки в бандле | `web-build`, `test_web_build` | выполнен |
 | UI.2–UI.7 | чат/предложения/конструктор/онбординг/ключ/«Сегодня» | ручной чек владельца | **не проверен** |
 | M1 | `0005` upgrade/downgrade, `agent_calls` с owner_id | `test_migrations` | выполнен |
@@ -180,7 +195,6 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
   `uvicorn app.backend.main:app` на временной БД).
 - Живой прогон A15/A16: пауза/продолжение сценария с реальным DeepSeek и
   вызов «Критика/Редактора» — по желанию владельца; ключ и стенд есть.
-- Независимые гейты 4 ролей (перевыпуск на `cf4de27` после approve плана v3) →
-  `needs_review` → ship.
+- Независимые гейты 4 ролей (перевыпуск на `6ca7c40`) → `needs_review` → ship.
 - Сканы/OCR на сервере — задача `T-46BE9A0F` (после этой).
 - Ретенция `agent_calls` — принятое ограничение (трейс растёт), отдельная задача.
