@@ -3,7 +3,9 @@ worktrees/
 .devkit/
 .env
 .env.*
-.secrets/
+.secrets/*
+!.secrets/atlas.env.example
+.tmp/stand/
 graphify-out/
 node_modules/
 .devkit-tmp/
