@@ -32,9 +32,10 @@ profile:
             tests.test_migrations tests.test_spheres_projects tests.test_people
             tests.test_tasks tests.test_events tests.test_isolation
             tests.test_web_build tests.test_knowledge tests.test_documents
-            tests.test_worker tests.test_search tests.test_yadisk
-            tests.test_ingest_isolation tests.test_ingest_acceptance
-            tests.test_chunking tests.test_eval tests.test_import_obsidian
+            tests.test_worker tests.test_worker_pg tests.test_http_fetch
+            tests.test_search tests.test_yadisk tests.test_ingest_isolation
+            tests.test_ingest_acceptance tests.test_chunking tests.test_eval
+            tests.test_import_obsidian
             tests.test_ingest.IngestTests.test_blank_image_needs_review
             tests.test_ingest.IngestTests.test_documents_processed
             tests.test_ingest.IngestTests.test_empty_body_needs_review
@@ -44,7 +45,8 @@ profile:
             tests.test_spheres_projects tests.test_people tests.test_tasks
             tests.test_events tests.test_isolation tests.test_web_build
             tests.test_knowledge tests.test_documents tests.test_worker
-            tests.test_search tests.test_yadisk tests.test_ingest_isolation
+            tests.test_worker_pg tests.test_http_fetch tests.test_search
+            tests.test_yadisk tests.test_ingest_isolation
             tests.test_ingest_acceptance tests.test_chunking tests.test_eval
             tests.test_import_obsidian
             tests.test_ingest.IngestTests.test_blank_image_needs_review
@@ -56,7 +58,8 @@ profile:
             tests.test_spheres_projects tests.test_people tests.test_tasks
             tests.test_events tests.test_isolation tests.test_web_build
             tests.test_knowledge tests.test_documents tests.test_worker
-            tests.test_search tests.test_yadisk tests.test_ingest_isolation
+            tests.test_worker_pg tests.test_http_fetch tests.test_search
+            tests.test_yadisk tests.test_ingest_isolation
             tests.test_ingest_acceptance tests.test_chunking tests.test_eval
             tests.test_import_obsidian
             tests.test_ingest.IngestTests.test_blank_image_needs_review
