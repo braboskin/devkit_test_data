@@ -102,10 +102,10 @@ if (-not (Test-Path $Python)) { throw "Не найден Python: $Python" }
 if (-not (Test-Path $KeyFile)) { throw "Не найден $KeyFile (создай/перенеси Fernet-ключ; иначе Яндекс-токен не расшифруется)" }
 
 if (-not $env:ATLAS_DB_URL) {
-    $db = Join-Path $env:TEMP 'atlas-m2.db'
+    $db = Join-Path $Secrets 'atlas.db'
     $env:ATLAS_DB_URL = 'sqlite:///' + (($db -replace '\\','/'))
 }
-if (-not $env:ATLAS_STORAGE_DIR) { $env:ATLAS_STORAGE_DIR = Join-Path $env:TEMP 'atlas-m2-storage' }
+if (-not $env:ATLAS_STORAGE_DIR) { $env:ATLAS_STORAGE_DIR = Join-Path $Secrets 'atlas-storage' }
 if (-not $env:ATLAS_EMBEDDINGS) { $env:ATLAS_EMBEDDINGS = 'fake' }
 if (-not $env:ATLAS_QDRANT_URL) { $env:ATLAS_QDRANT_URL = ':memory:' }
 if (-not $env:ATLAS_MAX_UPLOAD_MB) { $env:ATLAS_MAX_UPLOAD_MB = '100' }
@@ -128,8 +128,17 @@ if ($Stop) {
     $id = Get-Pid $ServerPid
     if (Test-Alive $id) { Stop-Process -Id $id -Force -ErrorAction SilentlyContinue; Write-Host "  server остановлен (pid $id)" }
     Remove-Item $ServerPid -Force -ErrorAction SilentlyContinue
+    Start-Sleep -Milliseconds 500
     $owner = Get-PortOwner
-    if ($owner -gt 0) { Write-Warn "порт $Port всё ещё занят pid $owner — это не процесс скрипта, не трогаю" }
+    if ($owner -gt 0) {
+        $cmd = (Get-CimInstance Win32_Process -Filter "ProcessId=$owner" -ErrorAction SilentlyContinue).CommandLine
+        if ($cmd -match 'app\.backend\.main|uvicorn') {
+            Stop-Process -Id $owner -Force -ErrorAction SilentlyContinue
+            Write-Host "  server остановлен (pid $owner, найден по порту)"
+        } else {
+            Write-Warn "порт $Port всё ещё занят pid $owner — это не процесс скрипта, не трогаю"
+        }
+    }
     return
 }
 
@@ -162,8 +171,15 @@ if ($owner -gt 0) {
     Set-Content -Path $ServerPid -Value $owner -Encoding ascii
 } else {
     Write-Step 'Миграции БД'
-    & $Python -m alembic upgrade head *> (Join-Path $LogDir 'alembic.log')
-    if ($LASTEXITCODE -ne 0) { Show-Tail (Join-Path $LogDir 'alembic.log'); throw "alembic upgrade failed (exit $LASTEXITCODE)" }
+    $alembicOut = Join-Path $LogDir 'alembic.out.log'
+    $alembicErr = Join-Path $LogDir 'alembic.err.log'
+    $ap = Start-Process -FilePath $Python `
+        -ArgumentList @('-m','alembic','upgrade','head') `
+        -WorkingDirectory $Repo `
+        -RedirectStandardOutput $alembicOut `
+        -RedirectStandardError $alembicErr `
+        -WindowStyle Hidden -Wait -PassThru
+    if ($ap.ExitCode -ne 0) { Show-Tail $alembicErr; throw "alembic upgrade failed (exit $($ap.ExitCode))" }
     Write-Host '  ok'
 
     Write-Step 'Запуск uvicorn'
@@ -180,6 +196,8 @@ if ($owner -gt 0) {
         Show-Tail (Join-Path $LogDir 'server.err.log')
         throw "Сервер не поднялся за $HealthTimeoutSec c (лог: $LogDir\server.err.log)"
     }
+    $actual = Get-PortOwner
+    if ($actual -gt 0) { Set-Content -Path $ServerPid -Value $actual -Encoding ascii }
 }
 
 if (-not (Test-Health)) {
