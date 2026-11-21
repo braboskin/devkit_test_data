@@ -1,9 +1,12 @@
 # Отчёт T-CA6FF8E2 — UI агента + A15/A16
 
-Ветка: `devkit/T-CA6FF8E2` от `main@b897d53` (M3 shipped). HEAD: `52bfcdf`.
-Ревизия devkit: `7c77152486891d8a62ac71177fdc031c8ee4af5f`.
-План: `plans/T-CA6FF8E2/v2.md` (approved). Эпик `E-46E212B4`.
-Scope фактический: UI M3 + backend A15 (пауза сценария) + A16 (сабагенты).
+Ветка: `devkit/T-CA6FF8E2` от `main@b897d53` (M3 shipped). HEAD: `cf4de27`.
+Ревизия devkit: `368138e1baafec3d7a159b7ce5deffad94ecfe34`.
+План: `plans/T-CA6FF8E2/v3.md` (зарегистрирован, ждёт подтверждения владельца;
+v2 approved).
+Scope фактический: UI M3 + backend A15 (пауза сценария) + A16 (сабагенты),
+плюс второй раунд по ручному чеку (usage сабагентов, конфиг OAuth Яндекса,
+инлайн-обработка текстовых PDF) — план v3.
 Карточка задачи не редактируется (web/CLI): остаётся `L`/`viewer-*` при плане
 `XL`/backend — осознанное расхождение метаданных (см. «Отклонения»).
 
@@ -64,14 +67,15 @@ Scope фактический: UI M3 + backend A15 (пауза сценария) 
 
 ## Изменения
 
-29 файлов, **+3786/−149** (`git diff main..HEAD`), база `b897d53`, 10 коммитов:
+30 файлов, **+3790/−149** (`git diff main..HEAD`), база `b897d53`, 11 коммитов:
 `dfe411a` (миграция 0005/agent_calls), `3c89cbb` (A16 сабагенты/трейс/флаги),
 `49f0f94` (A15 пауза/resume/cancel), `e12e799` (UI: чат/агенты/онбординг/
 «Сегодня»/настройки), `52bb1d3` (тест списка прогонов), `2cfd8b1` (фиксы гейтов),
 `3505d5a` (стриминг черновика/`replace`, usage и off-peak, дефолты модели),
 `7b19234` (fallback `stream_options`, позитивные тесты `replace`/`usage`),
-`69d17e2` (usage сабагентов, конфиг OAuth Яндекса, inline-PDF 200 стр/100 МБ),
-`52bfcdf` (тест настраиваемого лимита PDF).
+`69d17e2` (usage сабагентов, конфиг OAuth Яндекса, inline-PDF),
+`52bfcdf` (тест настраиваемого лимита PDF),
+`cf4de27` (inline-PDF байты 50 МБ по умолчанию, тест config-флага).
 
 Файлы: `app/backend/{models}.py`, `alembic/versions/0005_agent_calls.py`,
 `app/backend/agent/{presets,subagents,chat,scenarios,tools}.py`,
@@ -83,14 +87,14 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
 
 ## Проверки
 
-Ревизия `52bfcdf`; `devkit profile test`:
+Ревизия `cf4de27`; `devkit profile test`:
 
 | Проверка | Результат | Доказательство |
 | --- | --- | --- |
-| `unit-tests` (required) | passed | `CH-facae57c0090`: **314 тестов OK** |
-| `web-build` | passed | `CH-a3ecab35d15a` (tsc + vite) |
-| `ingest-fixtures` | passed | `CH-144bf59ae0f9` |
-| `schema-check` | passed | `CH-fe886532879c` |
+| `unit-tests` (required) | passed | `CH-7cd2c3846531`: **315 тестов OK** |
+| `web-build` | passed | `CH-5d274b387bae` (tsc + vite) |
+| `ingest-fixtures` | passed | `CH-1ff4ca79760f` |
+| `schema-check` | passed | `CH-c7be6fc500ce` |
 
 Новые тесты: `test_agent_subagents` 9, `test_agent_scenario_runs` 4,
 `test_migrations` +деградация `0005`, `test_web_build` +1 (вкладки в бандле),
@@ -98,11 +102,11 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
 
 ## Гейты
 
-Перевыпускаются на ревизии `7c7715…` (`52bfcdf`) после второго раунда правок
-(usage сабагентов, конфиг OAuth Яндекса, inline-PDF, тест лимита). На
-предыдущей `45a6ac7` (`7b19234`) все четыре гейта были `approve`; смена
-коммита инвалидировала их, цикл повторяется. Независимые роли (`code`, `test`,
-`architecture`, `security` — XL), автор вердикт не выдаёт.
+Ревизия `368138e…` (`cf4de27`): `security` — `approve` (валиден).
+`code`/`architecture`/`test` нужно перевыпустить после подтверждения владельцем
+плана v3 (архитектор заблокировал v2 за выход scope на документы/OAuth).
+Независимые роли (`code`, `test`, `architecture`, `security` — XL), автор
+вердикт не выдаёт.
 
 ## Отклонения и границы
 
@@ -147,6 +151,10 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
   PG-downgrade отдельно не гонялся.
 - Токены/стоимость: `usage` — числа от провайдера, цена — оценка по публичным
   тарифам DeepSeek; off-peak окно 16:30–00:30 UTC; не биллинг, не персистится.
+- **Инлайн-обработка текстовых PDF** до 200 стр / 50 МБ идёт синхронно в
+  upload-запросе на VPS 4 ГБ — риск памяти/латентности; лимиты настраиваются
+  `ATLAS_PDF_INLINE_MAX_PAGES/BYTES`, риск принят владельцем ради UX (R11 в
+  плане v3); сканы по-прежнему воркер (`T-46BE9A0F`).
 
 ## Sync: план → acceptance → факт
 
@@ -171,6 +179,7 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
   `uvicorn app.backend.main:app` на временной БД).
 - Живой прогон A15/A16: пауза/продолжение сценария с реальным DeepSeek и
   вызов «Критика/Редактора» — по желанию владельца; ключ и стенд есть.
-- Независимые гейты 4 ролей (перевыпуск на `52bfcdf`) → `needs_review` → ship.
+- Независимые гейты 4 ролей (перевыпуск на `cf4de27` после approve плана v3) →
+  `needs_review` → ship.
 - Сканы/OCR на сервере — задача `T-46BE9A0F` (после этой).
 - Ретенция `agent_calls` — принятое ограничение (трейс растёт), отдельная задача.
