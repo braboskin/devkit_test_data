@@ -1,7 +1,7 @@
 # Отчёт T-CA6FF8E2 — UI агента + A15/A16
 
-Ветка: `devkit/T-CA6FF8E2` от `main@b897d53` (M3 shipped). HEAD: `2cfd8b1`.
-Ревизия devkit: `895daf90d0d5f4cbf68e24a08bbd66b5c7136454`.
+Ветка: `devkit/T-CA6FF8E2` от `main@b897d53` (M3 shipped). HEAD: `3505d5a`.
+Ревизия devkit: `ef4cc3bdbd6256e8b91d14cf861a222968ac67f8`.
 План: `plans/T-CA6FF8E2/v2.md` (approved). Эпик `E-46E212B4`.
 Scope фактический: UI M3 + backend A15 (пауза сценария) + A16 (сабагенты).
 Карточка задачи не редактируется (web/CLI): остаётся `L`/`viewer-*` при плане
@@ -40,12 +40,25 @@ Scope фактический: UI M3 + backend A15 (пауза сценария) 
   человеческие тексты для 409/422, подсказка «пусто = все инструменты»,
   редактор `profile.data` (JSON). Downgrade `0005` покрыт тестом.
 
+- **После ручного чека владельца** (`3505d5a`): у агентов с
+  «Критиком/Редактором» черновик теперь **стримится сразу** (частичный вывод),
+  а после критики приходит событие `replace` с финальным текстом — отмена
+  работает и на этом пути; в SSE добавлен `usage` (DeepSeek
+  `stream_options.include_usage`), UI показывает вход/выход токенов и оценку
+  стоимости с учётом off-peak; в настройках LLM дефолты
+  `https://api.deepseek.com/v1` + `deepseek-chat` и подсказка со списком
+  моделей; для «Яндекс.Диска» при ненастроенном OAuth показывается причина и
+  совет вставить токен вручную; для документов в `queued` — подсказка открыть
+  «Задания» (токен воркера/статус).
+
 ## Изменения
 
-23 файла, **+3365/−91** (`git diff main..HEAD`), база `b897d53`, 6 коммитов:
+25 файлов, **+3572/−103** (`git diff main..HEAD`), база `b897d53`, 7 коммитов:
 `dfe411a` (миграция 0005/agent_calls), `3c89cbb` (A16 сабагенты/трейс/флаги),
 `49f0f94` (A15 пауза/resume/cancel), `e12e799` (UI: чат/агенты/онбординг/
-«Сегодня»/настройки), `52bb1d3` (тест списка прогонов), `2cfd8b1` (фиксы гейтов).
+«Сегодня»/настройки), `52bb1d3` (тест списка прогонов), `2cfd8b1` (фиксы гейтов),
+`3505d5a` (стриминг черновика/`replace`, usage и off-peak, дефолты модели,
+подсказки Яндекс.Диска и очереди ПК).
 
 Файлы: `app/backend/{models}.py`, `alembic/versions/0005_agent_calls.py`,
 `app/backend/agent/{presets,subagents,chat,scenarios,tools}.py`,
@@ -57,14 +70,14 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
 
 ## Проверки
 
-Ревизия `2cfd8b1`; `devkit profile test`:
+Ревизия `3505d5a`; `devkit profile test`:
 
 | Проверка | Результат | Доказательство |
 | --- | --- | --- |
-| `unit-tests` (required) | passed, 162 с | `CH-cac35c392243`: **311 тестов OK** |
-| `web-build` | passed | `CH-b6b75e6fc579` (tsc + vite) |
-| `ingest-fixtures` | passed | `CH-dcbc29814b61` |
-| `schema-check` | passed | `CH-f39bbd5a1f94` |
+| `unit-tests` (required) | passed | `CH-cb4137d5b46b`: **312 тестов OK** |
+| `web-build` | passed | `CH-7cf44f5be1a9` (tsc + vite) |
+| `ingest-fixtures` | passed | `CH-c5f5829bd80b` |
+| `schema-check` | passed | `CH-2bd64980ba56` |
 
 Новые тесты: `test_agent_subagents` 9, `test_agent_scenario_runs` 4,
 `test_migrations` +деградация `0005`, `test_web_build` +1 (вкладки в бандле),
@@ -72,21 +85,14 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
 
 ## Гейты
 
-Все на ревизии `895daf9…` (`2cfd8b1`), независимые роли, автор вердиктов не
-выдавал:
+Перевыпускаются на ревизии `ef4cc3b` (`3505d5a`) после правок ручного чека
+(стриминг черновика/`replace`, `usage`, подсказки); гейты на `895daf9`
+инвалидированы сменой коммита. Независимые роли (`code`, `test`,
+`architecture`, `security` — XL), автор вердикт не выдаёт.
 
-| kind | id | verdict | роль |
-| --- | --- | --- | --- |
-| code | `G-3092102dc80c` | approve | architect |
-| architecture | `G-ffad86c78080` | approve | architect |
-| test | `G-f9cb8d0202c9` | approve | test-engineer |
-| security | `G-87c12d5d2c11` | approve | skeptic |
-
-Первые гейты на `acf198c…` дали `code/architecture = changes` (internal-агенты
-как обычные, 500 при удалении агента с трейсом, неатомарный resume) и
-`test/security = approve`; после фиксов `2cfd8b1` все четыре перевыпущены.
-`agent_calls` без ретенции и 409 при удалении агента с трейсом — принятые
-ограничения (owner-only, кросс-доступа нет; нужен follow-up на purge/retention).
+Ранее на `895daf9` (`2cfd8b1`) все четыре были `approve` (`G-3092102dc80c`,
+`G-ffad86c78080`, `G-f9cb8d0202c9`, `G-87c12d5d2c11`); после правок общий
+цикл повторяется.
 
 ## Отклонения и границы
 
@@ -115,6 +121,9 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
 - `agent_calls` растёт без ретенции (трейс) — чистка не реализована (принято).
 - Миграция `0005` проверена upgrade (SQLite+PG) и downgrade (SQLite-тест);
   PG-downgrade отдельно не гонялся.
+- **Токены/стоимость** — оценка по публичным тарифам DeepSeek (могут меняться),
+  off-peak окно 16:30–00:30 UTC; `usage` не сохраняется в БД — виден в UI после
+  ответа и теряется при перезагрузке (персистентность — отдельная задача).
 
 ## Sync: план → acceptance → факт
 
