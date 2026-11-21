@@ -1,7 +1,7 @@
 # Отчёт T-CA6FF8E2 — UI агента + A15/A16
 
-Ветка: `devkit/T-CA6FF8E2` от `main@b897d53` (M3 shipped). HEAD: `cf4de27`.
-Ревизия devkit: `368138e1baafec3d7a159b7ce5deffad94ecfe34`.
+Ветка: `devkit/T-CA6FF8E2` от `main@b897d53` (M3 shipped). HEAD: `6ca7c40`.
+Ревизия devkit: `6194e4b52a2efbce321744fc289f8ef3ba4b818e`.
 План: `plans/T-CA6FF8E2/v3.md` (зарегистрирован, ждёт подтверждения владельца;
 v2 approved).
 Scope фактический: UI M3 + backend A15 (пауза сценария) + A16 (сабагенты),
@@ -67,7 +67,7 @@ Scope фактический: UI M3 + backend A15 (пауза сценария) 
 
 ## Изменения
 
-30 файлов, **+3790/−149** (`git diff main..HEAD`), база `b897d53`, 11 коммитов:
+30 файлов, **+3845/−148** (`git diff main..HEAD`), база `b897d53`, 12 коммитов:
 `dfe411a` (миграция 0005/agent_calls), `3c89cbb` (A16 сабагенты/трейс/флаги),
 `49f0f94` (A15 пауза/resume/cancel), `e12e799` (UI: чат/агенты/онбординг/
 «Сегодня»/настройки), `52bb1d3` (тест списка прогонов), `2cfd8b1` (фиксы гейтов),
@@ -75,7 +75,8 @@ Scope фактический: UI M3 + backend A15 (пауза сценария) 
 `7b19234` (fallback `stream_options`, позитивные тесты `replace`/`usage`),
 `69d17e2` (usage сабагентов, конфиг OAuth Яндекса, inline-PDF),
 `52bfcdf` (тест настраиваемого лимита PDF),
-`cf4de27` (inline-PDF байты 50 МБ по умолчанию, тест config-флага).
+`cf4de27` (inline-PDF байты 50 МБ по умолчанию, тест config-флага),
+`6ca7c40` (тесты DOC.1: env/байты/дефолты; UI.8: false/true и отсутствие секрета).
 
 Файлы: `app/backend/{models}.py`, `alembic/versions/0005_agent_calls.py`,
 `app/backend/agent/{presets,subagents,chat,scenarios,tools}.py`,
@@ -87,14 +88,14 @@ Onboarding,Today,Settings}.tsx`; тесты `test_agent_subagents.py`,
 
 ## Проверки
 
-Ревизия `cf4de27`; `devkit profile test`:
+Ревизия `6ca7c40`; `devkit profile test`:
 
 | Проверка | Результат | Доказательство |
 | --- | --- | --- |
-| `unit-tests` (required) | passed | `CH-7cd2c3846531`: **315 тестов OK** |
-| `web-build` | passed | `CH-5d274b387bae` (tsc + vite) |
-| `ingest-fixtures` | passed | `CH-1ff4ca79760f` |
-| `schema-check` | passed | `CH-c7be6fc500ce` |
+| `unit-tests` (required) | passed | `CH-535b762ab2ce`: **318 тестов OK** |
+| `web-build` | passed | `CH-7a06fd307480` (tsc + vite) |
+| `ingest-fixtures` | passed | `CH-092960899f64` |
+| `schema-check` | passed | `CH-24617c912d20` |
 
 Новые тесты: `test_agent_subagents` 9, `test_agent_scenario_runs` 4,
 `test_migrations` +деградация `0005`, `test_web_build` +1 (вкладки в бандле),
