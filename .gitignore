@@ -3,6 +3,7 @@ worktrees/
 .devkit/
 .env
 .env.*
+.secrets/
 graphify-out/
 node_modules/
 .devkit-tmp/
