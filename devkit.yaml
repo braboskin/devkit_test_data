@@ -17,25 +17,40 @@ profile:
       - qdrant
   commands:
     verification:
+      - name: web-build
+        required: false
+        run:
+          windows: npm ci && npm run build
+          darwin: npm ci && npm run build
+          linux: npm ci && npm run build
+        cwd: X:\devkit_instance\testproject\repo\atlas\viewer
+        timeoutSec: 600
       - name: unit-tests
         required: true
         run:
           windows: .venv\Scripts\python.exe -m unittest tests.test_app_auth
+            tests.test_migrations tests.test_spheres_projects tests.test_people
+            tests.test_tasks tests.test_events tests.test_isolation
+            tests.test_web_build tests.test_chunking tests.test_eval
+            tests.test_import_obsidian
+            tests.test_ingest.IngestTests.test_blank_image_needs_review
+            tests.test_ingest.IngestTests.test_documents_processed
+            tests.test_ingest.IngestTests.test_empty_body_needs_review
+            tests.test_ingest.IngestTests.test_rerun_is_idempotent
+            tests.test_triage
+          darwin: .venv/bin/python -m unittest tests.test_app_auth tests.test_migrations
+            tests.test_spheres_projects tests.test_people tests.test_tasks
+            tests.test_events tests.test_isolation tests.test_web_build
             tests.test_chunking tests.test_eval tests.test_import_obsidian
             tests.test_ingest.IngestTests.test_blank_image_needs_review
             tests.test_ingest.IngestTests.test_documents_processed
             tests.test_ingest.IngestTests.test_empty_body_needs_review
             tests.test_ingest.IngestTests.test_rerun_is_idempotent
             tests.test_triage
-          darwin: .venv/bin/python -m unittest tests.test_app_auth tests.test_chunking
-            tests.test_eval tests.test_import_obsidian
-            tests.test_ingest.IngestTests.test_blank_image_needs_review
-            tests.test_ingest.IngestTests.test_documents_processed
-            tests.test_ingest.IngestTests.test_empty_body_needs_review
-            tests.test_ingest.IngestTests.test_rerun_is_idempotent
-            tests.test_triage
-          linux: .venv/bin/python -m unittest tests.test_app_auth tests.test_chunking
-            tests.test_eval tests.test_import_obsidian
+          linux: .venv/bin/python -m unittest tests.test_app_auth tests.test_migrations
+            tests.test_spheres_projects tests.test_people tests.test_tasks
+            tests.test_events tests.test_isolation tests.test_web_build
+            tests.test_chunking tests.test_eval tests.test_import_obsidian
             tests.test_ingest.IngestTests.test_blank_image_needs_review
             tests.test_ingest.IngestTests.test_documents_processed
             tests.test_ingest.IngestTests.test_empty_body_needs_review
