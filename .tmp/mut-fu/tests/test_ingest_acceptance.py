@@ -228,7 +228,12 @@ class IngestAcceptanceTests(unittest.TestCase):
         done = self._ok(
             self.alice.post(
                 f"/api/worker/jobs/{job_id}/complete",
-                json={"text": WORKER_TEXT, "pages": 1, "quality": "ok"},
+                json={
+                    "text": WORKER_TEXT,
+                    "pages": 1,
+                    "quality": "ok",
+                    "attempts": claimed["job"]["attempts"],
+                },
                 headers=self._auth(token),
             )
         )

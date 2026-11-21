@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 
 from .config import COOKIE_NAME, COOKIE_SECURE, SESSION_DAYS
 from .deps import get_db
-from .models import User, UserSession, utcnow
+from .models import Integration, User, UserSession, WorkerToken, utcnow
 
 SCRYPT_N = 2**14
 SCRYPT_R = 8
@@ -78,8 +78,14 @@ def delete_session(db: Session, token: str) -> None:
 
 
 def delete_user_sessions(db: Session, user_id: str) -> None:
-    """Сброс пароля инвалидирует все сессии пользователя (M1-minor)."""
+    """Сброс пароля отзывает все учётные данные пользователя (M1-minor).
+
+    Смена пароля — признак возможной компрометации: старые cookie-сессии,
+    Bearer worker-токены и внешние токены (Яндекс.Диск) должны умереть.
+    """
     db.query(UserSession).filter_by(user_id=user_id).delete()
+    db.query(WorkerToken).filter_by(owner_id=user_id).delete()
+    db.query(Integration).filter_by(owner_id=user_id).delete()
     db.commit()
 
 

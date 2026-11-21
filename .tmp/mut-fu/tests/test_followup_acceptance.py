@@ -14,6 +14,7 @@ import os
 import tempfile
 import unittest
 import uuid
+from datetime import timedelta
 from pathlib import Path
 from unittest import mock
 from urllib.parse import parse_qs, urlparse
@@ -205,6 +206,16 @@ class FollowUpAcceptanceTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200, response.text)
         return parse_qs(urlparse(response.json()["url"]).query)["state"][0]
 
+    def _make_stale(self, job_id: int) -> None:
+        """Состарить lease running-задания: reclaim посчитает его протухшим."""
+        with self._db() as db:
+            job = db.get(Job, job_id)
+            self.assertIsNotNone(job)
+            job.started_at = utcnow() - timedelta(
+                minutes=worker_router.LEASE_MINUTES + 1
+            )
+            db.commit()
+
     # ---------- F7: дедуп без 500 ----------
 
     def test_f7_repeated_upload_is_duplicate_not_500(self) -> None:
@@ -314,6 +325,55 @@ class FollowUpAcceptanceTests(unittest.TestCase):
         self.assertEqual(card["error"], "unsupported format")
         self.assertNotIn("/tmp/private", card["error"])
 
+    def test_f8_worker_fail_stores_only_category_without_details(self) -> None:
+        """F8-worker: произвольный текст клиента в БД не попадает — категория."""
+        leak = (
+            f"OSError: {self.storage_dir}/scan.png "
+            "https://example.com/x?token=SECRET_TOKEN"
+        )
+        cases = (
+            (leak, "extract_failed"),
+            ("ocr failed", "extract_failed"),
+            ("", "extract_failed"),
+            ("timeout", "timeout"),
+            ("unsupported_format", "unsupported_format"),
+            ("cancelled", "cancelled"),
+        )
+        token = self._token(self.alice)
+        colors = ("white", "black", "red", "blue", "green", "yellow")
+        for index, (payload, expected) in enumerate(cases):
+            with self.subTest(payload=payload):
+                document = self._upload_png(self.alice, "fail.png", colors[index])
+                claimed = self._ok(
+                    self.alice.post("/api/worker/claim", headers=self._auth(token))
+                )
+                self.assertEqual(claimed["document"]["id"], document["id"])
+                failed = self._ok(
+                    self.alice.post(
+                        f"/api/worker/jobs/{claimed['job']['id']}/fail",
+                        json={
+                            "error": payload,
+                            "attempts": claimed["job"]["attempts"],
+                        },
+                        headers=self._auth(token),
+                    )
+                )
+                card = self._document(self.alice, document["id"])
+                with self._db() as db:
+                    stored = db.get(Job, claimed["job"]["id"])
+                    self.assertEqual(stored.error, expected)
+                # В ответе и карточке — только категория, без исходного текста.
+                self.assertEqual(failed["error"], expected)
+                self.assertEqual((card["status"], card["error"]), ("failed", expected))
+                for fragment in (
+                    str(self.storage_dir),
+                    "https://",
+                    "SECRET_TOKEN",
+                    "OSError",
+                ):
+                    self.assertNotIn(fragment, failed["error"])
+                    self.assertNotIn(fragment, card["error"])
+
     # ---------- F9: видимая индексация и reindex ----------
 
     def test_f9_index_failure_visible_and_reindex_recovers(self) -> None:
@@ -361,7 +421,10 @@ class FollowUpAcceptanceTests(unittest.TestCase):
             done = self._ok(
                 self.alice.post(
                     f"/api/worker/jobs/{claimed['job']['id']}/complete",
-                    json={"text": WORKER_TEXT},
+                    json={
+                        "text": WORKER_TEXT,
+                        "attempts": claimed["job"]["attempts"],
+                    },
                     headers=self._auth(token),
                 )
             )
@@ -640,7 +703,10 @@ class FollowUpAcceptanceTests(unittest.TestCase):
             self._ok(
                 self.alice.post(
                     f"/api/worker/jobs/{claimed['job']['id']}/complete",
-                    json={"text": WORKER_TEXT},
+                    json={
+                        "text": WORKER_TEXT,
+                        "attempts": claimed["job"]["attempts"],
+                    },
                     headers=self._auth(token),
                 )
             )
@@ -694,7 +760,11 @@ class FollowUpAcceptanceTests(unittest.TestCase):
             self._ok(
                 self.alice.post(
                     f"/api/worker/jobs/{claimed['job']['id']}/complete",
-                    json={"text": WORKER_TEXT, "quality": "ok"},
+                    json={
+                        "text": WORKER_TEXT,
+                        "quality": "ok",
+                        "attempts": claimed["job"]["attempts"],
+                    },
                     headers=self._auth(token),
                 )
             )
@@ -709,16 +779,192 @@ class FollowUpAcceptanceTests(unittest.TestCase):
         self._ok(
             self.alice.post(
                 f"/api/worker/jobs/{nxt['job']['id']}/fail",
-                json={"error": "ocr failed"},
+                json={
+                    "error": "ocr failed",
+                    "attempts": nxt["job"]["attempts"],
+                },
                 headers=self._auth(token),
             )
         )
         card = self._document(self.alice, second["id"])
-        self.assertEqual((card["status"], card["error"]), ("failed", "ocr failed"))
+        # F8: произвольный текст воркера не хранится — только категория.
+        self.assertEqual((card["status"], card["error"]), ("failed", "extract_failed"))
         # Single-flight снят: очередь снова отдаётся (пусто → 204).
         self.assertEqual(
             self.alice.post("/api/worker/claim", headers=self._auth(token)).status_code,
             204,
+        )
+
+    # ---------- lease: generation/attempts ----------
+
+    def test_lease_heartbeat_extends_lease(self) -> None:
+        """Heartbeat продлевает lease: протухшее задание не перехватывается."""
+        self._upload_png(self.alice, "stale.png", "white")
+        token = self._token(self.alice)
+
+        # Контроль: без heartbeat claim перехватывает протухшее задание.
+        claimed = self._ok(
+            self.alice.post("/api/worker/claim", headers=self._auth(token))
+        )
+        job_id, attempts = claimed["job"]["id"], claimed["job"]["attempts"]
+        self._make_stale(job_id)
+        reclaimed = self._ok(
+            self.alice.post("/api/worker/claim", headers=self._auth(token))
+        )
+        self.assertEqual(reclaimed["job"]["id"], job_id)
+        self.assertEqual(reclaimed["job"]["attempts"], attempts + 1)
+        with mock.patch.object(worker_router, "index_document"):
+            self._ok(
+                self.alice.post(
+                    f"/api/worker/jobs/{job_id}/complete",
+                    json={
+                        "text": WORKER_TEXT,
+                        "attempts": reclaimed["job"]["attempts"],
+                    },
+                    headers=self._auth(token),
+                )
+            )
+
+        # Heartbeat с чужой generation — 409, lease не продлён.
+        second = self._upload_png(self.alice, "lease.png", "black")
+        claimed = self._ok(
+            self.alice.post("/api/worker/claim", headers=self._auth(token))
+        )
+        job_id, attempts = claimed["job"]["id"], claimed["job"]["attempts"]
+        self._make_stale(job_id)
+        self.assertEqual(
+            self.alice.post(
+                f"/api/worker/jobs/{job_id}/heartbeat",
+                json={"attempts": attempts + 1},
+                headers=self._auth(token),
+            ).status_code,
+            409,
+        )
+        beat = self._ok(
+            self.alice.post(
+                f"/api/worker/jobs/{job_id}/heartbeat",
+                json={"attempts": attempts},
+                headers=self._auth(token),
+            )
+        )
+        self.assertEqual(beat, {"status": "running", "attempts": attempts})
+
+        # Lease продлён: claim не перехватывает, generation не вырос.
+        self.assertEqual(
+            self.alice.post("/api/worker/claim", headers=self._auth(token)).status_code,
+            204,
+        )
+        with self._db() as db:
+            job = db.get(Job, job_id)
+            self.assertEqual((job.status, job.attempts), ("running", attempts))
+        self.assertEqual(
+            self._document(self.alice, second["id"])["status"], "processing"
+        )
+
+    def test_lease_complete_with_old_attempts_is_409(self) -> None:
+        """Старый воркер после reclaim не может завершить перехваченный job."""
+        body = self._upload_png(self.alice, "old.png", "white")
+        token = self._token(self.alice)
+        claimed = self._ok(
+            self.alice.post("/api/worker/claim", headers=self._auth(token))
+        )
+        job_id = claimed["job"]["id"]
+        old_attempts = claimed["job"]["attempts"]
+        document_id = body["id"]
+
+        self._make_stale(job_id)
+        fresh = self._ok(
+            self.alice.post("/api/worker/claim", headers=self._auth(token))
+        )
+        self.assertEqual(fresh["job"]["id"], job_id)
+        self.assertEqual(fresh["job"]["attempts"], old_attempts + 1)
+
+        for path, payload in (
+            (
+                f"/api/worker/jobs/{job_id}/complete",
+                {"text": WORKER_TEXT, "attempts": old_attempts},
+            ),
+            (
+                f"/api/worker/jobs/{job_id}/fail",
+                {"error": "extract_failed", "attempts": old_attempts},
+            ),
+            (
+                f"/api/worker/jobs/{job_id}/heartbeat",
+                {"attempts": old_attempts},
+            ),
+        ):
+            with self.subTest(path=path):
+                response = self.alice.post(
+                    path, json=payload, headers=self._auth(token)
+                )
+                self.assertEqual(response.status_code, 409, response.text)
+
+        # Результат старого воркера не записан: документ ещё в обработке.
+        self.assertEqual(
+            self._document(self.alice, document_id)["status"], "processing"
+        )
+        with self._db() as db:
+            job = db.get(Job, job_id)
+            self.assertEqual(
+                (job.status, job.attempts), ("running", fresh["job"]["attempts"])
+            )
+
+        # Новая generation завершает задание штатно.
+        with mock.patch.object(worker_router, "index_document"):
+            done = self._ok(
+                self.alice.post(
+                    f"/api/worker/jobs/{job_id}/complete",
+                    json={
+                        "text": WORKER_TEXT,
+                        "attempts": fresh["job"]["attempts"],
+                    },
+                    headers=self._auth(token),
+                )
+            )
+        self.assertEqual(done["status"], "done")
+        self.assertEqual(self._document(self.alice, document_id)["status"], "ready")
+
+    def test_lease_reclaim_after_complete_keeps_done_and_ready(self) -> None:
+        """Reclaim не откатывает уже завершённое задание и его документ."""
+        body = self._upload_png(self.alice, "done.png", "white")
+        token = self._token(self.alice)
+        claimed = self._ok(
+            self.alice.post("/api/worker/claim", headers=self._auth(token))
+        )
+        job_id = claimed["job"]["id"]
+        attempts = claimed["job"]["attempts"]
+        self._make_stale(job_id)
+
+        with mock.patch.object(worker_router, "index_document"):
+            done = self._ok(
+                self.alice.post(
+                    f"/api/worker/jobs/{job_id}/complete",
+                    json={"text": WORKER_TEXT, "attempts": attempts},
+                    headers=self._auth(token),
+                )
+            )
+        self.assertEqual(done["status"], "done")
+
+        # Claim прогоняет reclaim: завершённое задание не воскресает.
+        self.assertEqual(
+            self.alice.post("/api/worker/claim", headers=self._auth(token)).status_code,
+            204,
+        )
+        with self._db() as db:
+            worker_router._reclaim_stale(db, self.alice_id, utcnow())
+            job = db.get(Job, job_id)
+            self.assertEqual(
+                (job.status, job.attempts, job.error), ("done", attempts, None)
+            )
+        card = self._document(self.alice, body["id"])
+        self.assertEqual((card["status"], card["error"]), ("ready", None))
+        self.assertEqual(
+            self.alice.post(
+                f"/api/worker/jobs/{job_id}/complete",
+                json={"text": WORKER_TEXT, "attempts": attempts},
+                headers=self._auth(token),
+            ).status_code,
+            409,
         )
 
     # ---------- изоляция владельцев ----------

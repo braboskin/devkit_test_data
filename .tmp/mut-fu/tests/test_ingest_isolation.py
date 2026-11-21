@@ -246,9 +246,12 @@ class IngestIsolationTests(unittest.TestCase):
         self._png(self.bob, "black")
         bob_job = self._job_id(self.bob_id)
         for path, payload in (
-            (f"/api/worker/jobs/{bob_job}/heartbeat", None),
-            (f"/api/worker/jobs/{bob_job}/complete", {"text": WORKER_TEXT}),
-            (f"/api/worker/jobs/{bob_job}/fail", {"error": "x"}),
+            (f"/api/worker/jobs/{bob_job}/heartbeat", {"attempts": 1}),
+            (
+                f"/api/worker/jobs/{bob_job}/complete",
+                {"text": WORKER_TEXT, "attempts": 1},
+            ),
+            (f"/api/worker/jobs/{bob_job}/fail", {"error": "x", "attempts": 1}),
         ):
             with self.subTest(path=path):
                 response = self.alice.post(
@@ -263,10 +266,20 @@ class IngestIsolationTests(unittest.TestCase):
             404,
         )
         # И наоборот: токен B не трогает задание A.
+        alice_attempts = claimed["job"]["attempts"]
         for path, payload in (
-            (f"/api/worker/jobs/{alice_job}/heartbeat", None),
-            (f"/api/worker/jobs/{alice_job}/complete", {"text": WORKER_TEXT}),
-            (f"/api/worker/jobs/{alice_job}/fail", {"error": "x"}),
+            (
+                f"/api/worker/jobs/{alice_job}/heartbeat",
+                {"attempts": alice_attempts},
+            ),
+            (
+                f"/api/worker/jobs/{alice_job}/complete",
+                {"text": WORKER_TEXT, "attempts": alice_attempts},
+            ),
+            (
+                f"/api/worker/jobs/{alice_job}/fail",
+                {"error": "x", "attempts": alice_attempts},
+            ),
         ):
             with self.subTest(path=path):
                 response = self.bob.post(
@@ -298,7 +311,10 @@ class IngestIsolationTests(unittest.TestCase):
         self.assertEqual(
             self.alice.post(
                 f"/api/worker/jobs/{alice_job}/complete",
-                json={"text": WORKER_TEXT},
+                json={
+                    "text": WORKER_TEXT,
+                    "attempts": alice_attempts,
+                },
                 headers=self._auth(alice_token),
             ).status_code,
             409,
@@ -389,18 +405,24 @@ class IngestIsolationTests(unittest.TestCase):
             ).status_code,
             204,
         )
-        self.assertEqual(
-            self._ok(
-                self.bob.post(
-                    "/api/worker/claim", headers=self._auth(bob_token)
-                )
-            )["job"]["id"],
-            bob_job,
+        bob_claimed = self._ok(
+            self.bob.post("/api/worker/claim", headers=self._auth(bob_token))
         )
+        self.assertEqual(bob_claimed["job"]["id"], bob_job)
+        bob_attempts = bob_claimed["job"]["attempts"]
         for path, payload in (
-            (f"/api/worker/jobs/{bob_job}/heartbeat", None),
-            (f"/api/worker/jobs/{bob_job}/complete", {"text": WORKER_TEXT}),
-            (f"/api/worker/jobs/{bob_job}/fail", {"error": "x"}),
+            (
+                f"/api/worker/jobs/{bob_job}/heartbeat",
+                {"attempts": bob_attempts},
+            ),
+            (
+                f"/api/worker/jobs/{bob_job}/complete",
+                {"text": WORKER_TEXT, "attempts": bob_attempts},
+            ),
+            (
+                f"/api/worker/jobs/{bob_job}/fail",
+                {"error": "x", "attempts": bob_attempts},
+            ),
         ):
             with self.subTest(path=path):
                 response = self.alice.post(

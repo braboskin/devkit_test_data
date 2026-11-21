@@ -12,7 +12,13 @@ from app.backend.auth import hash_password
 from app.backend.config import ROOT
 from app.backend.db import Base
 from app.backend.main import create_app
-from app.backend.models import User, UserSession, utcnow
+from app.backend.models import (
+    Integration,
+    User,
+    UserSession,
+    WorkerToken,
+    utcnow,
+)
 
 ALICE = {"username": "alice", "password": "alice-pass"}
 BOB = {"username": "bob", "password": "bob-pass"}
@@ -161,6 +167,66 @@ class AuthTests(unittest.TestCase):
             )
             self._login(first, {"username": "alice", "password": "new-pass-123"})
             self.assertEqual(first.get("/api/me").status_code, 200)
+
+    def test_reset_password_revokes_worker_token_and_integrations(self) -> None:
+        """Смена пароля убивает Bearer worker-токен и внешние токены, не чужие."""
+        with TestClient(self.app) as client, TestClient(self.app) as bob_client:
+            self._login(client, ALICE)
+            alice_id = client.get("/api/me").json()["id"]
+            alice_token = client.post("/api/settings/worker-token").json()["token"]
+            alice_headers = {"Authorization": f"Bearer {alice_token}"}
+            self.assertEqual(
+                client.post("/api/worker/claim", headers=alice_headers).status_code,
+                204,
+            )
+            self._login(bob_client, BOB)
+            bob_token = bob_client.post("/api/settings/worker-token").json()["token"]
+            bob_headers = {"Authorization": f"Bearer {bob_token}"}
+            with self.app.state.SessionLocal() as db:
+                bob_id = db.query(User).filter_by(username=BOB["username"]).one().id
+                db.add(
+                    Integration(owner_id=alice_id, kind="yadisk", token_enc="cipher")
+                )
+                db.add(
+                    Integration(owner_id=bob_id, kind="yadisk", token_enc="cipher")
+                )
+                db.commit()
+
+            with (
+                mock.patch.object(cli, "make_engine", return_value=self.engine),
+                mock.patch.object(
+                    cli, "prompt_password", return_value="new-pass-123"
+                ),
+            ):
+                self.assertEqual(
+                    cli.main(["reset-password", "--username", "alice"]), 0
+                )
+
+            # Cookie-сессия и Bearer worker-токен отозваны.
+            self.assertEqual(client.get("/api/me").status_code, 401)
+            self.assertEqual(
+                client.post("/api/worker/claim", headers=alice_headers).status_code,
+                401,
+            )
+            with self.app.state.SessionLocal() as db:
+                self.assertEqual(
+                    db.query(WorkerToken).filter_by(owner_id=alice_id).count(), 0
+                )
+                self.assertEqual(
+                    db.query(Integration).filter_by(owner_id=alice_id).count(), 0
+                )
+            # Учётные данные второго владельца не затронуты.
+            self.assertEqual(
+                bob_client.post("/api/worker/claim", headers=bob_headers).status_code,
+                204,
+            )
+            with self.app.state.SessionLocal() as db:
+                self.assertEqual(
+                    db.query(WorkerToken).filter_by(owner_id=bob_id).count(), 1
+                )
+                self.assertEqual(
+                    db.query(Integration).filter_by(owner_id=bob_id).count(), 1
+                )
 
     def test_root_json_without_viewer_build(self) -> None:
         with TestClient(self.app) as client:

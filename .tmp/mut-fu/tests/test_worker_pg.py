@@ -8,6 +8,7 @@ import subprocess
 import tempfile
 import threading
 import unittest
+from datetime import timedelta
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -16,7 +17,8 @@ from sqlalchemy.exc import IntegrityError
 
 from app.backend.auth import hash_password, hash_token
 from app.backend.main import create_app
-from app.backend.models import Document, Job, User, WorkerToken
+from app.backend.models import Document, Job, User, WorkerToken, utcnow
+from app.backend.routers.worker import LEASE_MINUTES
 from tests.test_migrations import find_pg_bin, free_port, remove_tree, upgrade
 
 
@@ -275,6 +277,40 @@ class PostgresClaimTests(unittest.TestCase):
                 counts = self._counts(owner)
                 self.assertEqual(counts["running"], 1, counts)
                 self.assertEqual(counts["queued"], 1, counts)
+                winner = next(r for r in responses if r.status_code == 200)
+                # Lease-generation виден воркеру в ответе claim.
+                self.assertEqual(winner.json()["job"]["attempts"], 1)
+
+    def test_parallel_claim_reclaims_stale_lease_once(self) -> None:
+        """Два конкурентных claim с reclaim: протухший job перехвачен ровно раз."""
+        owner, token = self._user("alice")
+        self._seed(owner, 2)
+        first = self._claim(token)
+        self.assertEqual(first.status_code, 200, first.text)
+        job_id = first.json()["job"]["id"]
+        with self.app.state.SessionLocal() as db:
+            job = db.get(Job, job_id)
+            job.started_at = utcnow() - timedelta(
+                minutes=LEASE_MINUTES + 1
+            )
+            db.commit()
+
+        responses = self._claim_together([token, token])
+        self.assertEqual(
+            sorted(r.status_code for r in responses),
+            [200, 204],
+            [r.text for r in responses],
+        )
+        with self.app.state.SessionLocal() as db:
+            running = (
+                db.query(Job)
+                .filter_by(owner_id=owner, status="running")
+                .all()
+            )
+        self.assertEqual(len(running), 1)
+        # reclaim не инкрементирует attempts; захват — ровно один (1 → 2).
+        self.assertEqual(running[0].attempts, 2)
+        self.assertEqual(self._counts(owner)["queued"], 1)
 
 
 if __name__ == "__main__":

@@ -78,7 +78,7 @@ def main(argv: list[str] | None = None) -> int:
                 return 1
             user.password_hash = hash_password(prompt_password())
             db.commit()
-            # Смена пароля инвалидирует все выданные сессии пользователя.
+            # Смена пароля отзывает все учётные данные пользователя.
             delete_user_sessions(db, user.id)
             print(f"пароль обновлён: {user.username}")
             return 0

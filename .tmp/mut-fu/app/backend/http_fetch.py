@@ -20,6 +20,20 @@ from .knowledge.extract import normalize_body
 REDIRECT_CODES = frozenset({301, 302, 303, 307, 308})
 CONTENT_TYPES = frozenset({"text/html", "text/plain", "application/xhtml+xml"})
 MAX_REDIRECTS = 3
+# NAT64 / IPv4-compatible адреса: `is_global` их пропускает, но по факту
+# это упаковка внутреннего IPv4 (например, `64:ff9b::7f00:1` = 127.0.0.1).
+# Плюс multicast и IETF-assignments (192.0.0.0/24) — не HTTP-назначение.
+BLOCKED_NETWORKS = tuple(
+    ipaddress.ip_network(value)
+    for value in (
+        "64:ff9b::/96",
+        "64:ff9b:1::/48",
+        "::/96",
+        "224.0.0.0/4",
+        "ff00::/8",
+        "192.0.0.0/24",
+    )
+)
 SKIP_TAGS = {"script", "style", "noscript", "template"}
 BLOCK_TAGS = {
     "p", "div", "br", "li", "ul", "ol", "tr", "td", "th", "table",
@@ -61,7 +75,7 @@ class _PinnedBackend(httpcore.SyncBackend):
                     local_address=local_address,
                     socket_options=socket_options,
                 )
-            except httpcore.ConnectError as exc:
+            except (httpcore.ConnectError, httpcore.ConnectTimeout) as exc:
                 error = exc
         raise error or httpcore.ConnectError("no resolved address")
 
@@ -119,6 +133,13 @@ def _html_to_text(html: str) -> tuple[str, str]:
     return text, " ".join(parser.title.split())
 
 
+def _blocked(address) -> bool:
+    """Приватный/служебный адрес, multicast или NAT64/IPv4-compatible."""
+    if not address.is_global:
+        return True
+    return any(address in network for network in BLOCKED_NETWORKS)
+
+
 def _public_ips(host: str, port: int) -> list[str]:
     """Все IP хоста — публичные (не private/loopback/link-local/reserved)."""
     try:
@@ -131,7 +152,7 @@ def _public_ips(host: str, port: int) -> list[str]:
             address = ipaddress.ip_address(info[4][0])
         except ValueError as exc:
             raise HttpFetchError(422, "url host cannot be resolved") from exc
-        if not address.is_global:
+        if _blocked(address):
             raise HttpFetchError(422, "url points to a private address")
         if address.compressed not in ips:
             ips.append(address.compressed)
@@ -188,7 +209,12 @@ def _fetch_once(
                             413, f"url content exceeds {max_bytes} bytes"
                         )
                 encoding = response.encoding or "utf-8"
-                return status, location, body.decode(encoding, errors="replace")
+                try:
+                    text = body.decode(encoding, errors="replace")
+                except LookupError:
+                    # Неизвестный charset в заголовке — не 500: читаем как utf-8.
+                    text = body.decode("utf-8", errors="replace")
+                return status, location, text
     except httpx.HTTPError as exc:
         raise HttpFetchError(422, "url fetch failed") from exc
 

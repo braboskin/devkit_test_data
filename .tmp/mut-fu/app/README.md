@@ -38,7 +38,13 @@ alembic upgrade head
 | `ATLAS_CORS_ORIGINS` | `http://localhost:5173` для dev |
 | `ATLAS_SESSION_DAYS` | `30` (сессия продлевается при активности, не чаще раза в сутки) |
 | `ATLAS_STORAGE_DIR` | `data/storage` — оригиналы документов, вне web-root |
-| `ATLAS_MAX_UPLOAD_MB` | `100` — лимит загружаемого файла |
+| `ATLAS_MAX_UPLOAD_MB` | `100` — лимит загружаемого файла; тело запроса ограничено `ATLAS_MAX_UPLOAD_MB` + 1 МБ (multipart-обвязка) |
+| `ATLAS_WORKER_LEASE_MINUTES` | `30` — сколько `running` задание считается живым до перезахвата воркером |
+| `ATLAS_WORKER_HEARTBEAT_SECONDS` | `60` — период heartbeat ПК-воркера, продлевающего lease во время извлечения |
+| `ATLAS_FERNET_KEY` | ключ Fernet (base64, 32 байта) для шифрования токенов интеграций в `integrations.token_enc`; без него `/api/settings/yadisk` отвечает 503 |
+| `YANDEX_CLIENT_ID` | OAuth-приложение Яндекса (кнопка «Подключить Яндекс.Диск») |
+| `YANDEX_CLIENT_SECRET` | секрет OAuth-приложения (только env, не в БД/UI) |
+| `YANDEX_REDIRECT_URI` | `http://127.0.0.1:8000/api/settings/yadisk/callback` по умолчанию |
 | `PG_BIN` | каталог `bin` PostgreSQL для PG-smoke в тестах |
 
 ## API
@@ -51,7 +57,13 @@ alembic upgrade head
   `/api/calendars` — каркасы роутеров, эндпоинты в следующих WS.
 - `/api/documents` — загрузка файлом или URL (`multipart`: ровно одно из
   `file`/`url`), список с фильтрами, карточка, `GET /{id}/content` (текст),
-  `GET /{id}/file` (оригинал), `POST /{id}/reprocess`, `DELETE /{id}`.
+  `GET /{id}/file` (оригинал), `POST /{id}/reprocess`, `POST /{id}/reindex`
+  (повтор индексации владельцем), `DELETE /{id}`.
+- `/api/worker/claim`, `/api/worker/jobs/{id}/{heartbeat,file,complete,fail}` —
+  протокол ПК-воркера (`Authorization: Bearer <worker-token>`);
+  `/api/settings/worker-token`, `/api/settings/worker-token` (DELETE).
+- `/api/settings/yadisk` — ручной токен (fallback), `GET .../authorize`,
+  `GET .../callback` — OAuth Яндекс.Диска.
 
 ## Документы
 
@@ -61,15 +73,43 @@ alembic upgrade head
 `ready` сразу, сканы и большие PDF — `queued` с заданием `extract` /
 `extract-full` для воркера.
 
-Лимит загрузки (`ATLAS_MAX_UPLOAD_MB`) проверяется дважды: ранний 413 по
-`Content-Length` до разбора multipart и стриминг на диск. Тело без
-`Content-Length` (chunked) ранней проверкой не покрывается — его ограничивает
-только стриминг при записи; ASGI-контроль chunked — follow-up.
+Лимит загрузки (`ATLAS_MAX_UPLOAD_MB`) ограничен на уровне ASGI нативным
+`FastAPI(max_body_size=...)`: это `ATLAS_MAX_UPLOAD_MB` + 1 МБ на multipart.
+Лимит действует и для тела без `Content-Length` (chunked) — 413 до разбора
+формы; дополнительный рубеж — стриминг на диск (`storage.save_stream`).
 
 Оригинал >20 МБ при наличии токена выгружается в Яндекс.Диск; локальная копия
-при этом остаётся и отдаётся через `GET /{id}/file`. Если копии нет, `/file` и
-`reprocess` отвечают 409 — скачивание из облака отдельный follow-up.
+при этом остаётся. Если копии нет, `/file` и `reprocess` скачивают облачный
+оригинал в `ATLAS_STORAGE_DIR`; без токена/при сбое — 409.
 `reprocess` при незавершённом задании документа отвечает 409.
+
+URL-приём защищён от SSRF: хост резолвится до запроса, все адреса обязаны быть
+публичными (private/loopback/link-local/NAT64 отсекаются), TCP-коннект идёт на
+проверенный IP, Host/SNI остаются исходными, редиректы не читаются
+автоматически (каждый хоп проверяется заново).
+
+## Воркер ПК
+
+```bash
+$env:ATLAS_WORKER_TOKEN = "..."
+.venv\Scripts\python.exe scripts\worker.py --once
+.venv\Scripts\python.exe scripts\worker.py --interval 10 --concurrency 2
+```
+
+`--concurrency N` — N параллельных claim-циклов (один токен = один владелец;
+для владельца допускается одно `running` задание). `claim` возвращает
+`job.attempts` — lease-generation: `heartbeat`, `complete` и `fail` передают
+его в теле, сервер сверяет `status='running' AND attempts=:attempts` (иначе
+409), поэтому старый воркер после перезахвата не допишет результат. Пока идёт
+извлечение, воркер шлёт `heartbeat` каждые `ATLAS_WORKER_HEARTBEAT_SECONDS`
+(по умолчанию 60 с) — он продлевает `started_at`. Задание, висящее `running`
+дольше `ATLAS_WORKER_LEASE_MINUTES`, возвращается в очередь (reclaim не
+инкрементирует `attempts` — это делает следующий `claim`); после трёх попыток
+помечается `failed` с ошибкой `worker timeout`. Reclaim атомарный
+(`UPDATE ... WHERE status='running' AND started_at < cutoff`, rowcount=1),
+поэтому конкурентный `complete`/`claim` не перетирается. Ошибки воркера
+передаются категорией (`extract_failed`, `unsupported_format`, `too_large`,
+`timeout`, `cancelled`) — произвольный текст в `document.error` не пишется.
 
 ## Viewer
 

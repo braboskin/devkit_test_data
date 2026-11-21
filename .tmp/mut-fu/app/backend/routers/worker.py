@@ -7,6 +7,8 @@
 from __future__ import annotations
 
 import logging
+import os
+from datetime import timedelta
 from pathlib import Path
 
 from fastapi import (
@@ -19,7 +21,7 @@ from fastapi import (
 )
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, OperationalError
 from sqlalchemy.orm import Session
 
 from .. import yadisk
@@ -38,14 +40,30 @@ router = APIRouter(prefix="/api/worker", tags=["worker"])
 # ponytail: потолок пропуска «битых» заданий (нет документа) за один claim;
 # при массовых битых payload-ах поднять или чистить задания фоновой задачей.
 CLAIM_SKIP_LIMIT = 10
+# F8: в БД пишем только категорию — произвольный текст от воркера не храним.
+FAIL_CATEGORIES = frozenset(
+    {"extract_failed", "unsupported_format", "too_large", "timeout", "cancelled"}
+)
+DEFAULT_FAIL_CATEGORY = "extract_failed"
+# F12: `running` дольше lease возвращается в очередь (свежий воркер его возьмёт),
+# после `MAX_ATTEMPTS` — `failed`; lease настраивается под скорость ПК-воркера.
+LEASE_MINUTES = int(os.environ.get("ATLAS_WORKER_LEASE_MINUTES", "30"))
+MAX_ATTEMPTS = 3
+TIMEOUT_ERROR = "worker timeout"
 JOB_FIELDS = (
     "id", "type", "status", "payload", "attempts",
     "created_at", "started_at", "finished_at", "error",
 )
 
 
+def _error_category(value: str) -> str:
+    """Категория ошибки из allowlist; неизвестное → `extract_failed`."""
+    return value if value in FAIL_CATEGORIES else DEFAULT_FAIL_CATEGORY
+
+
 class CompleteIn(BaseModel):
     text: str
+    attempts: int
     pages: int | None = None
     engine: str | None = None
     quality: str | None = None
@@ -53,6 +71,11 @@ class CompleteIn(BaseModel):
 
 class FailIn(BaseModel):
     error: str = ""
+    attempts: int
+
+
+class HeartbeatIn(BaseModel):
+    attempts: int
 
 
 def worker_token(
@@ -88,10 +111,17 @@ def _owned_job(db: Session, token: WorkerToken, job_id: int) -> Job:
     return job
 
 
-def _running_job(db: Session, token: WorkerToken, job_id: int) -> Job:
-    """Своё и именно `running` задание: иначе 404 (чужое) или 409 (завершено)."""
+def _running_job(
+    db: Session, token: WorkerToken, job_id: int, attempts: int
+) -> Job:
+    """Своё `running` задание с текущим lease-generation (`attempts`).
+
+    Иначе 404 (чужое/нет) или 409: задание завершено, перехвачено reclaim'ом
+    или захвачено новым claim'ом (attempts не совпал) — старый воркер не должен
+    дописывать чужой результат.
+    """
     job = _owned_job(db, token, job_id)
-    if job.status != "running":
+    if job.status != "running" or job.attempts != attempts:
         raise HTTPException(
             http_status.HTTP_409_CONFLICT, "job is not running"
         )
@@ -128,6 +158,63 @@ def _index(db: Session, document: Document) -> None:
             db.commit()
 
 
+def _reclaim_stale(db: Session, owner_id: str, now) -> None:
+    """Протухший lease: attempts<3 → `queued`, иначе `failed` («worker timeout»).
+
+    Reclaim — per-job атомарный `UPDATE ... WHERE status='running' AND
+    started_at < cutoff`: конкурентный complete/claim/reclaim не перетирается
+    (rowcount=0 → чужую строку не трогаем). Документ обновляется отдельным
+    условным UPDATE и только если reclaim выиграл (rowcount=1).
+    `attempts` here не меняется: generation инкрементирует следующий claim.
+    """
+    cutoff = now - timedelta(minutes=LEASE_MINUTES)
+    stale = (
+        db.query(Job)
+        .filter(
+            Job.owner_id == owner_id,
+            Job.status == "running",
+            Job.started_at.is_not(None),
+            Job.started_at < cutoff,
+        )
+        .all()
+    )
+    for job in stale:
+        requeue = (job.attempts or 0) < MAX_ATTEMPTS
+        job_values: dict = {"status": "queued" if requeue else "failed"}
+        if requeue:
+            job_values.update(
+                {"started_at": None, "finished_at": None, "error": None}
+            )
+        else:
+            job_values.update({"error": TIMEOUT_ERROR, "finished_at": now})
+        updated = (
+            db.query(Job)
+            .filter(
+                Job.id == job.id,
+                Job.status == "running",
+                Job.started_at.is_not(None),
+                Job.started_at < cutoff,
+            )
+            .update(job_values, synchronize_session=False)
+        )
+        if updated != 1:
+            continue  # конкурент уже завершил/перехватил это задание
+        document_values: dict = {
+            "status": "queued" if requeue else "failed",
+            "updated_at": now,
+        }
+        if not requeue:
+            document_values["error"] = TIMEOUT_ERROR
+        if job.payload and (document_id := job.payload.get("document_id")):
+            db.query(Document).filter(
+                Document.id == document_id,
+                Document.owner_id == owner_id,
+                Document.status.in_(("processing", "queued")),
+            ).update(document_values, synchronize_session=False)
+    if stale:
+        db.commit()
+
+
 @router.post("/claim")
 def claim(
     db: Session = Depends(get_db),
@@ -137,8 +224,13 @@ def claim(
 
     Single-flight: пока у владельца есть `running` задание, новый claim → 204
     (условие в запросе + частичный unique index `(owner_id) WHERE running`).
-    PostgreSQL: `FOR UPDATE SKIP LOCKED`; SQLite (тесты однопоточные) — select+update.
+    Захват — атомарным `UPDATE ... WHERE status='queued'` с проверкой rowcount
+    (SQLite и PG), плюс `FOR UPDATE SKIP LOCKED` на PG.
     """
+    now = utcnow()
+    # Протухшие running-задания не должны блокировать очередь навсегда.
+    _reclaim_stale(db, token.owner_id, now)
+
     # `NOT EXISTS running`: второй воркер/поток того же владельца ничего не берёт.
     running = (
         db.query(Job.id)
@@ -170,11 +262,39 @@ def claim(
             db.commit()
             continue
 
-        job.status = "running"
-        job.started_at = utcnow()
-        job.attempts = (job.attempts or 0) + 1
+        # Атомарный захват: только тот, кто реально перевёл queued → running,
+        # отдаёт задание (rowcount=0 — его перехватил параллельный claim).
+        try:
+            taken = (
+                db.query(Job)
+                .filter(Job.id == job.id, Job.status == "queued")
+                .update(
+                    {
+                        "status": "running",
+                        "started_at": now,
+                        "attempts": Job.attempts + 1,
+                    },
+                    synchronize_session=False,
+                )
+            )
+        except IntegrityError:
+            # PG: partial unique index отбил второй running-job того же владельца.
+            db.rollback()
+            _touch(db, token)
+            db.commit()
+            return Response(status_code=http_status.HTTP_204_NO_CONTENT)
+        except OperationalError:
+            # SQLite: параллельный writer держит БД — задание не наше, позже.
+            db.rollback()
+            _touch(db, token)
+            db.commit()
+            return Response(status_code=http_status.HTTP_204_NO_CONTENT)
+        if not taken:
+            db.rollback()
+            continue
+
         document.status = "processing"
-        document.updated_at = utcnow()
+        document.updated_at = now
         _touch(db, token)
         try:
             db.commit()
@@ -185,6 +305,7 @@ def claim(
             _touch(db, token)
             db.commit()
             return Response(status_code=http_status.HTTP_204_NO_CONTENT)
+        db.refresh(job)
         return {
             "job": _job_out(job),
             "document": {
@@ -204,13 +325,16 @@ def claim(
 @router.post("/jobs/{job_id}/heartbeat")
 def heartbeat(
     job_id: int,
+    body: HeartbeatIn,
     db: Session = Depends(get_db),
     token: WorkerToken = Depends(worker_token),
 ) -> dict:
-    job = _running_job(db, token, job_id)
+    """Продлить lease: `started_at=now`; чужой/устаревший attempts → 409."""
+    job = _running_job(db, token, job_id, body.attempts)
+    job.started_at = utcnow()
     _touch(db, token)
     db.commit()
-    return {"status": job.status}
+    return {"status": job.status, "attempts": job.attempts}
 
 
 @router.get("/jobs/{job_id}/file")
@@ -246,7 +370,7 @@ def complete(
     token: WorkerToken = Depends(worker_token),
 ) -> dict:
     """Результат распознавания: чанки + аннотация, документ `ready`/`needs_review`."""
-    job = _running_job(db, token, job_id)
+    job = _running_job(db, token, job_id, body.attempts)
     document = _document(db, job, token.owner_id)
     text = (body.text or "").strip()
     if not text:
@@ -305,8 +429,9 @@ def fail(
     db: Session = Depends(get_db),
     token: WorkerToken = Depends(worker_token),
 ) -> dict:
-    job = _running_job(db, token, job_id)
-    message = " ".join((body.error or "").split())[:500] or "worker failed"
+    """Сбой воркера: в БД — только категория (F8), детали остаются у воркера."""
+    job = _running_job(db, token, job_id, body.attempts)
+    message = _error_category(body.error.strip())
     document = payload_document(db, job)
     if document is not None and document.owner_id == token.owner_id:
         document.status = "failed"
