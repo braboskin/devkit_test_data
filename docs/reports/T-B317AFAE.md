@@ -1,11 +1,11 @@
 ---
 id: R-9d2e0f6eb8
 type: report
-title: "M3: отчёт"
+title: M3 report
 task: T-B317AFAE
 status: final
-created_at: 2026-11-21T18:10:56.585Z
-updated_at: 2026-11-21T18:10:56.585Z
+created_at: 2026-11-21T18:18:44.167Z
+updated_at: 2026-11-21T18:18:44.167Z
 ---
 
 # Отчёт T-B317AFAE — M3: агент — LLM-ключи, чат, предложения, онбординг, конструктор агентов
