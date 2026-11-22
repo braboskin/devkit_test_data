@@ -18,7 +18,7 @@ plan_version: 6
 report: docs/reports/T-9F5FB3D3.md
 assignee: owner
 created_at: 2026-11-21T00:07:18.226Z
-updated_at: 2026-11-22T17:25:47.961Z
+updated_at: 2026-11-22T17:29:55.342Z
 ---
 
 # M4: напоминания и push
