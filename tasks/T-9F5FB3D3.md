@@ -14,11 +14,11 @@ verification:
   - unit-tests
 depends_on:
   - T-B317AFAE
-plan_version: 3
+plan_version: 6
 report: docs/reports/T-9F5FB3D3.md
 assignee: agent:T-9F5FB3D3/architect
 created_at: 2026-11-21T00:07:18.226Z
-updated_at: 2026-11-22T10:29:08.783Z
+updated_at: 2026-11-22T10:30:27.731Z
 ---
 
 # M4: напоминания и push
