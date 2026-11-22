@@ -14,11 +14,11 @@ verification:
   - unit-tests
 depends_on:
   - T-B317AFAE
-plan_version: 0
+plan_version: 3
 report: docs/reports/T-9F5FB3D3.md
 assignee: null
 created_at: 2026-11-21T00:07:18.226Z
-updated_at: 2026-11-21T09:29:31.344Z
+updated_at: 2026-11-22T08:17:20.363Z
 ---
 
 # M4: напоминания и push
