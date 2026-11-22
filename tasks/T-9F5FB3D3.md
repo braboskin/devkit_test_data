@@ -3,7 +3,7 @@ id: T-9F5FB3D3
 project: testproject
 epic: E-46E212B4
 title: "M4: напоминания и push"
-status: needs_review
+status: done
 type: feature
 size: L
 priority: medium
@@ -18,7 +18,7 @@ plan_version: 6
 report: docs/reports/T-9F5FB3D3.md
 assignee: owner
 created_at: 2026-11-21T00:07:18.226Z
-updated_at: 2026-11-22T17:29:55.342Z
+updated_at: 2026-11-22T17:30:22.473Z
 ---
 
 # M4: напоминания и push
