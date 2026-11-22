@@ -99,7 +99,7 @@ INFO  [alembic.runtime.migration] Running upgrade 0004_agent -> 0005_agent_calls
 ��� (�������/���������).
 INFO  [alembic.runtime.migration] Running upgrade 0005_agent_calls -> 0006_notifications, M4: ����������� � ����� �����
 ������, Web Push ��������, ���������.
-..X:\devkit_instance\testproject\repo\atlas\.venv\Lib\site-packages\qdrant_client\qdrant_remote.py:295: UserWarning: Fa
+..X:\devkit_projects\projects\atlas\repo\atlas\.venv\Lib\site-packages\qdrant_client\qdrant_remote.py:295: UserWarning: Fa
 iled to obtain server version. Unable to check client-server compatibility. Set check_compatibility=False to skip versi
 on check.
   show_warning(

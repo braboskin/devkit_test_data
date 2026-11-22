@@ -4,8 +4,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-MUT = Path(r"X:\devkit_instance\testproject\.tmp\mut2")
-PY = Path(r"X:\devkit_instance\testproject\repo\atlas\.venv\Scripts\python.exe")
+MUT = Path(r"X:\devkit_projects\projects\atlas\.tmp\mut2")
+PY = Path(r"X:\devkit_projects\projects\atlas\repo\atlas\.venv\Scripts\python.exe")
 
 MUTATIONS = [
     # ---------- new fixes: the new tests must catch these ----------

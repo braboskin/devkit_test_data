@@ -10,8 +10,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-REPO = Path(r"X:\devkit_instance\testproject\repo\atlas")
-MUT = Path(r"X:\devkit_instance\testproject\.tmp\mut-fu")
+REPO = Path(r"X:\devkit_projects\projects\atlas\repo\atlas")
+MUT = Path(r"X:\devkit_projects\projects\atlas\.tmp\mut-fu")
 PY = REPO / ".venv" / "Scripts" / "python.exe"
 TEST = "tests.test_followup_acceptance"
 
