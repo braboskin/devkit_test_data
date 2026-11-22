@@ -1,0 +1,25 @@
+﻿
+added 24 packages, and audited 25 packages in 3s
+
+8 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+node.exe : npm notice run atlas-viewer@0.1.0 build
+строка:1 знак:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Users\xaylpq\AppData\Roaming ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (npm notice run atlas-viewer@0.1.0 build:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+npm notice run tsc --noEmit && vite build
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 32 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.88 kB │ gzip:  0.51 kB
+dist/assets/index-BjRjNUwu.css    8.47 kB │ gzip:  2.35 kB
+dist/assets/index-Ct4FgzPC.js   335.40 kB │ gzip: 95.13 kB
+
+✓ built in 197ms
