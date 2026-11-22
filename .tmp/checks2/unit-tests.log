@@ -1,0 +1,113 @@
+﻿.venv\Scripts\python.exe : ...........INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+строка:12 знак:1
++ .venv\Scripts\python.exe -m unittest @args 2>&1 | Out-File -Encoding  ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (...........INFO...PostgresqlImpl.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_m1, M1: ��������� �7 �� � ������������, ������ � �������� ��
+�����.
+INFO  [alembic.runtime.migration] Running upgrade 0001_m1 -> 0002_knowledge, M2: ������ � ���������, �����, �������, ��
+����-������, ���������� �7.
+INFO  [alembic.runtime.migration] Running upgrade 0002_knowledge -> 0003_worker_singleflight, M2 follow-up: ���� `runni
+ng` job �� ��������� (single-flight).
+INFO  [alembic.runtime.migration] Running upgrade 0003_worker_singleflight -> 0004_agent, M3: ����� � LLM-�����, ������
+�/���������, ������, ���, �����������, ��������.
+INFO  [alembic.runtime.migration] Running upgrade 0004_agent -> 0005_agent_calls, A16: ����� ������� ���������� �������
+��� (�������/���������).
+INFO  [alembic.runtime.migration] Running upgrade 0005_agent_calls -> 0006_notifications, M4: ����������� � ����� �����
+������, Web Push ��������, ���������.
+.INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_m1, M1: ��������� �7 �� � ������������, ������ � �������� ��
+�����.
+INFO  [alembic.runtime.migration] Running upgrade 0001_m1 -> 0002_knowledge, M2: ������ � ���������, �����, �������, ��
+����-������, ���������� �7.
+INFO  [alembic.runtime.migration] Running upgrade 0002_knowledge -> 0003_worker_singleflight, M2 follow-up: ���� `runni
+ng` job �� ��������� (single-flight).
+INFO  [alembic.runtime.migration] Running upgrade 0003_worker_singleflight -> 0004_agent, M3: ����� � LLM-�����, ������
+�/���������, ������, ���, �����������, ��������.
+INFO  [alembic.runtime.migration] Running upgrade 0004_agent -> 0005_agent_calls, A16: ����� ������� ���������� �������
+��� (�������/���������).
+INFO  [alembic.runtime.migration] Running upgrade 0005_agent_calls -> 0006_notifications, M4: ����������� � ����� �����
+������, Web Push ��������, ���������.
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running downgrade 0006_notifications -> 0005_agent_calls, M4: ����������� � ����� ���
+��������, Web Push ��������, ���������.
+INFO  [alembic.runtime.migration] Running downgrade 0005_agent_calls -> 0004_agent, A16: ����� ������� ���������� �����
+����� (�������/���������).
+.INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_m1, M1: ��������� �7 �� � ������������, ������ � �������� ��
+�����.
+INFO  [alembic.runtime.migration] Running upgrade 0001_m1 -> 0002_knowledge, M2: ������ � ���������, �����, �������, ��
+����-������, ���������� �7.
+INFO  [alembic.runtime.migration] Running upgrade 0002_knowledge -> 0003_worker_singleflight, M2 follow-up: ���� `runni
+ng` job �� ��������� (single-flight).
+INFO  [alembic.runtime.migration] Running upgrade 0003_worker_singleflight -> 0004_agent, M3: ����� � LLM-�����, ������
+�/���������, ������, ���, �����������, ��������.
+INFO  [alembic.runtime.migration] Running upgrade 0004_agent -> 0005_agent_calls, A16: ����� ������� ���������� �������
+��� (�������/���������).
+INFO  [alembic.runtime.migration] Running upgrade 0005_agent_calls -> 0006_notifications, M4: ����������� � ����� �����
+������, Web Push ��������, ���������.
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running downgrade 0006_notifications -> 0005_agent_calls, M4: ����������� � ����� ���
+��������, Web Push ��������, ���������.
+.INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_m1, M1: ��������� �7 �� � ������������, ������ � �������� ��
+�����.
+INFO  [alembic.runtime.migration] Running upgrade 0001_m1 -> 0002_knowledge, M2: ������ � ���������, �����, �������, ��
+����-������, ���������� �7.
+INFO  [alembic.runtime.migration] Running upgrade 0002_knowledge -> 0003_worker_singleflight, M2 follow-up: ���� `runni
+ng` job �� ��������� (single-flight).
+INFO  [alembic.runtime.migration] Running upgrade 0003_worker_singleflight -> 0004_agent, M3: ����� � LLM-�����, ������
+�/���������, ������, ���, �����������, ��������.
+INFO  [alembic.runtime.migration] Running upgrade 0004_agent -> 0005_agent_calls, A16: ����� ������� ���������� �������
+��� (�������/���������).
+INFO  [alembic.runtime.migration] Running upgrade 0005_agent_calls -> 0006_notifications, M4: ����������� � ����� �����
+������, Web Push ��������, ���������.
+.......................................................................................................................
+......INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_m1, M1: ��������� �7 �� � ������������, ������ � �������� ��
+�����.
+INFO  [alembic.runtime.migration] Running upgrade 0001_m1 -> 0002_knowledge, M2: ������ � ���������, �����, �������, ��
+����-������, ���������� �7.
+INFO  [alembic.runtime.migration] Running upgrade 0002_knowledge -> 0003_worker_singleflight, M2 follow-up: ���� `runni
+ng` job �� ��������� (single-flight).
+INFO  [alembic.runtime.migration] Running upgrade 0003_worker_singleflight -> 0004_agent, M3: ����� � LLM-�����, ������
+�/���������, ������, ���, �����������, ��������.
+INFO  [alembic.runtime.migration] Running upgrade 0004_agent -> 0005_agent_calls, A16: ����� ������� ���������� �������
+��� (�������/���������).
+INFO  [alembic.runtime.migration] Running upgrade 0005_agent_calls -> 0006_notifications, M4: ����������� � ����� �����
+������, Web Push ��������, ���������.
+.......................INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_m1, M1: ��������� �7 �� � ������������, ������ � �������� ��
+�����.
+INFO  [alembic.runtime.migration] Running upgrade 0001_m1 -> 0002_knowledge, M2: ������ � ���������, �����, �������, ��
+����-������, ���������� �7.
+INFO  [alembic.runtime.migration] Running upgrade 0002_knowledge -> 0003_worker_singleflight, M2 follow-up: ���� `runni
+ng` job �� ��������� (single-flight).
+INFO  [alembic.runtime.migration] Running upgrade 0003_worker_singleflight -> 0004_agent, M3: ����� � LLM-�����, ������
+�/���������, ������, ���, �����������, ��������.
+INFO  [alembic.runtime.migration] Running upgrade 0004_agent -> 0005_agent_calls, A16: ����� ������� ���������� �������
+��� (�������/���������).
+INFO  [alembic.runtime.migration] Running upgrade 0005_agent_calls -> 0006_notifications, M4: ����������� � ����� �����
+������, Web Push ��������, ���������.
+..X:\devkit_instance\testproject\repo\atlas\.venv\Lib\site-packages\qdrant_client\qdrant_remote.py:295: UserWarning: Fa
+iled to obtain server version. Unable to check client-server compatibility. Set check_compatibility=False to skip versi
+on check.
+  show_warning(
+.......................................................................................................................
+.............................................................
+----------------------------------------------------------------------
+Ran 344 tests in 182.166s
+
+OK
+пароль обновлён: alice
+пароль обновлён: alice

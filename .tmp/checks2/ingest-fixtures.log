@@ -1,0 +1,11 @@
+﻿.venv\Scripts\python.exe : .
+строка:14 знак:1
++ .venv\Scripts\python.exe -m unittest tests.test_ingest.IngestTests.te ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+----------------------------------------------------------------------
+Ran 1 test in 0.068s
+
+OK
