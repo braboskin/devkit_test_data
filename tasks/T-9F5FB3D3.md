@@ -3,7 +3,7 @@ id: T-9F5FB3D3
 project: testproject
 epic: E-46E212B4
 title: "M4: напоминания и push"
-status: blocked
+status: planned
 type: feature
 size: L
 priority: medium
@@ -18,7 +18,7 @@ plan_version: 6
 report: docs/reports/T-9F5FB3D3.md
 assignee: agent:T-9F5FB3D3/architect
 created_at: 2026-11-21T00:07:18.226Z
-updated_at: 2026-11-22T10:31:20.484Z
+updated_at: 2026-11-22T10:31:20.946Z
 ---
 
 # M4: напоминания и push
