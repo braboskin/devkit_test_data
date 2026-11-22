@@ -1,6 +1,6 @@
 ---
 id: T-46BE9A0F
-project: testproject
+project: atlas
 epic: E-46E212B4
 title: "Документы: обработка сканов на сервере (OCR) или явный выбор воркера"
 status: inbox

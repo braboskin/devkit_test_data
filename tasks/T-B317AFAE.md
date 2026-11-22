@@ -1,6 +1,6 @@
 ---
 id: T-B317AFAE
-project: testproject
+project: atlas
 epic: E-46E212B4
 title: "M3: агент — LLM-ключи, чат, предложения, онбординг, конструктор агентов"
 status: shipped

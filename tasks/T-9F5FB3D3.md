@@ -1,6 +1,6 @@
 ---
 id: T-9F5FB3D3
-project: testproject
+project: atlas
 epic: E-46E212B4
 title: "M4: напоминания и push"
 status: shipped

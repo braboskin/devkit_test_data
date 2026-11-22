@@ -1,6 +1,6 @@
 ---
 id: T-CA6FF8E2
-project: testproject
+project: atlas
 epic: E-46E212B4
 title: "M3 follow-up: UI — чат, конструктор агентов, онбординг, предложения"
 status: shipped

@@ -1,7 +1,7 @@
 version: 1
 project:
-  slug: testproject
-  name: Тестовый проект
+  slug: atlas
+  name: Atlas
 repos:
   - name: atlas
     url: https://github.com/xaylpq/atlas.git
@@ -23,7 +23,7 @@ profile:
           windows: npm ci && npm run build
           darwin: npm ci && npm run build
           linux: npm ci && npm run build
-        cwd: X:\devkit_instance\testproject\repo\atlas\viewer
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
         timeoutSec: 600
       - name: unit-tests
         required: true
@@ -67,7 +67,7 @@ profile:
             tests.test_ingest.IngestTests.test_empty_body_needs_review
             tests.test_ingest.IngestTests.test_rerun_is_idempotent
             tests.test_triage tests.test_push
-        cwd: X:\devkit_instance\testproject\repo\atlas
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas
         timeoutSec: 600
       - name: ingest-fixtures
         required: false
@@ -78,7 +78,7 @@ profile:
             tests.test_ingest.IngestTests.test_fixtures_processed
           linux: .venv/bin/python -m unittest
             tests.test_ingest.IngestTests.test_fixtures_processed
-        cwd: X:\devkit_instance\testproject\repo\atlas
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas
         timeoutSec: 300
       - name: schema-check
         required: false
@@ -86,7 +86,7 @@ profile:
           windows: powershell -NoProfile -ExecutionPolicy Bypass -Command "$o = (&
             .\scripts\validate-schema.ps1) 2>&1 | Out-String; Write-Host $o; if
             ($o -match 'ERROR:') { exit 1 }"
-        cwd: X:\devkit_instance\testproject\repo\atlas
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas
         timeoutSec: 600
     setup:
       - name: create-venv
@@ -95,7 +95,7 @@ profile:
           windows: C:\ProgramData\anaconda3\python.exe -m venv .venv
           darwin: python3 -m venv .venv
           linux: python3 -m venv .venv
-        cwd: X:\devkit_instance\testproject\repo\atlas
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas
         timeoutSec: 300
       - name: install-requirements
         required: false
@@ -103,7 +103,7 @@ profile:
           windows: .venv\Scripts\python.exe -m pip install -r requirements.txt
           darwin: .venv/bin/python -m pip install -r requirements.txt
           linux: .venv/bin/python -m pip install -r requirements.txt
-        cwd: X:\devkit_instance\testproject\repo\atlas
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas
         timeoutSec: 1800
   docs:
     readme: repo/atlas/README.md
