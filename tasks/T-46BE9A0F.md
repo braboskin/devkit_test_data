@@ -16,11 +16,11 @@ verification:
   - ingest-fixtures
 depends_on:
   - T-CA6FF8E2
-plan_version: 0
+plan_version: 1
 report: docs/reports/T-46BE9A0F.md
 assignee: null
 created_at: 2026-11-21T21:22:12.064Z
-updated_at: 2026-11-21T21:22:12.064Z
+updated_at: 2026-11-23T16:57:43.130Z
 ---
 
 # Документы: обработка сканов на сервере (OCR) или явный выбор воркера
