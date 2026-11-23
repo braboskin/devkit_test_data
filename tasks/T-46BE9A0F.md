@@ -3,7 +3,7 @@ id: T-46BE9A0F
 project: atlas
 epic: E-46E212B4
 title: "Документы: обработка сканов на сервере (OCR) или явный выбор воркера"
-status: inbox
+status: planned
 type: feature
 size: M
 priority: medium
@@ -20,7 +20,7 @@ plan_version: 1
 report: docs/reports/T-46BE9A0F.md
 assignee: null
 created_at: 2026-11-21T21:22:12.064Z
-updated_at: 2026-11-23T16:57:43.130Z
+updated_at: 2026-11-23T17:03:39.894Z
 ---
 
 # Документы: обработка сканов на сервере (OCR) или явный выбор воркера
