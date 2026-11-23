@@ -20,7 +20,7 @@ plan_version: 1
 report: docs/reports/T-46BE9A0F.md
 assignee: agent:T-46BE9A0F/lead
 created_at: 2026-11-21T21:22:12.064Z
-updated_at: 2026-11-23T17:05:40.429Z
+updated_at: 2026-11-23T18:03:12.887Z
 ---
 
 # Документы: обработка сканов на сервере (OCR) или явный выбор воркера
