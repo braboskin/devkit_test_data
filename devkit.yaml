@@ -30,7 +30,7 @@ profile:
         run:
           windows: .venv\Scripts\python.exe -m unittest tests.test_app_auth
             tests.test_migrations tests.test_spheres_projects tests.test_people
-            tests.test_tasks tests.test_events tests.test_isolation
+            tests.test_tasks tests.test_events tests.test_isolation tests.test_growth
             tests.test_web_build tests.test_knowledge tests.test_documents
             tests.test_worker tests.test_worker_pg tests.test_http_fetch
             tests.test_search tests.test_yadisk tests.test_ingest_isolation
@@ -43,7 +43,7 @@ profile:
             tests.test_triage tests.test_push
           darwin: .venv/bin/python -m unittest tests.test_app_auth tests.test_migrations
             tests.test_spheres_projects tests.test_people tests.test_tasks
-            tests.test_events tests.test_isolation tests.test_web_build
+            tests.test_events tests.test_isolation tests.test_growth tests.test_web_build
             tests.test_knowledge tests.test_documents tests.test_worker
             tests.test_worker_pg tests.test_http_fetch tests.test_search
             tests.test_yadisk tests.test_ingest_isolation
@@ -56,7 +56,7 @@ profile:
             tests.test_triage tests.test_push
           linux: .venv/bin/python -m unittest tests.test_app_auth tests.test_migrations
             tests.test_spheres_projects tests.test_people tests.test_tasks
-            tests.test_events tests.test_isolation tests.test_web_build
+            tests.test_events tests.test_isolation tests.test_growth tests.test_web_build
             tests.test_knowledge tests.test_documents tests.test_worker
             tests.test_worker_pg tests.test_http_fetch tests.test_search
             tests.test_yadisk tests.test_ingest_isolation
