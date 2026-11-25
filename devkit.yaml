@@ -9,8 +9,7 @@ repos:
 profile:
   app:
     name: atlas
-    description: "Atlas вЂ” Р»РёС‡РЅР°СЏ РћРЎ Р·РЅР°РЅРёР№: ingestion, РїРѕРёСЃРє,
-      MCP, FastAPI-Р±СЌРєРµРЅРґ"
+    description: "Atlas — личная ОС знаний: ingestion, поиск, MCP, FastAPI-бэкенд"
     stack:
       - python
       - fastapi
