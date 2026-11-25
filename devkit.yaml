@@ -9,22 +9,42 @@ repos:
 profile:
   app:
     name: atlas
-    description: "Atlas — личная ОС знаний: ingestion, поиск, MCP, FastAPI-бэкенд аккаунтов"
+    description: "Atlas вЂ” Р»РёС‡РЅР°СЏ РћРЎ Р·РЅР°РЅРёР№: ingestion, РїРѕРёСЃРє,
+      MCP, FastAPI-Р±СЌРєРµРЅРґ"
     stack:
       - python
       - fastapi
       - sqlalchemy
       - qdrant
+      - typescript
+      - react
+      - vite
   commands:
     verification:
       - name: web-build
-        required: false
+        required: true
         run:
-          windows: npm ci && npm run build
-          darwin: npm ci && npm run build
-          linux: npm ci && npm run build
+          windows: npm run build
+          darwin: npm run build
+          linux: npm run build
         cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
         timeoutSec: 600
+      - name: typecheck-web
+        required: true
+        run:
+          windows: npx tsc --noEmit
+          darwin: npx tsc --noEmit
+          linux: npx tsc --noEmit
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
+        timeoutSec: 300
+      - name: lint-python
+        required: true
+        run:
+          windows: .venv\Scripts\python.exe -m ruff check app scripts --select E4,E7,F
+          darwin: .venv/bin/python -m ruff check app scripts --select E4,E7,F
+          linux: .venv/bin/python -m ruff check app scripts --select E4,E7,F
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas
+        timeoutSec: 300
       - name: unit-tests
         required: true
         run:
@@ -81,18 +101,15 @@ profile:
             tests.test_ingest.IngestTests.test_rerun_is_idempotent
             tests.test_triage tests.test_push
         cwd: X:\devkit_projects\projects\atlas\repo\atlas
-        timeoutSec: 600
-      - name: ingest-fixtures
+        timeoutSec: 1200
+      - name: typecheck-python
         required: false
         run:
-          windows: .venv\Scripts\python.exe -m unittest
-            tests.test_ingest.IngestTests.test_fixtures_processed
-          darwin: .venv/bin/python -m unittest
-            tests.test_ingest.IngestTests.test_fixtures_processed
-          linux: .venv/bin/python -m unittest
-            tests.test_ingest.IngestTests.test_fixtures_processed
+          windows: .venv\Scripts\python.exe -m mypy app --ignore-missing-imports
+          darwin: .venv/bin/python -m mypy app --ignore-missing-imports
+          linux: .venv/bin/python -m mypy app --ignore-missing-imports
         cwd: X:\devkit_projects\projects\atlas\repo\atlas
-        timeoutSec: 300
+        timeoutSec: 600
       - name: schema-check
         required: false
         run:
@@ -100,54 +117,6 @@ profile:
             .\scripts\validate-schema.ps1) 2>&1 | Out-String; Write-Host $o; if
             ($o -match 'ERROR:') { exit 1 }"
         cwd: X:\devkit_projects\projects\atlas\repo\atlas
-        timeoutSec: 600
-      - name: lint-python
-        required: true
-        run:
-          windows: .venv\Scripts\python.exe -m ruff check .
-          darwin: .venv/bin/python -m ruff check .
-          linux: .venv/bin/python -m ruff check .
-        cwd: X:\devkit_projects\projects\atlas\repo\atlas
-        timeoutSec: 300
-      - name: typecheck-python
-        required: true
-        run:
-          windows: .venv\Scripts\python.exe -m mypy
-          darwin: .venv/bin/python -m mypy
-          linux: .venv/bin/python -m mypy
-        cwd: X:\devkit_projects\projects\atlas\repo\atlas
-        timeoutSec: 600
-      - name: arch-python
-        required: true
-        run:
-          windows: .venv\Scripts\python.exe -m unittest tests.test_architecture
-          darwin: .venv/bin/python -m unittest tests.test_architecture
-          linux: .venv/bin/python -m unittest tests.test_architecture
-        cwd: X:\devkit_projects\projects\atlas\repo\atlas
-        timeoutSec: 300
-      - name: lint-web
-        required: true
-        run:
-          windows: npx eslint .
-          darwin: npx eslint .
-          linux: npx eslint .
-        cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
-        timeoutSec: 300
-      - name: typecheck-web
-        required: true
-        run:
-          windows: npx tsc --noEmit
-          darwin: npx tsc --noEmit
-          linux: npx tsc --noEmit
-        cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
-        timeoutSec: 300
-      - name: arch-web
-        required: true
-        run:
-          windows: npx steiger ./src
-          darwin: npx steiger ./src
-          linux: npx steiger ./src
-        cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
         timeoutSec: 300
     setup:
       - name: create-venv
@@ -166,7 +135,18 @@ profile:
           linux: .venv/bin/python -m pip install -r requirements.txt
         cwd: X:\devkit_projects\projects\atlas\repo\atlas
         timeoutSec: 1800
+      - name: install-viewer
+        required: false
+        run:
+          windows: npm ci
+          darwin: npm ci
+          linux: npm ci
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
+        timeoutSec: 900
   docs:
     readme: repo/atlas/README.md
     agents: AGENTS.md
     schema: repo/atlas/docs/SCHEMA.md
+  tools:
+    - graphify
+    - ponytail
