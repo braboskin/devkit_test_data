@@ -1,0 +1,133 @@
+﻿# РџСЂРµРґР»РѕР¶РµРЅРёРµ РїСЂРѕС„РёР»СЏ Atlas. РџСЂРёРјРµРЅСЏРµС‚СЃСЏ С‡РµСЂРµР·:
+#   devkit project profile set atlas --file <this file>
+# cwd вЂ” РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РєР°С‚Р°Р»РѕРіР° РїСЂРѕРµРєС‚Р°; devkit СЂР°Р·РІРѕСЂР°С‡РёРІР°РµС‚ РµРіРѕ РІ Р°Р±СЃРѕР»СЋС‚РЅС‹Р№.
+app:
+  name: atlas
+  description: "Atlas вЂ” Р»РёС‡РЅР°СЏ РћРЎ Р·РЅР°РЅРёР№: ingestion, РїРѕРёСЃРє, MCP, FastAPI-Р±СЌРєРµРЅРґ"
+  stack: [python, fastapi, sqlalchemy, qdrant, typescript, react, vite]
+commands:
+  verification:
+    # 1. РЎР±РѕСЂРєР° PWA viewer: tsc --noEmit + vite build -> viewer/dist.
+    #    РЎС‚РѕРёС‚ РїРµСЂРІРѕР№, С‡С‚РѕР±С‹ unit-tests РІРёРґРµР» СЃРѕР±СЂР°РЅРЅС‹Р№ dist (РёРЅР°С‡Рµ test_web_build skip).
+    - name: web-build
+      required: true
+      run:
+        windows: npm run build
+        darwin: npm run build
+        linux: npm run build
+      cwd: repo/atlas/viewer
+      timeoutSec: 600
+    # 2. РўРёРїС‹ С„СЂРѕРЅС‚РµРЅРґР° Р±РµР· СЃР±РѕСЂРєРё вЂ” Р±С‹СЃС‚СЂС‹Р№ РѕС‚РґРµР»СЊРЅС‹Р№ СЃРёРіРЅР°Р».
+    - name: typecheck-web
+      required: true
+      run:
+        windows: npx tsc --noEmit
+        darwin: npx tsc --noEmit
+        linux: npx tsc --noEmit
+      cwd: repo/atlas/viewer
+      timeoutSec: 300
+    # 3. pyflakes-СѓСЂРѕРІРµРЅСЊ РїРѕ РїСЂРѕРґРѕРІРѕРјСѓ РєРѕРґСѓ: РЅРµРѕРїСЂРµРґРµР»С‘РЅРЅС‹Рµ РёРјРµРЅР°, РЅРµРёСЃРїРѕР»СЊР·СѓРµРјС‹Рµ
+    #    РёРјРїРѕСЂС‚С‹/РїРµСЂРµРјРµРЅРЅС‹Рµ, E402. tests/ РёСЃРєР»СЋС‡С‘РЅ: С‚Р°Рј 11 С‚Р°РєРёС… РѕС€РёР±РѕРє (СЃРј. РѕС‚С‡С‘С‚).
+    - name: lint-python
+      required: true
+      run:
+        windows: .venv\Scripts\python.exe -m ruff check app scripts --select E4,E7,F
+        darwin: .venv/bin/python -m ruff check app scripts --select E4,E7,F
+        linux: .venv/bin/python -m ruff check app scripts --select E4,E7,F
+      cwd: repo/atlas
+      timeoutSec: 300
+    # 4. Р РѕРІРЅРѕ СЃРїРёСЃРѕРє РјРѕРґСѓР»РµР№ РёР· .github/workflows/ci.yml (440 С‚РµСЃС‚РѕРІ).
+    - name: unit-tests
+      required: true
+      run:
+        windows: >-
+          .venv\Scripts\python.exe -m unittest tests.test_app_auth tests.test_migrations
+          tests.test_spheres_projects tests.test_people tests.test_tasks tests.test_events
+          tests.test_isolation tests.test_growth tests.test_web_build tests.test_knowledge
+          tests.test_documents tests.test_worker tests.test_worker_pg tests.test_http_fetch
+          tests.test_search tests.test_yadisk tests.test_ingest_isolation
+          tests.test_ingest_acceptance tests.test_followup_acceptance tests.test_agent_llm
+          tests.test_agent_onboarding tests.test_agent_chat tests.test_agent_proposals
+          tests.test_agent_builder tests.test_agent_isolation tests.test_agent_subagents
+          tests.test_agent_scenario_runs tests.test_chunking tests.test_eval
+          tests.test_import_obsidian tests.test_ingest.IngestTests.test_blank_image_needs_review
+          tests.test_ingest.IngestTests.test_documents_processed
+          tests.test_ingest.IngestTests.test_empty_body_needs_review
+          tests.test_ingest.IngestTests.test_rerun_is_idempotent tests.test_triage tests.test_push
+        darwin: >-
+          .venv/bin/python -m unittest tests.test_app_auth tests.test_migrations
+          tests.test_spheres_projects tests.test_people tests.test_tasks tests.test_events
+          tests.test_isolation tests.test_growth tests.test_web_build tests.test_knowledge
+          tests.test_documents tests.test_worker tests.test_worker_pg tests.test_http_fetch
+          tests.test_search tests.test_yadisk tests.test_ingest_isolation
+          tests.test_ingest_acceptance tests.test_followup_acceptance tests.test_agent_llm
+          tests.test_agent_onboarding tests.test_agent_chat tests.test_agent_proposals
+          tests.test_agent_builder tests.test_agent_isolation tests.test_agent_subagents
+          tests.test_agent_scenario_runs tests.test_chunking tests.test_eval
+          tests.test_import_obsidian tests.test_ingest.IngestTests.test_blank_image_needs_review
+          tests.test_ingest.IngestTests.test_documents_processed
+          tests.test_ingest.IngestTests.test_empty_body_needs_review
+          tests.test_ingest.IngestTests.test_rerun_is_idempotent tests.test_triage tests.test_push
+        linux: >-
+          .venv/bin/python -m unittest tests.test_app_auth tests.test_migrations
+          tests.test_spheres_projects tests.test_people tests.test_tasks tests.test_events
+          tests.test_isolation tests.test_growth tests.test_web_build tests.test_knowledge
+          tests.test_documents tests.test_worker tests.test_worker_pg tests.test_http_fetch
+          tests.test_search tests.test_yadisk tests.test_ingest_isolation
+          tests.test_ingest_acceptance tests.test_followup_acceptance tests.test_agent_llm
+          tests.test_agent_onboarding tests.test_agent_chat tests.test_agent_proposals
+          tests.test_agent_builder tests.test_agent_isolation tests.test_agent_subagents
+          tests.test_agent_scenario_runs tests.test_chunking tests.test_eval
+          tests.test_import_obsidian tests.test_ingest.IngestTests.test_blank_image_needs_review
+          tests.test_ingest.IngestTests.test_documents_processed
+          tests.test_ingest.IngestTests.test_empty_body_needs_review
+          tests.test_ingest.IngestTests.test_rerun_is_idempotent tests.test_triage tests.test_push
+      cwd: repo/atlas
+      timeoutSec: 1200
+    # 5. РћРїС†РёРѕРЅР°Р»СЊРЅРѕ: С‚РёРїС‹ Python. РЎРµРіРѕРґРЅСЏ 34 РѕС€РёР±РєРё РІ 17 С„Р°Р№Р»Р°С… вЂ” СЃРёРіРЅР°Р», РЅРµ РіРµР№С‚.
+    - name: typecheck-python
+      required: false
+      run:
+        windows: .venv\Scripts\python.exe -m mypy app --ignore-missing-imports
+        darwin: .venv/bin/python -m mypy app --ignore-missing-imports
+        linux: .venv/bin/python -m mypy app --ignore-missing-imports
+      cwd: repo/atlas
+      timeoutSec: 600
+    # 6. РћРїС†РёРѕРЅР°Р»СЊРЅРѕ (С‚РѕР»СЊРєРѕ Windows): DDL РёР· docs/SCHEMA.md РїСЂРёРјРµРЅСЏРµС‚СЃСЏ РІ СЂРµР°Р»СЊРЅРѕРј
+    #    PostgreSQL (initdb РІРѕ РІСЂРµРјРµРЅРЅРѕРј РєР°С‚Р°Р»РѕРіРµ). РЎРєСЂРёРїС‚ вЂ” PowerShell.
+    - name: schema-check
+      required: false
+      run:
+        windows: powershell -NoProfile -ExecutionPolicy Bypass -Command "$o = (& .\scripts\validate-schema.ps1) 2>&1 | Out-String; Write-Host $o; if ($o -match 'ERROR:') { exit 1 }"
+      cwd: repo/atlas
+      timeoutSec: 300
+  setup:
+    - name: create-venv
+      required: false
+      run:
+        windows: C:\ProgramData\anaconda3\python.exe -m venv .venv
+        darwin: python3 -m venv .venv
+        linux: python3 -m venv .venv
+      cwd: repo/atlas
+      timeoutSec: 300
+    - name: install-requirements
+      required: false
+      run:
+        windows: .venv\Scripts\python.exe -m pip install -r requirements.txt
+        darwin: .venv/bin/python -m pip install -r requirements.txt
+        linux: .venv/bin/python -m pip install -r requirements.txt
+      cwd: repo/atlas
+      timeoutSec: 1800
+    - name: install-viewer
+      required: false
+      run:
+        windows: npm ci
+        darwin: npm ci
+        linux: npm ci
+      cwd: repo/atlas/viewer
+      timeoutSec: 900
+docs:
+  readme: repo/atlas/README.md
+  agents: AGENTS.md
+  schema: repo/atlas/docs/SCHEMA.md
+tools: [graphify, ponytail]

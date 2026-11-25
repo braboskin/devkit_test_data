@@ -1,0 +1,11 @@
+﻿const { parse } = require(process.argv[2]);
+const fs = require('fs');
+const p = parse(fs.readFileSync(process.argv[3], 'utf8'));
+const checks = p.profile.commands.verification;
+console.log('checks:', checks.map(c => `${c.name} req=${c.required} to=${c.timeoutSec} cwd=${c.cwd}`).join('\n'));
+console.log('windows unit-tests len:', checks.find(c => c.name === 'unit-tests').run.windows.length);
+console.log('windows unit-tests single-line:', !/\n/.test(checks.find(c => c.name === 'unit-tests').run.windows));
+console.log('schema-check win:', checks.find(c => c.name === 'schema-check').run.windows);
+console.log('setup:', p.profile.commands.setup.map(c => c.name).join(','));
+console.log('docs:', JSON.stringify(p.profile.docs));
+console.log('tools:', JSON.stringify(p.profile.tools));

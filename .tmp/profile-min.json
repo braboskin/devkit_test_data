@@ -1,0 +1,1 @@
+﻿{"profile":{"app":{"name":"atlas"},"commands":{"verification":[{"name":"smoke","required":true,"run":{"windows":"exit 0"},"cwd":"repo/atlas","timeoutSec":60}]}}}
