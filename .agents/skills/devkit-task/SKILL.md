@@ -15,22 +15,22 @@ user-invocable: true
 ## Инструменты
 
 - `devkit task show <id> --json`, `devkit task list --json`, `devkit task status`
-- `devkit task plan`, `devkit task check`, `devkit task gate`, `devkit task report`,
-  `devkit task brief`, `devkit task ship`, `devkit task token`
+- `devkit task plan`, `devkit task check`, `devkit task report`, `devkit task brief`,
+  `devkit task ship`
 - `devkit doc ...`, `devkit profile show|test`
 - файлы задачи: `tasks/<id>.md`, `plans/<id>/`, `docs/`, `AGENTS.md`, `.agents/`
 - git (`log`, `diff`, `status`), grep/read, graphify (опционально), ponytail
-- Полный CLI-набор devkit: 	ask plan, 	ask check, 	ask gate, 	ask report,
-  doc, profile; применяй только относящиеся к навыку.
+- Полный CLI-набор devkit: `devkit task plan`, `devkit task check`, `devkit task report`, `devkit doc`, `devkit profile`; применяй только относящиеся к навыку.
 
 ## Шаги
 
 1. Прочитай задачу и её окружение:
    `devkit task show <id> --json`; затем `tasks/<id>.md`, связанный эпик
    (`epics/<id>.md`), профиль `devkit profile show --json`, `AGENTS.md`.
-2. Проверь готовность: есть ли task-токен в `DEVKIT_TOKEN` и нужные scopes,
-   установлен ли слой `.agents`, настроен ли профиль (`missing`/`pending` →
-   `devkit-profile-setup`).
+2. Проверь готовность: установлен ли слой `.agents`, настроен ли профиль
+   (`missing`/`pending` → `devkit-profile-setup`), известны ли владелец и scope.
+   Авторизация — локальное доверие: CLI на этой машине действует как агент;
+   approve плана и `done` делает владелец.
 3. Классифицируй:
    - **Размер**: S — 1–2 файла, без миграций/auth/денег/новых зависимостей;
      M — несколько файлов или один слой; L — несколько слоёв/репозиториев,
@@ -49,7 +49,8 @@ user-invocable: true
 5. Загрузи выбранный навык и следуй ему. Не дублируй его шаги здесь и не
    выполняй несколько основных навыков параллельно в одном агенте.
 6. После реализации обязательно `devkit-task-verify` (проверки), затем
-   `devkit-team-sync` и `devkit-team-check`; выпуск — `devkit-task-ship`.
+   `devkit-team-sync` и `devkit-team-check`; `done` ставит владелец, после него
+   сразу `devkit-task-ship`.
 
 ## Промпты субагентов
 
@@ -61,7 +62,8 @@ user-invocable: true
 - graphify нет → `grep`/`rg`, чтение файлов, `git log -S`, `git grep`; пометь в отчёте.
 - ponytail нет → правила `devkit-lifecycle` (минимальный diff, stdlib/native,
   одна runnable проверка).
-- Нет task-токена → остановись и запроси у владельца; не используй owner-сессию.
+- Нужно владельческое действие (approve плана, `done`, `--owner`) → не выполняй
+  его сам; эскалируй владельцу и дождись решения.
 - `devkit task show` не работает → читай `tasks/<id>.md` и `plans/<id>/`
   напрямую, зафиксируй деградацию.
 

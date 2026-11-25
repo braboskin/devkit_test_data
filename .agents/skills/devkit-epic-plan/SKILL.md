@@ -18,8 +18,7 @@ user-invocable: true
 - `devkit doc list|show|put`, `devkit profile show|test`
 - `devkit task report|comment`
 - git, grep/read, graphify (опционально), ponytail
-- Полный CLI-набор devkit: 	ask plan, 	ask check, 	ask gate, 	ask report,
-  doc, profile; применяй только относящиеся к навыку.
+- Полный CLI-набор devkit: `devkit task plan`, `devkit task check`, `devkit task report`, `devkit doc`, `devkit profile`; применяй только относящиеся к навыку.
 
 ## Шаги
 

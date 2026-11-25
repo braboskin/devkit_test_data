@@ -17,8 +17,7 @@ user-invocable: false
 - `devkit project show`, `devkit doctor`
 - git (`status`, `diff`, `log`, `branch`, `switch`, `worktree`, `fetch`,
   `merge`, `push`), grep/read, graphify (опционально), ponytail
-- Полный CLI-набор devkit: 	ask plan, 	ask check, 	ask gate, 	ask report,
-  doc, profile; применяй только относящиеся к навыку.
+- Полный CLI-набор devkit: `devkit task plan`, `devkit task check`, `devkit task report`, `devkit doc`, `devkit profile`; применяй только относящиеся к навыку.
 
 ## Шаги
 

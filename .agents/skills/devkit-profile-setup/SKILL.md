@@ -19,8 +19,7 @@ user-invocable: true
 - `devkit doc list|show`, `devkit task` (для проверки доступности задачи)
 - git, grep/read, оболочка проекта (npm/pnpm/cargo/go/etc. — только чтение),
   graphify (опционально), ponytail
-- Полный CLI-набор devkit: 	ask plan, 	ask check, 	ask gate, 	ask report,
-  doc, profile; применяй только относящиеся к навыку.
+- Полный CLI-набор devkit: `devkit task plan`, `devkit task check`, `devkit task report`, `devkit doc`, `devkit profile`; применяй только относящиеся к навыку.
 
 ## Шаги
 
@@ -28,13 +27,17 @@ user-invocable: true
    `repo/<name>/` (наличие проектов, lock-файлов, скриптов), существующий
    `devkit.yaml` проекта.
 2. Определи стек и реальные команды для каждой платформы (`windows`, `darwin`,
-   `linux`): установка зависимостей (setup), typecheck, lint, unit/integration
-   tests, build. Смотри `package.json`/`Makefile`/`Cargo.toml`/CI-конфиги, не
-   придумывай команды.
+   `linux`): установка зависимостей (setup), `lint`, `typecheck`, `arch`
+   (границы слоёв и импортов), unit/integration tests, build. Для линта, типов
+   и архитектуры — отдельные проверки, а не одна общая; выбор инструментов —
+   `devkit-code-quality` и `devkit-architecture`. Смотри
+   `package.json`/`Makefile`/`Cargo.toml`/CI-конфиги, не придумывай команды.
 3. Проверь каждую команду вручную из указанного `cwd` и зафиксируй exit code.
-   Требования: хотя бы одна `required: true` проверка; у каждой проверки есть
-   команда для текущей платформы; `cwd` внутри рабочего каталога проекта;
-   `timeoutSec` 1–3600. Запрещены пустышки (`echo`, `true`, `exit 0`).
+   Требования: хотя бы одна `required: true` проверка; `lint`, `typecheck` и
+   `arch` присутствуют, если стек и объявленная структура это позволяют; у
+   каждой проверки есть команда для текущей платформы; `cwd` внутри рабочего
+   каталога проекта; `timeoutSec` 1–3600. Запрещены пустышки (`echo`, `true`,
+   `exit 0`).
 4. Опиши профиль в YAML:
    `profile.app` (name, stack), `profile.commands.verification`,
    `profile.commands.setup` (опционально), `profile.docs` (ссылки внутри

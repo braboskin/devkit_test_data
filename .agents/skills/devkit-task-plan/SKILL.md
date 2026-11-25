@@ -17,10 +17,9 @@ acceptance используй `devkit-just-do`. Эпик планируется 
 
 - `devkit task show|create|status|plan|comment|report`, `devkit task brief`
 - `devkit profile show|test`, `devkit doc list|show|put`, `devkit epic show`
-- `devkit task check` (для последующей проверки), `devkit task gate`
+- `devkit task check` (для последующей проверки)
 - git, grep/read, graphify (опционально), ponytail
-- Полный CLI-набор devkit: 	ask plan, 	ask check, 	ask gate, 	ask report,
-  doc, profile; применяй только относящиеся к навыку.
+- Полный CLI-набор devkit: `devkit task plan`, `devkit task check`, `devkit task report`, `devkit doc`, `devkit profile`; применяй только относящиеся к навыку.
 
 ## Шаги
 
@@ -44,8 +43,9 @@ acceptance используй `devkit-just-do`. Эпик планируется 
 5. Запиши план файлом `plans/<id>/v<N>.md` (первая версия — `v1`) и создай
    версию через `devkit task plan <id> --file <file>`; закоммить в data-репозиторий.
    Не редактируй уже утверждённые версии — только новая версия.
-6. Попроси подтверждение владельца в web (план `draft` → `approved`). До
-   подтверждения не начинай реализацию. Ожидание — опрос `devkit task show
+6. Попроси подтверждение владельца: в web (план `draft` → `approved`) или в
+   CLI с `--owner`; команду выполняет владелец, не агент. До подтверждения не
+   начинай реализацию. Ожидание — опрос `devkit task show
    <id> --json` не чаще раза в 30 секунд, максимум 15 минут; затем остановись
    в `needs_review` с комментарием, не блокируй процесс навсегда.
 7. После approval переведи задачу в `planned`/`in_progress` и переходи к

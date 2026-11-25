@@ -14,26 +14,25 @@ user-invocable: true
 
 ## Инструменты
 
-- `devkit task show|plan|status|run|comment|report|brief|check|token`
+- `devkit task show|plan|status|run|comment|report|brief|check`
 - `devkit profile show|test`, `devkit doc show`
-- `devkit task gate` (для проверки статуса гейтов), git, grep/read
+- git, grep/read
 - graphify (опционально), ponytail
 - субагенты DSH: `subagent`, `send_message`, `wait_agent`
-- Полный CLI-набор devkit: 	ask plan, 	ask check, 	ask gate, 	ask report,
-  doc, profile; применяй только относящиеся к навыку.
+- Полный CLI-набор devkit: `devkit task plan`, `devkit task check`, `devkit task report`, `devkit doc`, `devkit profile`; применяй только относящиеся к навыку.
 
 ## Шаги
 
-1. Предусловия: план `approved`, профиль `valid`, task-токен с `task:read` и
-   `run:write`; у владельца получены токены для ролей с минимальными scopes
-   (исполнителю — `task:write`,`check:write`,`comment:write`; проверяющему —
-   `check:write`,`gate:write`,`comment:write`).
+1. Предусловия: план `approved`, профиль `valid`, scope задачи понятен.
+   Авторизация — локальное доверие: субагенты работают без токенов и scopes,
+   `--owner` и owner-сессия им недоступны; approve плана и `done` делает
+   владелец.
 2. Раздели план на workstreams с **непересекающимся** scope (файлы/каталоги/
    репозитории). Для каждого определи роль, результат, проверки и зависимости.
    Пересечение возможно только последовательно, с записью в план.
 3. Для каждого субагента собери бриф через `devkit-team-brief`: фрагмент
-   плана, scope, acceptance, ограничения, токен/scopes, формат ответа. Никакой
-   истории чата, никаких «сделай как в прошлый раз».
+   плана, scope, acceptance, ограничения, формат ответа. Никакой истории чата,
+   никаких «сделай как в прошлый раз».
 4. Запусти субагентов: прочитай `.agents/prompts/<role>.md` и подставь файл в
    `prompt` вместе с брифом. Роли: `backend-engineer`, `frontend-engineer`,
    `test-engineer`, `designer` (по потребности). Начни с независимых
@@ -47,7 +46,8 @@ user-invocable: true
 7. Проверь каждый workstream `devkit-task-verify`, затем `devkit-team-sync`
    (план ↔ acceptance ↔ scope) и `devkit-team-check` независимыми ролями.
 8. Отклонения от плана → `devkit-replan`; блокер → `devkit-team-escalate`.
-   Финальный статус и выпуск — только после гейтов и санкции владельца.
+   Финальный статус — `done` от владельца, выпуск — `devkit-task-ship` сразу
+   после него.
 
 ## Промпты субагентов
 
@@ -67,14 +67,15 @@ user-invocable: true
   сохраняя брифы и run-записи; это всё ещё AgentTeam-процесс.
 - `devkit task run` не подключён → фиксируй роли/scope/результат в отчёте и
   комментариях; отметь деградацию.
-- Нет токена на роль → не давай ребёнку owner-доступ; остановись и запроси.
+- Нужно владельческое действие → не давай ребёнку `--owner` и owner-сессию;
+  остановись и запроси решение у владельца.
 
 ## Доказательства
 
 - План и карта workstreams со scope; брифы (или их hash) в run-записях.
 - Run-записи: роль, старт/финиш, результат, коммиты.
 - Проверки по каждому workstream (id, exit code, sha) и отчёт.
-- Гейты независимых ролей; пустой `git status` перед сдачей.
+- Находки независимой проверки и рекомендация; пустой `git status` перед сдачей.
 
 ## Если не получилось
 
