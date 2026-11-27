@@ -41,4 +41,4 @@ updated_at: 2026-11-27T16:09:29.548Z
 
 ## Brief
 
-Graphite-дизайн-система: tokens.css (light/dark, акцент из theme.ts, дефолт #334155), Emotion + Global, Roboto Condensed self-host, LazyMotion, примитивы shared/ui без смены публичного API, AppShell с боковым меню и топбаром, vendor.ts для antd/SVAR/FullCalendar/Recharts, docs/DESIGN.md. Удаляются styles.css/base.css/shell.css/ui.css.
+Graphite-дизайн-система: tokens.css (light/dark, акцент из theme.ts, дефолт #334155), Emotion + Global, Roboto Condensed self-host, LazyMotion, примитивы shared/ui без смены публичного API, AppShell с боковым меню и топбаром, vendor.ts для antd/SVAR/FullCalendar/Recharts, docs/DESIGN.md. Удаляются styles.css/base.css/shell.css/ui.css. antd-first: Avatar → antd Avatar, Skeleton → antd Skeleton, Badge/DocBadge/JobBadge → antd Tag, TreeList → antd Tree, Empty → antd Empty, дубль EmptyState в States.tsx удалить; мобильный сайдбар — antd Drawer, топбар — Tooltip/Dropdown; токены antd через ConfigProvider (Card, Segmented, Switch, Tag, Result, Drawer).

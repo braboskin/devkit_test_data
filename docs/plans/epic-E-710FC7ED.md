@@ -53,6 +53,43 @@ Scope в задачах указан относительно `repo/atlas/`; е�
 `devkit.yaml` (корень data-репозитория). Так `AGENTS.md`, `README.md` и
 `docs/DESIGN.md` однозначно означают файлы приложения.
 
+### antd-first: что берём готовое
+
+Правило ТЗ R1.9: antd — первый выбор; свой компонент только при отсутствии
+аналога. Уже являются обёртками antd (менять не нужно): `Button`/`IconButton`,
+`TextField`, `TextAreaField`, `NumberField`, `SearchField`, `SelectField`,
+`DateField`, `ColorField`, `CheckboxField`, `SwitchField`, `Card`, `Tabs`,
+`EmptyState`, `Alert`, `Spin`, `Modal`+`useConfirm`, `Table`, `message`/`App`,
+`ConfigProvider`+`Segmented` (тема).
+
+| Сейчас | antd | Задача |
+|---|---|---|
+| `Avatar` (span + инициалы + CSS) | `Avatar` | T-4FC8A97B |
+| `Skeleton` + `.skeleton-line` | `Skeleton` | T-4FC8A97B |
+| `Badge`/`DocBadge`/`JobBadge` (`span.badge-*`) | `Tag` | T-4FC8A97B |
+| `TreeList` (`details/summary`) | `Tree` | T-4FC8A97B |
+| `Empty` (`p.muted`) и дубль `EmptyState` в `States.tsx` | `Empty` | T-4FC8A97B |
+| мобильный сайдбар (нет вообще) | `Drawer` | T-4FC8A97B |
+| иконки топбара без подсказок, меню профиля на `Popover` | `Tooltip`, `Dropdown` | T-4FC8A97B |
+| 404 (нет) | `Result status="404"` | T-59D31937 |
+| модель: `input` + `datalist`, провайдер: `SelectField` уже antd | `AutoComplete` | T-D24FD0BF |
+| чат: нативный `<select>`, трейс `<details>`, степпер — строка «Шаг N из M» | `SelectField`, `Collapse`, `Steps` | T-F4778357 |
+| календарь: вид через `SelectField`, файлы: кнопка «Дальше» | `Segmented`, `Pagination` (при `total`) | T-7805803A |
+| прогресс сфер — div с `width`, загрузка фото — `<input type="file">` | `Progress`, `Upload` | T-28C2A79F |
+| Growth/Tasks/People/Settings/Login/Jobs: ≈31 `<select>`, ≈52 `<input>`, 6 `<textarea>`, ≈115 `<button>` | `SelectField`, `TextField`, `NumberField`, `DateField`, `TextAreaField`, `Button`, `Checkbox` | T-7E446096 (+ Chat в T-F4778357) |
+
+Остаются своими осознанно: `PageHeader` (в antd 6 вынесен в
+pro-components), `WidgetHost`, `session`, поверхности и стекло, навигация
+сайдбара (ссылки с навигационной семантикой лучше `Menu` с `role="menu"`),
+виджеты FullCalendar/SVAR/Recharts. `Form` не переводим: формы шлют `FormData`,
+переход на antd Form — отдельный рефакторинг.
+
+Следствия: минус 2–3 файла (`Avatar.tsx`, `TreeList.tsx`, `States.tsx`) и ~8
+CSS-классов (`badge`, `avatar`, `state`, `skeleton-line`, `tree-*`), клавиатура
+и фокус в `Tree`/`AutoComplete`/`Select` бесплатно, `Progress` даёт
+`role="progressbar"`. Но antd-компоненты берут цвета из `ConfigProvider`, а не из
+Emotion: для стекла их оборачиваем, внутренности не перекрашиваем.
+
 ### Порядок и параллельность
 
 ```
@@ -87,6 +124,7 @@ T-4FC8A97B ──┬─> T-D24FD0BF ──┬─> T-F4778357
 | A8 SPA-fallback и 404 | T-59D31937 | unit-tests, e2e |
 | A9 `viewer` вычищен, CI `web-dist` | T-EAD5B055 | все проверки профиля |
 | A10 проверки и тесты без ослаблений | каждая задача | профиль + `devkit task check` |
+| A11 самописных дублей antd нет, нативных контролов на экранах нет | T-4FC8A97B, T-D24FD0BF, T-59D31937, T-F4778357, T-7805803A, T-28C2A79F, T-7E446096 | tsc, eslint, steiger, e2e (роли и подписи), ручная сверка |
 
 ## 5. Риски и как снимаем
 

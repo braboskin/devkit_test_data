@@ -44,3 +44,5 @@ updated_at: 2026-11-27T16:09:38.110Z
 ## Brief
 
 Один LlmSettingsForm в shared/ui: провайдер → адрес API (только для «Свой») → ключ (placeholder sk-..., password) → модель (input+datalist). Список моделей — новый POST /api/settings/llm/models (ключ не уходит в браузер, TRANSPORT подменяем), при отказе — каталог и ручной ввод. PUT /api/settings/llm принимает пустой api_key (сохраняется прежний). Компонент в SetupWizard.ModelStep и в секции «Модель» на /settings; провайдер выводится из base_url. Матрица test_isolation обновлена.
+
+Провайдер — antd Select, модель — antd AutoComplete (подсказки из списка провайдера + свободный ввод id для «Своего»), не input+datalist.
