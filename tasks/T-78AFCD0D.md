@@ -27,11 +27,11 @@ verification:
   - arch-python
 depends_on:
   - T-F4778357
-plan_version: 0
+plan_version: 1
 report: docs/reports/T-78AFCD0D.md
 assignee: null
 created_at: 2026-11-27T18:31:01.854Z
-updated_at: 2026-11-27T18:31:01.854Z
+updated_at: 2026-11-27T18:34:29.174Z
 ---
 
 # Чат: поиск по диалогам, «Стоп», «Глубокий анализ», вложения
