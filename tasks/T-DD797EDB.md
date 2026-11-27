@@ -23,7 +23,7 @@ plan_version: 1
 report: docs/reports/T-DD797EDB.md
 assignee: agent
 created_at: 2026-11-27T00:20:46.428Z
-updated_at: 2026-11-27T10:35:40.156Z
+updated_at: 2026-11-27T10:59:29.496Z
 ---
 
 # Бэкенд: миграции и эндпоинты под новый UI
