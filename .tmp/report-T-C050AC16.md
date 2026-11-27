@@ -10,10 +10,10 @@
   к своим адресам, новые (`/profile`, `/notifications`, `/space`) — заглушки.
   Редиректы: `/today` → `/`, `/documents` → `/files`, `/spheres` → `/interests`,
   `/projects` → `/interests` (до экрана S2). SPA-fallback проверен.
-- Каркас `AppShell`: липкая шапка (логотип, поиск с `Ctrl/⌘K`, аватар с бейджем
-  непрочитанных, меню профиля), левое меню из 9 пунктов со сворачиванием до
-  иконок, нижние табы Home/Chat/Space/Profile с safe-area, `PageHeader`.
-  Возврат после OAuth Яндекса (`?yadisk`) снова открывает настройки.
+- Каркас `AppShell`: липкая шапка (логотип, компактный поиск 260×34 с `Ctrl/⌘K`,
+  аватар с бейджем непрочитанных, меню профиля), левое меню из 9 пунктов со
+  сворачиванием до иконок, нижние табы Home/Chat/Space/Profile с safe-area,
+  `PageHeader`. Возврат после OAuth Яндекса (`?yadisk`) снова открывает настройки.
 - Тема и токены: `styles/tokens.css` — один источник цветов, тёмная/светлая/
   системная, `--accent` из пикера по всей палитре, `--accent-contrast` по
   яркости, фокус-кольцо, фон-пресеты (аврора/дымка/ночь), тема в localStorage
@@ -29,6 +29,9 @@
 - Тесты `test_web_build` и `test_growth` адаптированы под перенос навигации в
   `AppShell`/`router`: проверки не ослаблены, те же утверждения на новых
   файлах, allowlist зависимостей обновлён под утверждённый план S0.
+- По ревью владельца (скриншот): поле поиска в шапке стало компактнее
+  (260×34 вместо 420×40), акцент, фон и стекло настраиваются на странице
+  профиля; в меню профиля остался только переключатель темы.
 
 ## Изменения
 
@@ -37,6 +40,7 @@
 - `a21e066` — feat(viewer): shell, роутер, токены, тема, стекло.
 - `2c79dd7` — fix(viewer,tests): OAuth-возврат в настройки, тесты следуют за
   роутером.
+- `1cb5ce7` — fix(viewer): компактный поиск, настройки вида в профиле.
 
 Файлы: `viewer/package.json` и `package-lock.json`, `viewer/index.html`,
 `viewer/src/app/{App.tsx,main.tsx,AppShell.tsx,SearchOverlay.tsx,router.tsx}`,
@@ -51,19 +55,19 @@
 
 | Проверка | Команда | Результат |
 |---|---|---|
-| web-build | `npm run build` | exit 0; dist 1.01 MB JS / 311 KB gzip, CSS 19 KB |
+| web-build | `npm run build` | exit 0; dist 1.01 MB JS / 311 KB gzip, CSS 19.1 KB |
 | typecheck-web | `npx tsc --noEmit` | exit 0 |
 | lint-web | `npx eslint .` | exit 0, 0 выключений |
 | arch-web | `npx steiger ./src` | exit 0, «No problems found» |
 | format-web | `npx prettier --check .` | exit 0, «All matched files use Prettier code style» |
-| unit-tests | `python -m unittest discover -s tests` | exit 0, Ran 446 tests, OK |
+| unit-tests | `python -m unittest discover -s tests` | exit 0, Ran 446 tests, OK (284 s) |
 
 Smoke: `vite preview` отдаёт `/` и SPA-fallback `/settings` (200), ассет
 1 011 787 байт.
 
 ## Риски
 
-- **Bundle 1.01 MB (311 KB gzip)** — начал предупреждать Vite о чанках >500 KB.
+- **Bundle 1.01 MB (311 KB gzip)** — Vite предупреждает о чанках >500 KB.
   Нужен route-level `lazy`/`import()`; предложу в S4 или отдельной chore.
 - **Service worker** (`public/sw.js`) не проверялся в браузере на новых
   маршрутах: кэш навигации может отдавать старый shell. Проверить в S4 вместе
