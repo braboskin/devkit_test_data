@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>Atlas — варианты островов (dark)</title>
+<style>
+  :root {
+    --bg0: #06070a; --bg1: #0d1016;
+    --surface: rgba(22, 25, 31, 0.55);
+    --raised: rgba(30, 34, 41, 0.86);
+    --sunken: rgba(8, 9, 12, 0.9);
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.16);
+    --text: #e6e8eb; --muted: #98a2b3; --faint: #6b7280;
+    --accent: #3b82f6; --accent-soft: rgba(59, 130, 246, 0.16); --on-accent: #fff;
+    --ok: #34d399; --warn: #fbbf24; --danger: #f87171;
+
+    /* переопределяются вариантом */
+    --island-bg: rgba(26, 30, 37, 0.62);
+    --island-border: rgba(255, 255, 255, 0.08);
+    --island-hi: rgba(255, 255, 255, 0.06);
+    --island-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+    --island-blur: 26px;
+    --island-inset: none;
+  }
+
+  /* 1. Графит: тёмное стекло без подсветки, тонкая кромка */
+  body.v1 {
+    --island-bg: rgba(13, 15, 19, 0.62);
+    --island-border: rgba(255, 255, 255, 0.07);
+    --island-hi: rgba(255, 255, 255, 0.03);
+    --island-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+  }
+  /* 2. Обсидиан + акцентная кромка и свечение сверху */
+  body.v2 {
+    --island-bg: rgba(9, 11, 14, 0.72);
+    --island-border: color-mix(in srgb, var(--accent) 34%, rgba(255,255,255,0.06));
+    --island-hi: rgba(59, 130, 246, 0.1);
+    --island-shadow: 0 22px 54px rgba(0, 0, 0, 0.6);
+    --island-inset: inset 0 1px 0 rgba(59, 130, 246, 0.28);
+  }
+  /* 3. Дымчатое стекло: полупрозрачное, сильный blur, блик как в iOS */
+  body.v3 {
+    --island-bg: rgba(16, 19, 24, 0.44);
+    --island-border: rgba(255, 255, 255, 0.1);
+    --island-hi: rgba(255, 255, 255, 0.11);
+    --island-shadow: 0 26px 70px rgba(0, 0, 0, 0.6);
+    --island-blur: 34px;
+  }
+  /* 4. Карбон: почти непрозрачный, чёткая кромка, без блика — максимальная читаемость */
+  body.v4 {
+    --island-bg: rgba(17, 19, 23, 0.94);
+    --island-border: rgba(255, 255, 255, 0.12);
+    --island-hi: transparent;
+    --island-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+    --island-blur: 0px;
+  }
+  /* 5. Liquid Ink: глубокий градиент, бликовая струя по верху слева, глубокая тень */
+  body.v5 {
+    --island-bg: linear-gradient(150deg, rgba(20, 24, 31, 0.78), rgba(8, 9, 12, 0.9) 62%);
+    --island-border: rgba(255, 255, 255, 0.11);
+    --island-hi: rgba(255, 255, 255, 0.14);
+    --island-shadow: 0 30px 80px rgba(0, 0, 0, 0.68);
+    --island-blur: 20px;
+    --island-inset: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background:
+      radial-gradient(60% 45% at 82% -8%, rgba(59, 130, 246, 0.18), transparent 68%),
+      radial-gradient(45% 40% at 6% 110%, rgba(59, 130, 246, 0.1), transparent 70%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    color: var(--text);
+    font: 400 14px/1.45 "Roboto Condensed", "Segoe UI", system-ui, sans-serif;
+  }
+  .page { display: none; min-height: 100vh; }
+  .page:target { display: block; }
+  .shell { display: flex; flex-direction: column; min-height: 100vh; padding: 14px; gap: 12px; }
+
+  .top { display: flex; align-items: center; gap: 10px; }
+  .island {
+    background: var(--island-bg);
+    border: 1px solid var(--island-border);
+    border-radius: 22px;
+    box-shadow: var(--island-shadow), var(--island-inset);
+    backdrop-filter: blur(var(--island-blur)) saturate(140%);
+    -webkit-backdrop-filter: blur(var(--island-blur)) saturate(140%);
+    position: relative;
+    overflow: hidden;
+  }
+  .island::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(180deg, var(--island-hi), transparent 44%);
+  }
+  .island > * { position: relative; }
+
+  .brand-island { display: flex; align-items: center; gap: 10px; padding: 9px 16px; }
+  .logo { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: linear-gradient(160deg, #3b82f6, #1d4ed8); color: #fff; font-weight: 700; }
+  .brand-island b { font-size: 16px; font-weight: 600; }
+  .spacer { flex: 1; }
+  .search-island { display: flex; align-items: center; gap: 9px; width: 460px; height: 44px; padding: 0 16px; color: var(--faint); font-size: 13px; }
+  .search-island .kbd { margin-left: auto; border: 1px solid var(--border-strong); border-radius: 7px; padding: 1px 6px; font-size: 10.5px; color: var(--muted); }
+  .right-island { display: flex; align-items: center; gap: 6px; padding: 6px 10px; }
+  .ico { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); position: relative; }
+  .ico.on { background: var(--accent-soft); color: var(--text); }
+  .ico .dot { position: absolute; top: 3px; right: 4px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); border: 2px solid #0b0d11; }
+  .ava { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(160deg, #475569, #1f2937); font-size: 12px; }
+
+  .body { display: flex; gap: 12px; flex: 1; min-height: 0; }
+  .side { width: 240px; flex: 0 0 auto; padding: 12px; display: flex; flex-direction: column; gap: 4px; }
+  .navlabel { padding: 10px 12px 4px; color: var(--faint); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .nav a { display: flex; align-items: center; gap: 10px; min-height: 38px; padding: 0 12px; border-radius: 14px; color: var(--muted); text-decoration: none; font-size: 13.5px; }
+  .nav a.active { color: var(--text); background: var(--accent-soft); box-shadow: inset 2px 0 var(--accent); }
+  .nav a .count { margin-left: auto; font-size: 11px; color: var(--faint); }
+  .side-foot { margin-top: auto; border-radius: 14px; border: 1px solid var(--border); background: rgba(8, 9, 12, 0.4); padding: 10px 12px; }
+  .side-foot b { display: block; font-size: 12px; }
+  .side-foot span { color: var(--muted); font-size: 11px; }
+
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; padding: 4px 2px 8px; }
+  .label { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface); font-size: 12px; color: var(--muted); width: fit-content; }
+  .label b { color: var(--text); font-weight: 500; }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 16px; }
+  h1 { margin: 2px 0 6px; font-size: 28px; font-weight: 600; }
+  .lead { margin: 0; color: var(--muted); font-size: 13px; }
+  .chip { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: var(--sunken); border: 1px solid var(--border); color: var(--muted); font-size: 11.5px; }
+  .chip.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 35%, transparent); background: color-mix(in srgb, var(--ok) 12%, transparent); }
+</style>
+</head>
+<body>
+<div class="page" id="v1">
+  <div class="shell">
+    <div class="top"><div class="island brand-island"><div class="logo">A</div><b>Atlas</b></div><div class="spacer"></div><div class="island search-island">Поиск по Atlas<span class="kbd">Ctrl K</span></div><div class="spacer"></div><div class="island right-island"><div class="ico on">●</div><div class="ava">М</div></div></div>
+    <div class="body"><aside class="island side"><div class="nav"><a class="active" href="#v1">Главная</a><a href="#">Развитие</a><a href="#">Чат</a><a href="#">Календарь</a></div><div class="navlabel">Система</div><div class="nav"><a href="#">Проекты</a><a href="#">Задачи</a><a href="#">Люди</a><a href="#">Файлы</a></div><div class="side-foot"><b>Индекс знаний</b><span>128 документов · 4 820 фрагментов</span></div></aside>
+      <div class="main"><div class="label"><b>1. Графит</b> · тёмное стекло, тонкая кромка, без подсветки</div><div class="panel"><h1>Графит</h1><p class="lead">Почти непрозрачная тёмная основа (13,15,19 · 62%), едва заметный блик сверху, тень мягкая. Остров «уходит» в фон, читаемость максимальная, акцент живёт только в навигации.</p><p style="margin-top:14px"><span class="chip">спокойно</span> <span class="chip">дизайн-система по умолчанию</span></p></div></div></div>
+  </div>
+</div>
+
+<div class="page" id="v2">
+  <div class="shell">
+    <div class="top"><div class="island brand-island"><div class="logo">A</div><b>Atlas</b></div><div class="spacer"></div><div class="island search-island">Поиск по Atlas<span class="kbd">Ctrl K</span></div><div class="spacer"></div><div class="island right-island"><div class="ico on">●</div><div class="ava">М</div></div></div>
+    <div class="body"><aside class="island side"><div class="nav"><a class="active" href="#v2">Главная</a><a href="#">Развитие</a><a href="#">Чат</a><a href="#">Календарь</a></div><div class="navlabel">Система</div><div class="nav"><a href="#">Проекты</a><a href="#">Задачи</a><a href="#">Люди</a><a href="#">Файлы</a></div><div class="side-foot"><b>Индекс знаний</b><span>128 документов · 4 820 фрагментов</span></div></aside>
+      <div class="main"><div class="label"><b>2. Обсидиан</b> · глубокий чёрный + акцентная кромка и свечение</div><div class="panel"><h1>Обсидиан</h1><p class="lead">Самый тёмный вариант (9,11,14 · 72%): остров почти сливается с фоном, но выделен тонкой кромкой акцента и голубым свечением по верхней грани. Технологично, но акцентного света много.</p><p style="margin-top:14px"><span class="chip">глубокий тёмный</span> <span class="chip">акцентная кромка</span></p></div></div></div>
+  </div>
+</div>
+
+<div class="page" id="v3">
+  <div class="shell">
+    <div class="top"><div class="island brand-island"><div class="logo">A</div><b>Atlas</b></div><div class="spacer"></div><div class="island search-island">Поиск по Atlas<span class="kbd">Ctrl K</span></div><div class="spacer"></div><div class="island right-island"><div class="ico on">●</div><div class="ava">М</div></div></div>
+    <div class="body"><aside class="island side"><div class="nav"><a class="active" href="#v3">Главная</a><a href="#">Развитие</a><a href="#">Чат</a><a href="#">Календарь</a></div><div class="navlabel">Система</div><div class="nav"><a href="#">Проекты</a><a href="#">Задачи</a><a href="#">Люди</a><a href="#">Файлы</a></div><div class="side-foot"><b>Индекс знаний</b><span>128 документов · 4 820 фрагментов</span></div></aside>
+      <div class="main"><div class="label"><b>3. Дымчатое стекло</b> · прозрачнее, сильный blur, блик как в iOS</div><div class="panel"><h1>Дымчатое стекло</h1><p class="lead">Полупрозрачная основа (16,19,24 · 44%) с агрессивным размытием фона и заметным бликом сверху — «настоящий LiquidGlass». Фон просвечивает сильнее, тени глубже, читаемость текста чуть ниже, чем в 1/4.</p><p style="margin-top:14px"><span class="chip">больше стекла</span> <span class="chip">фон просвечивает</span></p></div></div></div>
+  </div>
+</div>
+
+<div class="page" id="v4">
+  <div class="shell">
+    <div class="top"><div class="island brand-island"><div class="logo">A</div><b>Atlas</b></div><div class="spacer"></div><div class="island search-island">Поиск по Atlas<span class="kbd">Ctrl K</span></div><div class="spacer"></div><div class="island right-island"><div class="ico on">●</div><div class="ava">М</div></div></div>
+    <div class="body"><aside class="island side"><div class="nav"><a class="active" href="#v4">Главная</a><a href="#">Развитие</a><a href="#">Чат</a><a href="#">Календарь</a></div><div class="navlabel">Система</div><div class="nav"><a href="#">Проекты</a><a href="#">Задачи</a><a href="#">Люди</a><a href="#">Файлы</a></div><div class="side-foot"><b>Индекс знаний</b><span>128 документов · 4 820 фрагментов</span></div></aside>
+      <div class="main"><div class="label"><b>4. Карбон</b> · почти непрозрачный, чёткая кромка, без блика</div><div class="panel"><h1>Карбон</h1><p class="lead">Плотная карбоновая плашка (17,19,23 · 94%) без размытия и блика, с чёткой светлой кромкой 12%. Максимальная читаемость и минимальная нагрузка на GPU; «острова» выглядят как отдельные панели, а не стекло.</p><p style="margin-top:14px"><span class="chip ok">лучший контраст</span> <span class="chip">без blur</span></p></div></div></div>
+  </div>
+</div>
+
+<div class="page" id="v5">
+  <div class="shell">
+    <div class="top"><div class="island brand-island"><div class="logo">A</div><b>Atlas</b></div><div class="spacer"></div><div class="island search-island">Поиск по Atlas<span class="kbd">Ctrl K</span></div><div class="spacer"></div><div class="island right-island"><div class="ico on">●</div><div class="ava">М</div></div></div>
+    <div class="body"><aside class="island side"><div class="nav"><a class="active" href="#v5">Главная</a><a href="#">Развитие</a><a href="#">Чат</a><a href="#">Календарь</a></div><div class="navlabel">Система</div><div class="nav"><a href="#">Проекты</a><a href="#">Задачи</a><a href="#">Люди</a><a href="#">Файлы</a></div><div class="side-foot"><b>Индекс знаний</b><span>128 документов · 4 820 фрагментов</span></div></aside>
+      <div class="main"><div class="label"><b>5. Liquid Ink</b> · градиент, бликовая полоса, глубокая тень</div><div class="panel"><h1>Liquid Ink</h1><p class="lead">Тёмный градиент по диагонали (20,24,31 → 8,9,12), по верхней грани — узкая бликовая полоса, тень самая глубокая. Чернильное стекло: эффектно, но самый «декоративный» вариант, и на светлой теме его нужно пересобирать.</p><p style="margin-top:14px"><span class="chip">выразительно</span> <span class="chip">градиент + блик</span></p></div></div></div>
+  </div>
+</div>
+
+<script>
+  const variants = ['v1', 'v2', 'v3', 'v4', 'v5'];
+  function show() {
+    const id = (location.hash || '#v1').slice(1);
+    const target = variants.includes(id) ? id : 'v1';
+    document.body.className = target;
+    variants.forEach((name) => {
+      document.getElementById(name).style.display = name === target ? 'block' : 'none';
+    });
+  }
+  window.addEventListener('hashchange', show);
+  show();
+</script>
+</body>
+</html>
