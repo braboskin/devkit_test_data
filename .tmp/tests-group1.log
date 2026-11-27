@@ -1,0 +1,8 @@
+...................indexing failed for document 1: RuntimeError
+indexing failed for document 1: RuntimeError
+...................yadisk token is unavailable: remote original of document 1 kept
+..
+----------------------------------------------------------------------
+Ran 40 tests in 25.854s
+
+OK
