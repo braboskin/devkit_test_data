@@ -14,4 +14,4 @@ dist/assets/index-CNuVPiXo.js   1,011.97 kB │ gzip: 311.04 kB
 - Using dynamic import() to code-split the application
 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
-✓ built in 707ms
+✓ built in 682ms
