@@ -3,7 +3,7 @@ id: T-DD797EDB
 project: atlas
 epic: E-AA7F23F1
 title: "Бэкенд: миграции и эндпоинты под новый UI"
-status: planned
+status: in_progress
 type: feature
 size: L
 priority: high
@@ -21,9 +21,9 @@ verification:
 depends_on: []
 plan_version: 1
 report: docs/reports/T-DD797EDB.md
-assignee: null
+assignee: agent
 created_at: 2026-11-27T00:20:46.428Z
-updated_at: 2026-11-27T10:35:39.621Z
+updated_at: 2026-11-27T10:35:40.156Z
 ---
 
 # Бэкенд: миграции и эндпоинты под новый UI
