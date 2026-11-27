@@ -1,0 +1,79 @@
+# План T-EAD5B055 — переименование `viewer/` в `web/`
+
+## Контекст
+
+- Каталог фронтенда — `repo/atlas/viewer`, но имя зашито в живых ссылках:
+  `devkit.yaml` (7 `cwd` + setup `install-viewer`), `.github/workflows/ci.yml`
+  (`working-directory`, artifact `viewer-dist`, upload/download),
+  `.pre-commit-config.yaml` (prettier/eslint пути), `pyproject.toml` (`exclude`),
+  `app/backend/main.py` (`ROOT / "viewer" / "dist"`, mount name `viewer`),
+  тесты (`test_viewer_acceptance.py`, пути в `test_web_build.py`,
+  `test_growth.py`, `test_app_auth.py`, `test_push.py`), `repo/atlas/AGENTS.md`,
+  `README.md`, `app/README.md`.
+- Архив `docs/coordination/archive/DEVKIT.md` — исторический документ, не
+  переписывается (ТЗ R4).
+- Задача идёт последней, чтобы не ломать пути у остальных задач эпика.
+- Имена проверок профиля (`web-build`, `typecheck-web`, …) не меняются —
+  их сохраняет `AGENTS.md`.
+
+## Шаги
+
+1. `git mv viewer web` в `repo/atlas` (одним коммитом-переименованием, чтобы
+   git увидел rename, а не delete+add).
+2. `web/package.json` → `"name": "atlas-web"`; `package-lock.json` — `name` в
+   корне и в `packages[""]` (проверить, что `npm ci` не ругается).
+3. `devkit.yaml`: 7 путей `cwd` и setup `install-viewer` → `install-web`
+   (`devkit profile set --file devkit.yaml` или ручная правка + `devkit profile
+   show` для валидации). Имена verification-команд не трогать.
+4. `.github/workflows/ci.yml`: `working-directory: web`, artifact `web-dist`,
+   шаги upload/download, пути `web/dist`.
+5. `.pre-commit-config.yaml`: `node web/node_modules/...`, `files: ^web/src/...`;
+   `pyproject.toml`: `exclude = [..., "web"]`.
+6. `app/backend/main.py`: `ROOT / "web" / "dist"`, `name="web"`.
+7. Тесты: `git mv tests/test_viewer_acceptance.py tests/test_web_acceptance.py`
+   (переименование, не удаление), переменные `VIEWER` → `WEB`, пути
+   `viewer/...` → `web/...` в `test_web_build.py`, `test_growth.py`,
+   `test_app_auth.py`, `test_push.py`; докстринги и сообщения скипов.
+8. Документация: `repo/atlas/AGENTS.md` (команды, структура FSD),
+   `README.md`, `app/README.md`.
+9. Проверка: `rg -i "viewer" repo/atlas` — остаются только архив и
+   исторические упоминания в changelog-подобных файлах; `npm ci && npm run
+   build` в `web/`; полный профиль (все 10 обязательных проверок); e2e
+   (сборка теперь в `web/dist`, fallback из T-59D31937 читает новый путь).
+
+## Acceptance
+
+- A9: `viewer` не встречается в живых ссылках; CI-artifact `web-dist`;
+  `npm ci && npm run build` в `web/` зелёный.
+- Все обязательные проверки профиля зелёные после переименования; e2e и a11y
+  работают (браузер ищет сборку в `web/dist`).
+- `test_web_acceptance.py` собран и проходит (не скипнут) при собранном
+  `web/dist`.
+- Архив `docs/coordination/archive/DEVKIT.md` не изменён.
+- `devkit.yaml` валиден (`devkit profile show` → `valid`).
+
+## Проверки
+
+`web-build`, `typecheck-web`, `lint-web`, `arch-web`, `e2e`, `a11y`,
+`unit-tests`, `lint-python`, `typecheck-python`, `arch-python`.
+
+## Scope
+
+`viewer/**` (переименование в `web/**`), `devkit.yaml`,
+`.github/workflows/ci.yml`, `.pre-commit-config.yaml`, `pyproject.toml`,
+`app/backend/main.py`, `tests/**`, `AGENTS.md`, `README.md`, `app/README.md`.
+
+Вне scope: содержимое кода (кроме путей), архивные документы, остальные экраны.
+
+## Риски
+
+1. **git rename** — делать `git mv` и не смешивать с содержательными правками,
+   иначе история теряется.
+2. **`package-lock.json`** — имя пакета в двух местах; `npm ci` падает при
+   несоответствии.
+3. **CI-artifact** `web-dist` скачивается python-джобой — обе стороны должны
+   совпасть, иначе `test_web_build` скипнется и ослабит проверку.
+4. **Windows-пути в `devkit.yaml`** — абсолютные; обновить все 7 и проверить
+   `devkit profile show`.
+5. **Скрытые ссылки** — `viewer` в логах/отчётах/планах не переименовываем
+   задним числом; проверяем только живые конфиги и код.

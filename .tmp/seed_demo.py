@@ -79,8 +79,25 @@ def wipe(owner_id: str, *, keep_integrations: bool) -> None:
     q("delete from habit_logs where habit_id in (select id from habits where owner_id=?)", (owner_id,))
     q("delete from metric_entries where metric_id in (select id from metrics where owner_id=?)", (owner_id,))
 
-    for table in owner_tables:
+    order = [
+        "task_dependencies", "task_people", "event_participants",
+        "person_spheres", "person_projects", "habit_logs", "metric_entries",
+        "messages", "chunks", "proposals", "agent_calls", "agent_grants",
+        "scenarios", "agents", "tasks", "events", "goals", "documents",
+        "chats", "people", "projects", "spheres", "habits", "metrics",
+        "growth_settings", "notifications", "push_subscriptions",
+        "notification_settings", "onboarding_sessions", "user_profile",
+        "journal_entries", "reviews", "integrations", "llm_credentials",
+        "sessions",
+    ]
+    for table in order:
+        if table not in owner_tables:
+            continue
         if keep_integrations and table in {"integrations", "llm_credentials"}:
+            continue
+        q(f"delete from {table} where owner_id=?", (owner_id,))
+    for table in owner_tables:
+        if table in order:
             continue
         q(f"delete from {table} where owner_id=?", (owner_id,))
 
