@@ -1,0 +1,48 @@
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: @typescript-eslint/typescript-estree@8.74.0
+npm warn Found: @typescript/native@7.0.2
+npm warn node_modules/@typescript/native
+npm warn   dev @typescript/native@"npm:typescript@^7.0.2" from the root project
+npm warn
+npm warn Could not resolve dependency:
+npm warn peerOptional @typescript/native@"npm:typescript@>=7.1.0-dev.20261009.1 || >=7.1.0-beta <7.1.0-dev" from @typescript-eslint/typescript-estree@8.74.0
+npm warn node_modules/@typescript-eslint/typescript-estree
+npm warn   @typescript-eslint/typescript-estree@"8.74.0" from @typescript-eslint/parser@8.74.0
+npm warn   node_modules/@typescript-eslint/parser
+npm warn   3 more (@typescript-eslint/type-utils, ...)
+npm warn
+npm warn Conflicting peer dependency: @typescript/native@7.1.0-dev.20261127.1
+npm warn node_modules/@typescript/native
+npm warn   peerOptional @typescript/native@"npm:typescript@>=7.1.0-dev.20261009.1 || >=7.1.0-beta <7.1.0-dev" from @typescript-eslint/typescript-estree@8.74.0
+npm warn   node_modules/@typescript-eslint/typescript-estree
+npm warn     @typescript-eslint/typescript-estree@"8.74.0" from @typescript-eslint/parser@8.74.0
+npm warn     node_modules/@typescript-eslint/parser
+npm warn     3 more (@typescript-eslint/type-utils, ...)
+npm warn ERESOLVE overriding peer dependency
+npm warn Found: typescript@6.0.2
+npm warn node_modules/typescript
+npm warn   peer typescript@">=4.8.4 <6.1.0" from @typescript-eslint/eslint-plugin@8.74.0
+npm warn   node_modules/@typescript-eslint/eslint-plugin
+npm warn     @typescript-eslint/eslint-plugin@"8.74.0" from typescript-eslint@8.74.0
+npm warn     node_modules/typescript-eslint
+npm warn   9 more (@typescript-eslint/parser, ...)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peerOptional typescript@"^5.0.0" from tsconfck@3.1.6
+npm warn node_modules/tsconfck
+npm warn   tsconfck@"^3.1.6" from @feature-sliced/steiger-plugin@0.8.2
+npm warn   node_modules/@feature-sliced/steiger-plugin
+npm warn
+npm warn Conflicting peer dependency: typescript@5.9.3
+npm warn node_modules/@feature-sliced/filesystem/node_modules/typescript
+npm warn   peerOptional typescript@"^5.0.0" from tsconfck@3.1.6
+npm warn   node_modules/tsconfck
+npm warn     tsconfck@"^3.1.6" from @feature-sliced/steiger-plugin@0.8.2
+npm warn     node_modules/@feature-sliced/steiger-plugin
+
+added 5 packages, and audited 423 packages in 4s
+
+67 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
