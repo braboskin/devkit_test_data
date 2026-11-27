@@ -17,11 +17,11 @@ verification:
   - arch-web
 depends_on:
   - T-84858592
-plan_version: 0
+plan_version: 1
 report: docs/reports/T-3FEAB172.md
 assignee: null
 created_at: 2026-11-27T13:37:42.524Z
-updated_at: 2026-11-27T13:37:42.524Z
+updated_at: 2026-11-27T15:10:52.343Z
 ---
 
 # Настройки и Задания: рестайл на дизайн-системе
