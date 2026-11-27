@@ -53,18 +53,12 @@ async function installMocks(page) {
       await route.fallback();
       return;
     }
-    const body = MOCKS[url.pathname] ?? [];
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify(body),
+      body: JSON.stringify(MOCKS[url.pathname] ?? []),
     });
   });
-}
-
-async function waitForApp(page, text) {
-  await page.getByText(text).first().waitFor({ timeout: 15000 });
-  await page.waitForTimeout(500);
 }
 
 async function main() {
@@ -91,7 +85,8 @@ async function main() {
 
   // --- Настройки: до/после ---
   await page.goto('http://localhost:5174/settings');
-  await waitForApp(page, 'Настройки');
+  await page.getByText('Сводка профиля').first().waitFor({ timeout: 15000 });
+  await page.waitForTimeout(600);
   await page.screenshot({ path: `${OUT}/settings-before.png`, fullPage: true });
   await page.addStyleTag({
     content: '[aria-labelledby="profile-heading"]{display:none!important}',
@@ -101,7 +96,8 @@ async function main() {
 
   // --- Профиль: до/после ---
   await page.goto('http://localhost:5174/profile');
-  await waitForApp(page, 'Контекст для агента');
+  await page.getByText('Контекст для агента').first().waitFor({ timeout: 15000 });
+  await page.waitForTimeout(600);
   await page.screenshot({ path: `${OUT}/profile-before.png`, fullPage: true });
 
   const report = await page.evaluate(() => {
@@ -109,51 +105,48 @@ async function main() {
       node.textContent.includes('Контекст для агента'),
     );
     if (!form) return { ok: false, reason: 'form not found' };
-    const field = form.querySelector('.field');
     const row = form.querySelector('.row');
-    if (!field || !row) return { ok: false, reason: 'field/row not found' };
+    const field = row?.children[0];
+    const sourceInput = field?.querySelector('input');
+    if (!row || !field || !sourceInput) {
+      return { ok: false, reason: 'row/field/input not found' };
+    }
 
-    const sourceInput = field.querySelector('input');
-    const computed = getComputedStyle(sourceInput);
-    const clone = field.cloneNode(true);
-    const input = clone.querySelector('input');
     const textarea = document.createElement('textarea');
-    textarea.rows = 4;
+    textarea.className = sourceInput.className;
+    textarea.id = 'summary';
+    textarea.rows = 5;
     textarea.value =
       'Сферы: Здоровье, Работа. Проекты: Atlas. Цели: запустить v1. Важно: ясность, короткие ответы, никаких диагнозов.';
-    const style = {
-      width: '100%',
-      minHeight: '110px',
+    Object.assign(textarea.style, {
+      minHeight: '150px',
       resize: 'vertical',
-      backgroundColor: computed.backgroundColor,
-      backgroundImage: computed.backgroundImage,
-      color: computed.color,
-      border: computed.border,
-      borderColor: computed.borderColor,
-      borderRadius: computed.borderRadius,
-      padding: computed.padding,
-      fontFamily: computed.fontFamily,
-      fontSize: computed.fontSize,
-      lineHeight: computed.lineHeight,
-      boxShadow: computed.boxShadow,
-      outline: 'none',
-    };
-    Object.assign(textarea.style, style);
-    input.replaceWith(textarea);
-    const label = clone.querySelector('label');
-    if (label) label.textContent = 'О владельце (сводка профиля)';
+      lineHeight: '1.5',
+      padding: '10px 11px',
+    });
+    sourceInput.replaceWith(textarea);
 
-    row.replaceChildren(clone);
-    for (const node of [...form.querySelectorAll('.field')]) {
-      if (node.contains(clone)) continue;
-      node.remove();
+    const label = field.querySelector('label');
+    if (label) {
+      label.textContent = 'О владельце (сводка профиля)';
+      label.setAttribute('for', 'summary');
     }
+
+    for (const node of [...row.children].slice(1)) node.remove();
+    row.replaceWith(field);
+    field.style.width = '100%';
+
+    for (const node of [...form.children]) {
+      if (node.querySelector('input[type="checkbox"]')) node.remove();
+    }
+
     const heading = form.querySelector('h2');
     if (heading) heading.textContent = 'О владельце';
     const note = form.querySelector('p.muted');
-    if (note)
+    if (note) {
       note.textContent =
         'Сводка профиля попадает в промпт всем агентам: кто вы, чем занимаетесь и что важно учитывать.';
+    }
     return { ok: true };
   });
 

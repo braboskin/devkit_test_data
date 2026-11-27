@@ -24,8 +24,12 @@ await context.addInitScript(() => {
   );
 });
 const page = await context.newPage();
-await page.route('**/api/**', async (route) => {
+await page.route('**/*', async (route) => {
   const url = new URL(route.request().url());
+  if (!url.pathname.startsWith('/api/')) {
+    await route.fallback();
+    return;
+  }
   await route.fulfill({
     status: 200,
     contentType: 'application/json',
@@ -39,15 +43,13 @@ const info = await page.evaluate(() => {
   const form = [...document.querySelectorAll('form')].find((node) =>
     node.textContent.includes('Контекст для агента'),
   );
-  const panel = form?.closest('[class]') ?? null;
   const inputs = [...(form?.querySelectorAll('input') ?? [])];
   const first = inputs[0];
   const cs = first ? getComputedStyle(first) : null;
   return {
+    formTag: form?.tagName ?? null,
     formClass: form?.className ?? null,
-    formParent: form?.parentElement?.className ?? null,
-    formHtml: form?.outerHTML.slice(0, 1200) ?? null,
-    inputCount: inputs.length,
+    formHtml: form?.outerHTML.slice(0, 2600) ?? null,
     inputStyle: cs
       ? {
           background: cs.backgroundColor,
@@ -60,8 +62,6 @@ const info = await page.evaluate(() => {
           height: cs.height,
         }
       : null,
-    labels: form ? [...form.querySelectorAll('label')].map((l) => l.textContent) : [],
-    headings: form ? [...form.querySelectorAll('h2')].map((h) => h.textContent) : [],
   };
 });
 console.log(JSON.stringify(info, null, 2));
