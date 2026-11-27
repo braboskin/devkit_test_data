@@ -19,11 +19,11 @@ verification:
   - arch-python
   - schema-check
 depends_on: []
-plan_version: 0
+plan_version: 1
 report: docs/reports/T-DD797EDB.md
 assignee: null
 created_at: 2026-11-27T00:20:46.428Z
-updated_at: 2026-11-27T00:20:46.428Z
+updated_at: 2026-11-27T00:36:34.320Z
 ---
 
 # Бэкенд: миграции и эндпоинты под новый UI
