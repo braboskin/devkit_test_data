@@ -3,7 +3,7 @@ id: T-78AFCD0D
 project: atlas
 epic: E-710FC7ED
 title: "Чат: поиск по диалогам, «Стоп», «Глубокий анализ», вложения"
-status: planned
+status: in_progress
 type: feature
 size: L
 priority: medium
@@ -29,9 +29,9 @@ depends_on:
   - T-F4778357
 plan_version: 1
 report: docs/reports/T-78AFCD0D.md
-assignee: null
+assignee: agent
 created_at: 2026-11-27T18:31:01.854Z
-updated_at: 2026-11-27T22:00:05.345Z
+updated_at: 2026-11-27T22:00:05.820Z
 ---
 
 # Чат: поиск по диалогам, «Стоп», «Глубокий анализ», вложения
