@@ -3,7 +3,7 @@ id: T-DB0D3FD0
 project: atlas
 epic: E-AA7F23F1
 title: "Онбординг: маршруты /setup/*, deep links, баннер пропуска и серверная идемпотентность"
-status: planned
+status: in_progress
 type: feature
 size: M
 priority: medium
@@ -24,9 +24,9 @@ depends_on:
   - T-6E58E324
 plan_version: 1
 report: docs/reports/T-DB0D3FD0.md
-assignee: null
+assignee: agent
 created_at: 2026-11-27T13:37:41.027Z
-updated_at: 2026-11-27T15:11:30.062Z
+updated_at: 2026-11-27T15:11:31.419Z
 ---
 
 # Онбординг: маршруты /setup/*, deep links, баннер пропуска и серверная идемпотентность
