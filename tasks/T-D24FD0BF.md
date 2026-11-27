@@ -36,7 +36,7 @@ plan_version: 1
 report: docs/reports/T-D24FD0BF.md
 assignee: agent
 created_at: 2026-11-27T16:09:38.110Z
-updated_at: 2026-11-27T17:37:53.520Z
+updated_at: 2026-11-27T18:12:03.627Z
 ---
 
 # Подключение LLM: провайдер, ключ, список моделей
