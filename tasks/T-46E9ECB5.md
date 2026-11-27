@@ -3,7 +3,7 @@ id: T-46E9ECB5
 project: atlas
 epic: E-AA7F23F1
 title: "Файлы: серверная пагинация и фильтры"
-status: planned
+status: in_progress
 type: feature
 size: M
 priority: medium
@@ -24,9 +24,9 @@ depends_on:
   - T-AC2A5666
 plan_version: 1
 report: docs/reports/T-46E9ECB5.md
-assignee: null
+assignee: agent
 created_at: 2026-11-27T13:37:39.879Z
-updated_at: 2026-11-27T14:17:02.338Z
+updated_at: 2026-11-27T14:17:03.644Z
 ---
 
 # Файлы: серверная пагинация и фильтры
