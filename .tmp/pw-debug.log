@@ -1,0 +1,41 @@
+npm notice run atlas-viewer@0.1.0 npx
+npm notice run playwright test debug.spec.ts --workers=1
+[WebServer] npm notice run atlas-viewer@0.1.0 preview
+[WebServer] npm notice run vite preview --host 127.0.0.1 --port 4173 --strictPort
+[WebServer] (node:29680) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:28840) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+RESP 200 http://127.0.0.1:4173/api/me
+RESP 200 http://127.0.0.1:4173/api/profile
+RESP 200 http://127.0.0.1:4173/api/notifications
+RESP 200 http://127.0.0.1:4173/api/profile
+RESP 200 http://127.0.0.1:4173/api/profile
+RESP 401 http://127.0.0.1:4173/api/documents?limit=5
+CONSOLE Failed to load resource: the server responded with a status of 401 (Unauthorized)
+RESP 200 http://127.0.0.1:4173/api/tasks
+RESP 200 http://127.0.0.1:4173/api/events
+RESP 200 http://127.0.0.1:4173/api/notifications?limit=20
+RESP 200 http://127.0.0.1:4173/api/goals
+RESP 200 http://127.0.0.1:4173/api/habits
+RESP 200 http://127.0.0.1:4173/api/metrics
+RESP 200 http://127.0.0.1:4173/api/notifications
+RESP 200 http://127.0.0.1:4173/api/settings/llm
+RESP 200 http://127.0.0.1:4173/api/settings/yadisk
+RESP 200 http://127.0.0.1:4173/api/settings/yadisk/config
+RESP 200 http://127.0.0.1:4173/api/spheres
+RESP 200 http://127.0.0.1:4173/api/profile
+URL http://127.0.0.1:4173/setup
+BODY Atlas Chat
+
+Войдите, чтобы работать со сферами, людьми, задачами и календарём.
+
+Имя пользователя
+Пароль
+Войти
+  ok 1 [chromium] › e2e\debug.spec.ts:4:1 › debug api (2.7s)
+
+  1 passed (4.2s)

@@ -1,0 +1,16 @@
+npm notice run atlas-viewer@0.1.0 npx
+npm notice run playwright test dbg.spec.ts --workers=1
+[WebServer] npm notice run atlas-viewer@0.1.0 preview
+[WebServer] npm notice run vite preview --host 127.0.0.1 --port 4173 --strictPort
+[WebServer] (node:27228) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:31456) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+C: DBG init http://127.0.0.1:4173/ null
+C: Failed to load resource: net::ERR_FAILED
+  ok 1 [chromium] › e2e\dbg.spec.ts:3:1 › dbg (977ms)
+
+  1 passed (2.5s)
