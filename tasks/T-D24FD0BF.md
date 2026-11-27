@@ -3,7 +3,7 @@ id: T-D24FD0BF
 project: atlas
 epic: E-710FC7ED
 title: "Подключение LLM: провайдер, ключ, список моделей"
-status: inbox
+status: planned
 type: feature
 size: L
 priority: high
@@ -36,7 +36,7 @@ plan_version: 1
 report: docs/reports/T-D24FD0BF.md
 assignee: null
 created_at: 2026-11-27T16:09:38.110Z
-updated_at: 2026-11-27T16:32:59.839Z
+updated_at: 2026-11-27T17:37:53.082Z
 ---
 
 # Подключение LLM: провайдер, ключ, список моделей
