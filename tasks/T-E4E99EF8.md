@@ -3,7 +3,7 @@ id: T-E4E99EF8
 project: atlas
 epic: E-AA7F23F1
 title: "Уведомления: автообновление списка и счётчика"
-status: done
+status: shipped
 type: feature
 size: S
 priority: medium
@@ -21,7 +21,7 @@ plan_version: 1
 report: docs/reports/T-E4E99EF8.md
 assignee: agent
 created_at: 2026-11-27T13:37:41.767Z
-updated_at: 2026-11-27T15:08:14.870Z
+updated_at: 2026-11-27T15:09:43.139Z
 ---
 
 # Уведомления: автообновление списка и счётчика
