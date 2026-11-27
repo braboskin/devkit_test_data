@@ -37,11 +37,11 @@ depends_on:
   - T-7805803A
   - T-28C2A79F
   - T-7E446096
-plan_version: 0
+plan_version: 1
 report: docs/reports/T-EAD5B055.md
 assignee: null
 created_at: 2026-11-27T16:10:14.649Z
-updated_at: 2026-11-27T16:10:14.649Z
+updated_at: 2026-11-27T16:33:01.847Z
 ---
 
 # Переименование viewer/ в web/
