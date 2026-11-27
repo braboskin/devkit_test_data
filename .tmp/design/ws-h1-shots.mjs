@@ -1,4 +1,4 @@
-import { createRequire } from 'node:module';
+﻿import { createRequire } from 'node:module';
 
 const require = createRequire(
   'X:/devkit_projects/projects/atlas/repo/atlas/viewer/package.json',
@@ -14,6 +14,7 @@ const at = (hour) => {
 const LATER = new Date(Date.now() + 36 * 3600 * 1000).toISOString();
 
 const MOCKS = {
+  '/api/me': { id: 'u1', username: 'Михаил' },
   '/api/profile': {
     data: { onboarding_done: true },
     summary: null,
