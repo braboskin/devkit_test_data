@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>Atlas Graphite — макеты v3</title>
+<style>
+  :root {
+    --bg0: #06070a; --bg1: #0d1016;
+    --surface: rgba(22, 25, 31, 0.55);
+    --raised: rgba(30, 34, 41, 0.86);
+    --sunken: rgba(8, 9, 12, 0.9);
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.16);
+    --text: #e6e8eb; --muted: #98a2b3; --faint: #6b7280;
+    --accent: #3b82f6; --accent-soft: rgba(59, 130, 246, 0.16); --on-accent: #fff;
+    --ok: #34d399; --warn: #fbbf24; --danger: #f87171;
+    --island: rgba(26, 30, 37, 0.62);
+    --island-hi: rgba(255, 255, 255, 0.06);
+    --island-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), 0 2px 0 rgba(255, 255, 255, 0.04) inset;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background:
+      radial-gradient(60% 45% at 82% -8%, rgba(59, 130, 246, 0.18), transparent 68%),
+      radial-gradient(45% 40% at 6% 110%, rgba(59, 130, 246, 0.1), transparent 70%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    color: var(--text);
+    font: 400 14px/1.45 "Roboto Condensed", "Segoe UI", system-ui, sans-serif;
+  }
+  .page { display: none; min-height: 100%; }
+  .page:target { display: block; }
+
+  /* ---------- islands shell ---------- */
+  .shell { display: flex; flex-direction: column; min-height: 100%; padding: 14px; gap: 12px; }
+  .top { display: flex; align-items: center; gap: 10px; }
+  .island {
+    background: var(--island);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: var(--island-shadow);
+    backdrop-filter: blur(26px) saturate(140%);
+    position: relative;
+    overflow: hidden;
+  }
+  .island::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(180deg, var(--island-hi), transparent 42%);
+  }
+  .brand-island { display: flex; align-items: center; gap: 10px; padding: 9px 16px; }
+  .logo { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: linear-gradient(160deg, #3b82f6, #1d4ed8); color: #fff; font-weight: 700; }
+  .brand-island b { font-size: 16px; font-weight: 600; }
+  .spacer { flex: 1; }
+  .search-island { display: flex; align-items: center; gap: 9px; width: 460px; height: 44px; padding: 0 16px; color: var(--faint); font-size: 13px; }
+  .search-island .kbd { margin-left: auto; border: 1px solid var(--border-strong); border-radius: 7px; padding: 1px 6px; font-size: 10.5px; color: var(--muted); }
+  .right-island { display: flex; align-items: center; gap: 6px; padding: 6px 10px; }
+  .ico { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); position: relative; }
+  .ico.on { background: var(--accent-soft); color: var(--text); }
+  .ico .dot { position: absolute; top: 3px; right: 4px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); border: 2px solid #0b0d11; }
+  .ava { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(160deg, #475569, #1f2937); font-size: 12px; }
+
+  .body { display: flex; gap: 12px; flex: 1; min-height: 0; }
+  .side { width: 240px; flex: 0 0 auto; padding: 12px; display: flex; flex-direction: column; gap: 4px; }
+  .navlabel { padding: 10px 12px 4px; color: var(--faint); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .nav a { display: flex; align-items: center; gap: 10px; min-height: 38px; padding: 0 12px; border-radius: 14px; color: var(--muted); text-decoration: none; font-size: 13.5px; }
+  .nav a.active { color: var(--text); background: var(--accent-soft); box-shadow: inset 2px 0 var(--accent); }
+  .nav a .count { margin-left: auto; font-size: 11px; color: var(--faint); }
+  .side-foot { margin-top: auto; border-radius: 14px; border: 1px solid var(--border); background: rgba(10, 12, 16, 0.5); padding: 10px 12px; }
+  .side-foot b { display: block; font-size: 12px; }
+  .side-foot span { color: var(--muted); font-size: 11px; }
+
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; padding: 4px 2px 8px; }
+  .eyebrow { color: var(--faint); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; }
+  h1 { margin: 2px 0 4px; font-size: 28px; font-weight: 600; }
+  .lead { margin: 0; color: var(--muted); font-size: 13px; }
+  .head { display: flex; align-items: flex-end; gap: 16px; }
+  .head .actions { margin-left: auto; display: flex; gap: 8px; }
+  .btn { display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); font: inherit; font-size: 13px; }
+  .btn.primary { background: var(--accent); border-color: transparent; color: var(--on-accent); font-weight: 500; }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 14px 16px; }
+  .tag { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: var(--sunken); border: 1px solid var(--border); color: var(--muted); font-size: 11.5px; }
+  .tag.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 35%, transparent); background: color-mix(in srgb, var(--ok) 12%, transparent); }
+  .tag.info { color: #bfdbfe; border-color: color-mix(in srgb, var(--accent) 35%, transparent); background: var(--accent-soft); }
+  .tag.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 35%, transparent); background: color-mix(in srgb, var(--warn) 12%, transparent); }
+  .tag.danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 35%, transparent); background: color-mix(in srgb, var(--danger) 12%, transparent); }
+
+  /* ---------- projects tree ---------- */
+  .toolbar { display: flex; align-items: center; gap: 10px; }
+  .searchbox { display: flex; align-items: center; gap: 8px; width: 320px; height: 34px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--sunken); color: var(--faint); font-size: 13px; }
+  .colfilters { margin-left: auto; display: flex; gap: 8px; }
+  .filter-btn { display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); font-size: 12.5px; }
+  .filter-btn .badge { width: 16px; height: 16px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 10px; display: grid; place-items: center; }
+
+  .tree { display: flex; flex-direction: column; }
+  .tree-head { display: grid; grid-template-columns: minmax(0, 1fr) 150px 130px 170px; gap: 12px; padding: 2px 10px 10px; border-bottom: 1px solid var(--border); color: var(--faint); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .tree-head span { display: flex; align-items: center; gap: 6px; }
+  .sort { color: var(--accent); }
+  .sphere-row { display: flex; align-items: center; gap: 10px; padding: 12px 10px 8px; color: var(--text); font-size: 13.5px; font-weight: 600; }
+  .chev { color: var(--muted); font-size: 11px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .muted { color: var(--muted); font-weight: 400; font-size: 12px; }
+  .proj-row { display: grid; grid-template-columns: minmax(0, 1fr) 150px 130px 170px; gap: 12px; align-items: center; padding: 10px 10px 10px 34px; border-top: 1px solid var(--border); }
+  .proj-row .name { font-size: 13.5px; }
+  .proj-row .sub { color: var(--muted); font-size: 11.5px; }
+  .bar { height: 6px; border-radius: 999px; background: var(--sunken); overflow: hidden; display: flex; align-items: center; gap: 8px; }
+  .bar i { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+  .bar span { color: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+  .empty-hint { padding: 10px 10px 6px 34px; color: var(--faint); font-size: 12px; }
+
+  .popover {
+    position: absolute; right: 16px; top: 118px; width: 320px; z-index: 3;
+    background: rgba(26, 30, 36, 0.98); border: 1px solid var(--border-strong);
+    border-radius: 16px; box-shadow: 0 26px 60px rgba(0, 0, 0, 0.55); padding: 12px;
+  }
+  .popover h4 { margin: 0 0 8px; font-size: 12px; color: var(--muted); font-weight: 500; }
+  .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: var(--sunken); border: 1px solid var(--border); border-radius: 10px; padding: 3px; margin-bottom: 10px; }
+  .modes span { text-align: center; height: 28px; display: grid; place-items: center; border-radius: 8px; color: var(--muted); font-size: 12px; }
+  .modes span.on { background: var(--raised); color: var(--text); }
+  .opt-line { display: flex; align-items: center; gap: 9px; min-height: 32px; font-size: 12.5px; }
+  .cbox { width: 16px; height: 16px; border-radius: 5px; border: 1.5px solid var(--border-strong); }
+  .cbox.on { background: var(--accent); border-color: var(--accent); }
+  .opt-line .cnt { margin-left: auto; color: var(--faint); font-size: 11px; }
+  .pop-foot { display: flex; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .pop-foot .btn { height: 30px; font-size: 12.5px; }
+
+  /* notifications island panel */
+  .notif { position: absolute; right: 14px; top: 66px; width: 360px; z-index: 3; padding: 14px; }
+  .notif h4 { margin: 0 0 10px; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+  .notif-item { display: flex; gap: 10px; padding: 10px 0; border-top: 1px solid var(--border); }
+  .notif-item:first-of-type { border-top: 0; }
+  .notif-item .txt b { font-size: 12.5px; font-weight: 500; }
+  .notif-item .txt p { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
+  .notif-item .x { color: var(--faint); margin-left: auto; font-size: 14px; }
+  .notif-foot { display: flex; justify-content: space-between; padding-top: 10px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; }
+
+  /* toast stack */
+  .toasts { position: fixed; right: 22px; bottom: 22px; display: flex; flex-direction: column; gap: 8px; z-index: 5; }
+  .toast { display: flex; gap: 10px; align-items: flex-start; width: 340px; background: rgba(26, 30, 36, 0.97); border: 1px solid var(--border-strong); border-radius: 14px; padding: 11px 12px; box-shadow: 0 18px 44px rgba(0,0,0,.5); font-size: 12.5px; }
+  .toast .bar-i { width: 3px; border-radius: 3px; align-self: stretch; background: var(--danger); }
+  .toast.ok .bar-i { background: var(--ok); }
+  .toast .txt b { display: block; margin-bottom: 2px; font-size: 12.5px; }
+  .toast .txt span { color: var(--muted); }
+  .toast .x { margin-left: auto; color: var(--faint); }
+</style>
+</head>
+<body>
+
+<!-- ============ SHELL: islands + notifications + toasts ============ -->
+<div class="page" id="shell">
+  <div class="shell">
+    <div class="top">
+      <div class="island brand-island"><div class="logo">A</div><b>Atlas</b></div>
+      <div class="spacer"></div>
+      <div class="island search-island"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>Поиск по Atlas<span class="kbd">Ctrl K</span></div>
+      <div class="spacer"></div>
+      <div class="island right-island">
+        <div class="ico on"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span class="dot"></span></div>
+        <div class="ava">М</div>
+      </div>
+      <div class="island notif">
+        <h4>Уведомления · 2 новых</h4>
+        <div class="notif-item"><div class="txt"><b>Не удалось сохранить документ</b><p>Сервер вернул 413 · 2 минуты назад</p></div><span class="x">✕</span></div>
+        <div class="notif-item"><div class="txt"><b>Событие создано</b><p>«Планёрка» — 28 ноября, 10:00</p></div><span class="x">✕</span></div>
+        <div class="notif-item"><div class="txt"><b>Воркер ПК подключён</b><p>Токен принят · 8 минут назад</p></div><span class="x">✕</span></div>
+        <div class="notif-foot"><span>Только в этом браузере</span><span>Прочитать все</span></div>
+      </div>
+    </div>
+
+    <div class="body">
+      <aside class="island side">
+        <div class="nav">
+          <a class="active" href="#shell"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Главная</a>
+          <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l2.4 5.6L20 11l-5.6 2.4L12 19l-2.4-5.6L4 11l5.6-2.4z"/></svg>Развитие</a>
+          <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12a8 8 0 1 1-3.2-6.4L21 4l-1.2 3.4A8 8 0 0 1 21 12z"/></svg>Чат<span class="count">3</span></a>
+          <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>Календарь</a>
+        </div>
+        <div class="navlabel">Система</div>
+        <div class="nav">
+          <a href="#projects"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="9" rx="1.5"/></svg>Проекты</a>
+          <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg>Задачи<span class="count">7</span></a>
+          <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0M17 11a3 3 0 1 0 0-6M18 20a5.5 5.5 0 0 0-2-4.3"/></svg>Люди</a>
+          <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/></svg>Файлы</a>
+        </div>
+        <div class="side-foot"><b>Индекс знаний</b><span>128 документов · 4 820 фрагментов</span></div>
+      </aside>
+
+      <div class="main">
+        <div class="head">
+          <div><div class="eyebrow">Вторник · 2 декабря</div><h1>Сегодня</h1><p class="lead">Три острова вместо панелей: поиск в центре, профиль и уведомления справа, навигация — слева.</p></div>
+        </div>
+        <div class="panel" style="display:flex;gap:12px;align-items:center">
+          <span class="tag info">остров навигации</span>
+          <span class="tag">остров поиска</span>
+          <span class="tag">остров профиля</span>
+          <span class="tag ok">тосты снизу справа</span>
+          <span class="muted" style="margin-left:auto">Настройки убраны из меню — вход через профиль и Ctrl+K</span>
+        </div>
+        <div class="panel" style="min-height:260px">
+          <h1 style="font-size:20px;margin:0 0 8px">Контентная область</h1>
+          <p class="lead">Фон виден между островами — стекло обыгрывает LiquidGlass: блик сверху, тень, скругление 22.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toasts">
+    <div class="toast"><div class="bar-i"></div><div class="txt"><b>Не удалось сохранить документ</b><span>Сервер вернул 413 — файл больше 20 МБ</span></div><span class="x">✕</span></div>
+    <div class="toast ok"><div class="bar-i"></div><div class="txt"><b>Событие создано</b><span>«Планёрка» — 28 ноября, 10:00</span></div><span class="x">✕</span></div>
+  </div>
+</div>
+
+<!-- ============ PROJECTS: tree + column filters ============ -->
+<div class="page" id="projects">
+  <div class="shell">
+    <div class="top">
+      <div class="island brand-island"><div class="logo">A</div><b>Atlas</b></div>
+      <div class="spacer"></div>
+      <div class="island search-island"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>Поиск по Atlas<span class="kbd">Ctrl K</span></div>
+      <div class="spacer"></div>
+      <div class="island right-island"><div class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div><div class="ava">М</div></div>
+    </div>
+
+    <div class="body">
+      <aside class="island side">
+        <div class="nav">
+          <a href="#shell"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Главная</a>
+          <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l2.4 5.6L20 11l-5.6 2.4L12 19l-2.4-5.6L4 11l5.6-2.4z"/></svg>Развитие</a>
+          <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12a8 8 0 1 1-3.2-6.4L21 4l-1.2 3.4A8 8 0 0 1 21 12z"/></svg>Чат<span class="count">3</span></a>
+          <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>Календарь</a>
+        </div>
+        <div class="navlabel">Система</div>
+        <div class="nav">
+          <a class="active" href="#projects"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="9" rx="1.5"/></svg>Проекты</a>
+          <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg>Задачи<span class="count">7</span></a>
+          <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0M17 11a3 3 0 1 0 0-6M18 20a5.5 5.5 0 0 0-2-4.3"/></svg>Люди</a>
+          <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/></svg>Файлы</a>
+        </div>
+        <div class="side-foot"><b>Индекс знаний</b><span>128 документов · 4 820 фрагментов</span></div>
+      </aside>
+
+      <div class="main" style="position:relative">
+        <div class="head">
+          <div><div class="eyebrow">Система · Проекты</div><h1>Проекты по сферам</h1><p class="lead">Дерево «сфера → проект», фильтры в колонках, сортировка по статусу и сроку.</p></div>
+          <div class="actions"><button class="btn primary">Новый проект</button></div>
+        </div>
+
+        <div class="panel">
+          <div class="toolbar" style="margin-bottom:12px">
+            <div class="searchbox"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>Фильтр по названию</div>
+            <div class="colfilters">
+              <button class="filter-btn">Статус <span class="badge">2</span> ▾</button>
+              <button class="filter-btn">Срок ▾</button>
+            </div>
+          </div>
+
+          <div class="tree">
+            <div class="tree-head"><span>Проект</span><span>Статус <span class="sort">▲</span></span><span>Срок <span class="sort">▼</span></span><span>Прогресс</span></div>
+
+            <div class="sphere-row"><span class="chev">▾</span><span class="dot" style="background:#34d399"></span>Здоровье <span class="muted">· 3 проекта</span></div>
+            <div class="proj-row"><div><div class="name">Марафон 42 км</div><div class="sub">тренировочный план · 12 недель</div></div><div><span class="tag warn">входящие</span></div><div class="sub">01.03.2027</div><div class="bar"><i style="width:62%"></i><span>62%</span></div></div>
+            <div class="proj-row"><div><div class="name">Сон 7–8 часов</div><div class="sub">гигиена сна · 30 дней</div></div><div><span class="tag info">активный</span></div><div class="sub">29.11.2026</div><div class="bar"><i style="width:41%"></i><span>41%</span></div></div>
+            <div class="empty-hint">ещё 1 проект скрыт фильтром</div>
+
+            <div class="sphere-row"><span class="chev">▾</span><span class="dot" style="background:#3b82f6"></span>Работа <span class="muted">· 2 проекта</span></div>
+            <div class="proj-row"><div><div class="name">Atlas</div><div class="sub">личная ОС знаний · 2-й квартал</div></div><div><span class="tag info">активный</span></div><div class="sub">15.12.2026</div><div class="bar"><i style="width:74%"></i><span>74%</span></div></div>
+            <div class="proj-row"><div><div class="name">Стратегия Q1</div><div class="sub">планирование · 6 недель</div></div><div><span class="tag ok">выполнен</span></div><div class="sub">—</div><div class="bar"><i style="width:100%"></i><span>100%</span></div></div>
+
+            <div class="sphere-row"><span class="chev">▸</span><span class="dot" style="background:#a78bfa"></span>Развитие <span class="muted">· 4 проекта</span></div>
+          </div>
+        </div>
+
+        <div class="popover">
+          <h4>Статус · режим фильтра</h4>
+          <div class="modes"><span class="on">Показать только</span><span>Скрыть</span></div>
+          <div class="opt-line"><span class="cbox on"></span>входящие<span class="cnt">4</span></div>
+          <div class="opt-line"><span class="cbox on"></span>активные<span class="cnt">9</span></div>
+          <div class="opt-line"><span class="cbox"></span>на паузе<span class="cnt">2</span></div>
+          <div class="opt-line"><span class="cbox"></span>выполненные<span class="cnt">17</span></div>
+          <div class="opt-line"><span class="cbox"></span>отменённые<span class="cnt">3</span></div>
+          <div class="pop-foot"><button class="btn">Сбросить</button><button class="btn primary">Применить</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const pages = ['shell', 'projects'];
+  function show() {
+    const id = (location.hash || '#shell').slice(1);
+    const target = pages.includes(id) ? id : 'shell';
+    pages.forEach((page) => {
+      const el = document.getElementById(page);
+      el.style.display = page === target ? 'block' : 'none';
+    });
+  }
+  window.addEventListener('hashchange', show);
+  show();
+</script>
+</body>
+</html>
