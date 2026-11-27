@@ -1,0 +1,121 @@
+..yadisk oauth state mismatch
+yadisk oauth state mismatch
+..........indexing failed for document 1: RuntimeError
+....................................................................................................................indexing failed for document 1: RuntimeError
+indexing failed for document 1: RuntimeError
+..................yadisk token is unavailable: remote original of document 1 kept
+....................................................................................INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_m1, M1: фундамент §7 ТЗ — пользователи, сессии и доменные таблицы.
+INFO  [alembic.runtime.migration] Running upgrade 0001_m1 -> 0002_knowledge, M2: знания — документы, чанки, задания, воркер-токены, интеграции §7.
+INFO  [alembic.runtime.migration] Running upgrade 0002_knowledge -> 0003_worker_singleflight, M2 follow-up: один `running` job на владельца (single-flight).
+INFO  [alembic.runtime.migration] Running upgrade 0003_worker_singleflight -> 0004_agent, M3: агент — LLM-ключи, профиль/онбординг, агенты, чат, предложения, сценарии.
+INFO  [alembic.runtime.migration] Running upgrade 0004_agent -> 0005_agent_calls, A16: трейс вызовов внутренних сабагентов («Критик»/«Редактор»).
+INFO  [alembic.runtime.migration] Running upgrade 0005_agent_calls -> 0006_notifications, M4: напоминания — лента уведомлений, Web Push подписки, настройки.
+INFO  [alembic.runtime.migration] Running upgrade 0006_notifications -> 0007_job_priority, T-46BE9A0F: приоритет задания — ручное поднятие в очереди.
+INFO  [alembic.runtime.migration] Running upgrade 0007_job_priority -> 0008_growth, M5: развитие — цели, привычки, метрики, дневник, обзоры, гранты.
+INFO  [alembic.runtime.migration] Running upgrade 0008_growth -> 0009_ui_fields, UI: поля под новый фронтенд — интерес, задачи, проекты, пользователь, люди.
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running downgrade 0009_ui_fields -> 0008_growth, UI: поля под новый фронтенд — интерес, задачи, проекты, пользователь, люди.
+INFO  [alembic.runtime.migration] Running downgrade 0008_growth -> 0007_job_priority, M5: развитие — цели, привычки, метрики, дневник, обзоры, гранты.
+INFO  [alembic.runtime.migration] Running downgrade 0007_job_priority -> 0006_notifications, T-46BE9A0F: приоритет задания — ручное поднятие в очереди.
+INFO  [alembic.runtime.migration] Running downgrade 0006_notifications -> 0005_agent_calls, M4: напоминания — лента уведомлений, Web Push подписки, настройки.
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running downgrade 0005_agent_calls -> 0004_agent, A16: трейс вызовов внутренних сабагентов («Критик»/«Редактор»).
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running downgrade 0004_agent -> 0003_worker_singleflight, M3: агент — LLM-ключи, профиль/онбординг, агенты, чат, предложения, сценарии.
+.INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_m1, M1: фундамент §7 ТЗ — пользователи, сессии и доменные таблицы.
+INFO  [alembic.runtime.migration] Running upgrade 0001_m1 -> 0002_knowledge, M2: знания — документы, чанки, задания, воркер-токены, интеграции §7.
+INFO  [alembic.runtime.migration] Running upgrade 0002_knowledge -> 0003_worker_singleflight, M2 follow-up: один `running` job на владельца (single-flight).
+INFO  [alembic.runtime.migration] Running upgrade 0003_worker_singleflight -> 0004_agent, M3: агент — LLM-ключи, профиль/онбординг, агенты, чат, предложения, сценарии.
+INFO  [alembic.runtime.migration] Running upgrade 0004_agent -> 0005_agent_calls, A16: трейс вызовов внутренних сабагентов («Критик»/«Редактор»).
+INFO  [alembic.runtime.migration] Running upgrade 0005_agent_calls -> 0006_notifications, M4: напоминания — лента уведомлений, Web Push подписки, настройки.
+INFO  [alembic.runtime.migration] Running upgrade 0006_notifications -> 0007_job_priority, T-46BE9A0F: приоритет задания — ручное поднятие в очереди.
+INFO  [alembic.runtime.migration] Running upgrade 0007_job_priority -> 0008_growth, M5: развитие — цели, привычки, метрики, дневник, обзоры, гранты.
+INFO  [alembic.runtime.migration] Running upgrade 0008_growth -> 0009_ui_fields, UI: поля под новый фронтенд — интерес, задачи, проекты, пользователь, люди.
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running downgrade 0009_ui_fields -> 0008_growth, UI: поля под новый фронтенд — интерес, задачи, проекты, пользователь, люди.
+INFO  [alembic.runtime.migration] Running downgrade 0008_growth -> 0007_job_priority, M5: развитие — цели, привычки, метрики, дневник, обзоры, гранты.
+INFO  [alembic.runtime.migration] Running downgrade 0007_job_priority -> 0006_notifications, T-46BE9A0F: приоритет задания — ручное поднятие в очереди.
+INFO  [alembic.runtime.migration] Running downgrade 0006_notifications -> 0005_agent_calls, M4: напоминания — лента уведомлений, Web Push подписки, настройки.
+INFO  [alembic.runtime.migration] Running downgrade 0005_agent_calls -> 0004_agent, A16: трейс вызовов внутренних сабагентов («Критик»/«Редактор»).
+.INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_m1, M1: фундамент §7 ТЗ — пользователи, сессии и доменные таблицы.
+INFO  [alembic.runtime.migration] Running upgrade 0001_m1 -> 0002_knowledge, M2: знания — документы, чанки, задания, воркер-токены, интеграции §7.
+INFO  [alembic.runtime.migration] Running upgrade 0002_knowledge -> 0003_worker_singleflight, M2 follow-up: один `running` job на владельца (single-flight).
+INFO  [alembic.runtime.migration] Running upgrade 0003_worker_singleflight -> 0004_agent, M3: агент — LLM-ключи, профиль/онбординг, агенты, чат, предложения, сценарии.
+INFO  [alembic.runtime.migration] Running upgrade 0004_agent -> 0005_agent_calls, A16: трейс вызовов внутренних сабагентов («Критик»/«Редактор»).
+INFO  [alembic.runtime.migration] Running upgrade 0005_agent_calls -> 0006_notifications, M4: напоминания — лента уведомлений, Web Push подписки, настройки.
+INFO  [alembic.runtime.migration] Running upgrade 0006_notifications -> 0007_job_priority, T-46BE9A0F: приоритет задания — ручное поднятие в очереди.
+INFO  [alembic.runtime.migration] Running upgrade 0007_job_priority -> 0008_growth, M5: развитие — цели, привычки, метрики, дневник, обзоры, гранты.
+INFO  [alembic.runtime.migration] Running upgrade 0008_growth -> 0009_ui_fields, UI: поля под новый фронтенд — интерес, задачи, проекты, пользователь, люди.
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running downgrade 0009_ui_fields -> 0008_growth, UI: поля под новый фронтенд — интерес, задачи, проекты, пользователь, люди.
+INFO  [alembic.runtime.migration] Running downgrade 0008_growth -> 0007_job_priority, M5: развитие — цели, привычки, метрики, дневник, обзоры, гранты.
+.INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_m1, M1: фундамент §7 ТЗ — пользователи, сессии и доменные таблицы.
+INFO  [alembic.runtime.migration] Running upgrade 0001_m1 -> 0002_knowledge, M2: знания — документы, чанки, задания, воркер-токены, интеграции §7.
+INFO  [alembic.runtime.migration] Running upgrade 0002_knowledge -> 0003_worker_singleflight, M2 follow-up: один `running` job на владельца (single-flight).
+INFO  [alembic.runtime.migration] Running upgrade 0003_worker_singleflight -> 0004_agent, M3: агент — LLM-ключи, профиль/онбординг, агенты, чат, предложения, сценарии.
+INFO  [alembic.runtime.migration] Running upgrade 0004_agent -> 0005_agent_calls, A16: трейс вызовов внутренних сабагентов («Критик»/«Редактор»).
+INFO  [alembic.runtime.migration] Running upgrade 0005_agent_calls -> 0006_notifications, M4: напоминания — лента уведомлений, Web Push подписки, настройки.
+INFO  [alembic.runtime.migration] Running upgrade 0006_notifications -> 0007_job_priority, T-46BE9A0F: приоритет задания — ручное поднятие в очереди.
+INFO  [alembic.runtime.migration] Running upgrade 0007_job_priority -> 0008_growth, M5: развитие — цели, привычки, метрики, дневник, обзоры, гранты.
+INFO  [alembic.runtime.migration] Running upgrade 0008_growth -> 0009_ui_fields, UI: поля под новый фронтенд — интерес, задачи, проекты, пользователь, люди.
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running downgrade 0009_ui_fields -> 0008_growth, UI: поля под новый фронтенд — интерес, задачи, проекты, пользователь, люди.
+INFO  [alembic.runtime.migration] Running downgrade 0008_growth -> 0007_job_priority, M5: развитие — цели, привычки, метрики, дневник, обзоры, гранты.
+INFO  [alembic.runtime.migration] Running downgrade 0007_job_priority -> 0006_notifications, T-46BE9A0F: приоритет задания — ручное поднятие в очереди.
+INFO  [alembic.runtime.migration] Running downgrade 0006_notifications -> 0005_agent_calls, M4: напоминания — лента уведомлений, Web Push подписки, настройки.
+.INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_m1, M1: фундамент §7 ТЗ — пользователи, сессии и доменные таблицы.
+INFO  [alembic.runtime.migration] Running upgrade 0001_m1 -> 0002_knowledge, M2: знания — документы, чанки, задания, воркер-токены, интеграции §7.
+INFO  [alembic.runtime.migration] Running upgrade 0002_knowledge -> 0003_worker_singleflight, M2 follow-up: один `running` job на владельца (single-flight).
+INFO  [alembic.runtime.migration] Running upgrade 0003_worker_singleflight -> 0004_agent, M3: агент — LLM-ключи, профиль/онбординг, агенты, чат, предложения, сценарии.
+INFO  [alembic.runtime.migration] Running upgrade 0004_agent -> 0005_agent_calls, A16: трейс вызовов внутренних сабагентов («Критик»/«Редактор»).
+INFO  [alembic.runtime.migration] Running upgrade 0005_agent_calls -> 0006_notifications, M4: напоминания — лента уведомлений, Web Push подписки, настройки.
+INFO  [alembic.runtime.migration] Running upgrade 0006_notifications -> 0007_job_priority, T-46BE9A0F: приоритет задания — ручное поднятие в очереди.
+INFO  [alembic.runtime.migration] Running upgrade 0007_job_priority -> 0008_growth, M5: развитие — цели, привычки, метрики, дневник, обзоры, гранты.
+INFO  [alembic.runtime.migration] Running upgrade 0008_growth -> 0009_ui_fields, UI: поля под новый фронтенд — интерес, задачи, проекты, пользователь, люди.
+.........................................................................................INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_m1, M1: фундамент §7 ТЗ — пользователи, сессии и доменные таблицы.
+INFO  [alembic.runtime.migration] Running upgrade 0001_m1 -> 0002_knowledge, M2: знания — документы, чанки, задания, воркер-токены, интеграции §7.
+INFO  [alembic.runtime.migration] Running upgrade 0002_knowledge -> 0003_worker_singleflight, M2 follow-up: один `running` job на владельца (single-flight).
+INFO  [alembic.runtime.migration] Running upgrade 0003_worker_singleflight -> 0004_agent, M3: агент — LLM-ключи, профиль/онбординг, агенты, чат, предложения, сценарии.
+INFO  [alembic.runtime.migration] Running upgrade 0004_agent -> 0005_agent_calls, A16: трейс вызовов внутренних сабагентов («Критик»/«Редактор»).
+INFO  [alembic.runtime.migration] Running upgrade 0005_agent_calls -> 0006_notifications, M4: напоминания — лента уведомлений, Web Push подписки, настройки.
+INFO  [alembic.runtime.migration] Running upgrade 0006_notifications -> 0007_job_priority, T-46BE9A0F: приоритет задания — ручное поднятие в очереди.
+INFO  [alembic.runtime.migration] Running upgrade 0007_job_priority -> 0008_growth, M5: развитие — цели, привычки, метрики, дневник, обзоры, гранты.
+INFO  [alembic.runtime.migration] Running upgrade 0008_growth -> 0009_ui_fields, UI: поля под новый фронтенд — интерес, задачи, проекты, пользователь, люди.
+.X:\devkit_projects\projects\atlas\repo\atlas\.venv\Lib\site-packages\qdrant_client\qdrant_remote.py:295: UserWarning: Failed to obtain server version. Unable to check client-server compatibility. Set check_compatibility=False to skip version check.
+  show_warning(
+...............................................INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001_m1, M1: фундамент §7 ТЗ — пользователи, сессии и доменные таблицы.
+INFO  [alembic.runtime.migration] Running upgrade 0001_m1 -> 0002_knowledge, M2: знания — документы, чанки, задания, воркер-токены, интеграции §7.
+INFO  [alembic.runtime.migration] Running upgrade 0002_knowledge -> 0003_worker_singleflight, M2 follow-up: один `running` job на владельца (single-flight).
+INFO  [alembic.runtime.migration] Running upgrade 0003_worker_singleflight -> 0004_agent, M3: агент — LLM-ключи, профиль/онбординг, агенты, чат, предложения, сценарии.
+INFO  [alembic.runtime.migration] Running upgrade 0004_agent -> 0005_agent_calls, A16: трейс вызовов внутренних сабагентов («Критик»/«Редактор»).
+INFO  [alembic.runtime.migration] Running upgrade 0005_agent_calls -> 0006_notifications, M4: напоминания — лента уведомлений, Web Push подписки, настройки.
+INFO  [alembic.runtime.migration] Running upgrade 0006_notifications -> 0007_job_priority, T-46BE9A0F: приоритет задания — ручное поднятие в очереди.
+INFO  [alembic.runtime.migration] Running upgrade 0007_job_priority -> 0008_growth, M5: развитие — цели, привычки, метрики, дневник, обзоры, гранты.
+INFO  [alembic.runtime.migration] Running upgrade 0008_growth -> 0009_ui_fields, UI: поля под новый фронтенд — интерес, задачи, проекты, пользователь, люди.
+....................................................................
+----------------------------------------------------------------------
+Ran 439 tests in 273.729s
+
+OK
+РїР°СЂРѕР»СЊ РѕР±РЅРѕРІР»С‘РЅ: alice
+РїР°СЂРѕР»СЊ РѕР±РЅРѕРІР»С‘РЅ: alice

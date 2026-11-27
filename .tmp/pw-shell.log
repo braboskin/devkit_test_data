@@ -1,0 +1,10 @@
+npm notice run atlas-viewer@0.1.0 npx
+npm notice run playwright test e2e\shell.spec.ts --workers=1
+[WebServer] npm notice run atlas-viewer@0.1.0 preview
+[WebServer] npm notice run vite preview --host 127.0.0.1 --port 4173 --strictPort
+[WebServer] (node:31312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+Error: No tests found.
+Make sure that arguments are regular expressions matching test files.
+You may need to escape symbols like "$" or "*" and quote the arguments.
+

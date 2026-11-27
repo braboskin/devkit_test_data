@@ -1,0 +1,143 @@
+npm notice run atlas-viewer@0.1.0 npx
+npm notice run playwright test
+[WebServer] npm notice run atlas-viewer@0.1.0 preview
+[WebServer] npm notice run vite preview --host 127.0.0.1 --port 4173 --strictPort
+[WebServer] (node:26672) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 8 tests using 8 workers
+
+(node:28380) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:27832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31200) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29748) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28464) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28028) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 [chromium] › e2e\shell.spec.ts:22:1 › тема сохраняется после перезагрузки (701ms)
+  ok 1 [chromium] › e2e\shell.spec.ts:16:1 › календарь грузится ленивым чанком (829ms)
+  ok 6 [chromium] › e2e\a11y.spec.ts:18:3 › axe: Главная (1.5s)
+  ok 7 [chromium] › e2e\a11y.spec.ts:18:3 › axe: Уведомления (1.5s)
+  ok 5 [chromium] › e2e\a11y.spec.ts:18:3 › axe: Сферы (1.6s)
+  x  8 [chromium] › e2e\a11y.spec.ts:18:3 › axe: Профиль (1.7s)
+  x  4 [chromium] › e2e\a11y.spec.ts:18:3 › axe: Календарь (2.7s)
+  x  2 [chromium] › e2e\shell.spec.ts:8:1 › оболочка и навигация (5.6s)
+
+
+  1) [chromium] › e2e\a11y.spec.ts:18:3 › axe: Календарь ───────────────────────────────────────────
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 29
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "id": "color-contrast",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       "a[aria-label=\"Week 44\"]",
+    +       "#fc-dom-8",
+    +       "#fc-dom-10",
+    +       "#fc-dom-12",
+    +       "a[aria-label=\"Week 45\"]",
+    +       "a[aria-label=\"Week 46\"]",
+    +       "a[aria-label=\"Week 47\"]",
+    +       "a[aria-label=\"Week 48\"]",
+    +       "a[aria-label=\"Week 49\"]",
+    +     ],
+    +   },
+    +   Object {
+    +     "id": "label-content-name-mismatch",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       "td[aria-labelledby=\"fc-dom-2\"]",
+    +       "td[aria-labelledby=\"fc-dom-16\"]",
+    +       "td[aria-labelledby=\"fc-dom-30\"]",
+    +       "td[aria-labelledby=\"fc-dom-44\"]",
+    +       "td[aria-labelledby=\"fc-dom-58\"]",
+    +       "td[aria-labelledby=\"fc-dom-72\"]",
+    +     ],
+    +   },
+    + ]
+
+      30 |         nodes: violation.nodes.map((node) => node.target.join(' ')),
+      31 |       })),
+    > 32 |     ).toEqual([]);
+         |       ^
+      33 |   });
+      34 | }
+      35 |
+        at X:\devkit_projects\projects\atlas\repo\atlas\viewer\e2e\a11y.spec.ts:32:7
+
+    Error Context: test-results\a11y-axe-Календарь-chromium\error-context.md
+
+  2) [chromium] › e2e\a11y.spec.ts:18:3 › axe: Профиль ─────────────────────────────────────────────
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 9
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "id": "label",
+    +     "impact": "critical",
+    +     "nodes": Array [
+    +       "#background-file",
+    +     ],
+    +   },
+    + ]
+
+      30 |         nodes: violation.nodes.map((node) => node.target.join(' ')),
+      31 |       })),
+    > 32 |     ).toEqual([]);
+         |       ^
+      33 |   });
+      34 | }
+      35 |
+        at X:\devkit_projects\projects\atlas\repo\atlas\viewer\e2e\a11y.spec.ts:32:7
+
+    Error Context: test-results\a11y-axe-Профиль-chromium\error-context.md
+
+  3) [chromium] › e2e\shell.spec.ts:8:1 › оболочка и навигация ─────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('link', { name: 'Календарь' }).first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('link', { name: 'Календарь' }).first() with timeout 5000ms
+      - waiting for getByRole('link', { name: 'Календарь' }).first()
+
+
+      11 |   await expect(
+      12 |     page.getByRole('link', { name: 'Календарь' }).first(),
+    > 13 |   ).toBeVisible();
+         |     ^
+      14 | });
+      15 |
+      16 | test('календарь грузится ленивым чанком', async ({ page }) => {
+        at X:\devkit_projects\projects\atlas\repo\atlas\viewer\e2e\shell.spec.ts:13:5
+
+    Error Context: test-results\shell-оболочка-и-навигация-chromium\error-context.md
+
+  3 failed
+    [chromium] › e2e\a11y.spec.ts:18:3 › axe: Календарь ────────────────────────────────────────────
+    [chromium] › e2e\a11y.spec.ts:18:3 › axe: Профиль ──────────────────────────────────────────────
+    [chromium] › e2e\shell.spec.ts:8:1 › оболочка и навигация ──────────────────────────────────────
+  5 passed (7.4s)

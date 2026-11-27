@@ -52,6 +52,22 @@ profile:
           linux: npx steiger ./src
         cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
         timeoutSec: 300
+      - name: e2e
+        required: true
+        run:
+          windows: npx playwright install chromium; if ($LASTEXITCODE -ne 0) { exit 1 }; npx playwright test --grep-invert "axe:"
+          darwin: npx playwright install chromium && npx playwright test --grep-invert "axe:"
+          linux: npx playwright install chromium && npx playwright test --grep-invert "axe:"
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
+        timeoutSec: 900
+      - name: a11y
+        required: true
+        run:
+          windows: npx playwright test a11y.spec.ts
+          darwin: npx playwright test a11y.spec.ts
+          linux: npx playwright test a11y.spec.ts
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
+        timeoutSec: 900
       - name: unit-tests
         required: true
         run:

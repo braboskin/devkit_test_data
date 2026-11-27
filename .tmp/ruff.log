@@ -1,0 +1,11 @@
+E501 Line too long (93 > 88)
+   --> tests\test_viewer_acceptance.py:108:89
+    |
+106 |                 "vite",
+107 |             },
+108 |             "новые dev-зависимости вне плана S1 запрещены (Playwright добавлен по плану S4)",
+    |                                                                                         ^^^^^
+109 |         )
+    |
+
+Found 1 error.

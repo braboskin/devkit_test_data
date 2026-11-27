@@ -1,0 +1,23 @@
+..............F..
+======================================================================
+FAIL: test_ag12_no_new_npm_dependencies (tests.test_viewer_acceptance.ViewerAcceptanceTests.test_ag12_no_new_npm_dependencies)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "X:\devkit_projects\projects\atlas\repo\atlas\tests\test_viewer_acceptance.py", line 89, in test_ag12_no_new_npm_dependencies
+    self.assertEqual(
+    ~~~~~~~~~~~~~~~~^
+        set(package["devDependencies"]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<15 lines>...
+        "новые dev-зависимости вне плана S1 запрещены",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+AssertionError: Items in the first set but not the second:
+'@playwright/test'
+'@axe-core/playwright' : новые dev-зависимости вне плана S1 запрещены
+
+----------------------------------------------------------------------
+Ran 17 tests in 3.474s
+
+FAILED (failures=1)

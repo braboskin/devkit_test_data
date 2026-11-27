@@ -1,0 +1,12 @@
+unformatted: File would be reformatted
+   --> tests\test_viewer_acceptance.py:172:72
+    |
+171 |         src = root / "viewer" / "src"
+    -         today = (src / "pages" / "home" / "ui" / "Home.tsx").read_text(
+    -             encoding="utf-8"
+    -         )
+172 +         today = (src / "pages" / "home" / "ui" / "Home.tsx").read_text(encoding="utf-8")
+173 |         settings = (src / "pages" / "settings" / "ui" / "Settings.tsx").read_text(
+    |
+
+1 file would be reformatted, 283 files already formatted

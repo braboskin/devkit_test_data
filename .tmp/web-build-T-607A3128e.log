@@ -1,0 +1,29 @@
+npm notice run atlas-viewer@0.1.0 build
+npm notice run tsc --noEmit && vite build
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 4195 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                          2.48 kB │ gzip:   1.14 kB
+dist/assets/ui-Be_P4RZ8.css              0.30 kB │ gzip:   0.19 kB
+dist/assets/calendar-BSejSB-e.css        1.63 kB │ gzip:   0.64 kB
+dist/assets/index-Dt-KVMQM.css          19.38 kB │ gzip:   4.75 kB
+dist/assets/board-B1AgDL_0.css         109.37 kB │ gzip:  14.36 kB
+dist/assets/gantt-Bivam034.css         165.27 kB │ gzip:  22.56 kB
+dist/assets/calendar-CPbJhBk2.js         8.29 kB │ gzip:   3.13 kB
+dist/assets/jsx-runtime-CWACBe9S.js     12.71 kB │ gzip:   4.46 kB
+dist/assets/board-BfZ0CNz5.js           95.81 kB │ gzip:  30.17 kB
+dist/assets/index-BHrYRojO.js          155.20 kB │ gzip:  39.99 kB
+dist/assets/calendar-BLB38HLv.js       267.81 kB │ gzip:  77.97 kB
+dist/assets/gantt-G9gp05Rs.js          271.07 kB │ gzip:  86.58 kB
+dist/assets/ui-DvuL-ELo.js           1,078.40 kB │ gzip: 346.12 kB
+
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0msrc/pages/projects/index.ts is dynamically imported by src/app/router.tsx but also statically imported by src/app/router.tsx, dynamic import will not move module into another chunk.
+
+✓ built in 822ms
