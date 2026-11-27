@@ -34,7 +34,7 @@ plan_version: 1
 report: docs/reports/T-4FC8A97B.md
 assignee: agent
 created_at: 2026-11-27T16:09:29.548Z
-updated_at: 2026-11-27T16:34:33.880Z
+updated_at: 2026-11-27T17:05:45.960Z
 ---
 
 # Дизайн-система: токены, Emotion, шрифт, motion, примитивы, каркас
