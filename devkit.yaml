@@ -55,7 +55,7 @@ profile:
       - name: e2e
         required: true
         run:
-          windows: npx playwright install chromium; if ($LASTEXITCODE -ne 0) { exit 1 }; npx playwright test --grep-invert "axe:"
+          windows: npx playwright install chromium && npx playwright test --grep-invert "axe:"
           darwin: npx playwright install chromium && npx playwright test --grep-invert "axe:"
           linux: npx playwright install chromium && npx playwright test --grep-invert "axe:"
         cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
