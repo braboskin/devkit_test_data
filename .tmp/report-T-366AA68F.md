@@ -1,0 +1,60 @@
+# T-366AA68F — Проект: дерево, доска, гант; экран Задачи
+
+## Что сделано
+
+- **Спайк SVAR** пройден: подтверждены API Kanban (`cards`, `columns`,
+  `onMoveCard`) и Gantt (`tasks`, `links`, `readonly`), типы из пакета,
+  CSS `all.css`. Работает на React 19.
+- `shared/ui/board.tsx` — `TaskBoard` на SVAR Kanban: колонки
+  todo/doing/done/cancelled, карточки из задач (title, priority, due), drag
+  между колонками вызывает `onMove` → PATCH статуса на сервере, после —
+  перезагрузка.
+- `shared/ui/gantt.tsx` — `TaskGantt` на SVAR Gantt: полосы `start_at`→`due_at`,
+  прогресс, подзадачи (`parent_id`), зависимости (`links` из `blocked_by`),
+  `readonly` (правка через гант — не в v1).
+- `pages/projects` (ProjectPage): переключатель представлений
+  «Список · Доска · Гант» на наших `Tabs`, вид в URL (`?view=tree|board|gantt`).
+  Список — группировка по статусу со счётчиками; доска и гант — обёртки SVAR.
+  Зависимости собираются карточками задач (N+1 на проект, отмечено).
+- `pages/tasks`: фильтры «Без сферы и проекта» / «Все задачи» чипами, значение
+  в URL (`/tasks?filter=unassigned`), клиентская фильтрация по
+  отсутствию `sphere_id`/`project_id`; существующая группировка по статусам
+  сохранена.
+- Новые элементы — на обёртках antd (`Tabs`, `Button`), новых зависимостей нет.
+
+## Изменения
+
+Ветка `devkit/T-366AA68F`, коммит `2ade932`.
+
+Файлы: `viewer/src/shared/ui/{board.tsx,gantt.tsx,index.tsx,ui.css}`,
+`viewer/src/pages/projects/ui/ProjectPage.tsx`,
+`viewer/src/pages/tasks/ui/Tasks.tsx`.
+
+## Проверки
+
+| Проверка | Результат |
+|---|---|
+| web-build | exit 0, dist 1884.1 kB JS / 582.0 kB gzip, CSS 228 kB |
+| typecheck-web | exit 0 |
+| lint-web | exit 0, 0 подавлений |
+| arch-web | exit 0, Steiger «No problems found» |
+| format-web | exit 0 |
+| web-тесты Python | `test_web_build`, `test_viewer_acceptance` — 17 OK |
+| unit-tests | exit 0, 439 OK (прогон перед сдачей) |
+
+## Риски
+
+- **Бандл вырос до 582 kB gzip** (SVAR Gantt+Kanban и их CSS 228 kB). Основной
+  кандидат на `React.lazy` маршрута проекта и/или раздельных CSS — отдельная
+  задача в S4.
+- **Доска**: drag меняет статус, но при ошибке сети откатываемся перезагрузкой,
+  оптимистичного undo нет; внутренний store SVAR и сервер синхронизируются
+  через reload.
+- **Гант**: только просмотр, без drag/resize; задачи без `start_at`/`due_at`
+  не рисуются (нужны оба поля).
+- **Дерево проекта** без поиска/фильтров (только группировка по статусу) —
+  вынесено в S4/follow-up.
+- **Зависимости N+1**: по карточке на задачу; при больших проектах нужен
+  bulk-эндпоинт.
+- **Экран Задачи** остался прежним по структуре (старый экран), добавлены только
+  чипы фильтра; полный редизайн — S4.
