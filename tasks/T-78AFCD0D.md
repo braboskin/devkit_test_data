@@ -31,7 +31,7 @@ plan_version: 1
 report: docs/reports/T-78AFCD0D.md
 assignee: agent
 created_at: 2026-11-27T18:31:01.854Z
-updated_at: 2026-11-27T22:00:05.820Z
+updated_at: 2026-11-27T22:29:07.536Z
 ---
 
 # Чат: поиск по диалогам, «Стоп», «Глубокий анализ», вложения
