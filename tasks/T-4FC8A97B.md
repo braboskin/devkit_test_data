@@ -3,7 +3,7 @@ id: T-4FC8A97B
 project: atlas
 epic: E-710FC7ED
 title: "Дизайн-система: токены, Emotion, шрифт, motion, примитивы, каркас"
-status: planned
+status: in_progress
 type: feature
 size: L
 priority: high
@@ -32,9 +32,9 @@ verification:
 depends_on: []
 plan_version: 1
 report: docs/reports/T-4FC8A97B.md
-assignee: null
+assignee: agent
 created_at: 2026-11-27T16:09:29.548Z
-updated_at: 2026-11-27T16:34:33.426Z
+updated_at: 2026-11-27T16:34:33.880Z
 ---
 
 # Дизайн-система: токены, Emotion, шрифт, motion, примитивы, каркас
