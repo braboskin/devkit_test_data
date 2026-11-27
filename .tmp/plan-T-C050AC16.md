@@ -1,0 +1,94 @@
+# План S0: shell, токены, тема, стекло
+
+## Контекст
+
+- Viewer: React 19.3 + Vite 8, TS (нативный preview), FSD + Steiger, 14 экранов на
+  12 табах в `App.tsx`, роутера нет, UI-зависимостей нет.
+- ТЗ `docs/tz/TZ-53B42870.md`: разделы 2 (маршруты), 4–5 (каркасы), 7 (тема,
+  акцент, фон, стекло), 8 (слои); Acceptance A1, A3, A4.
+- Версии проверены в npm 2026-11-27: `antd` 6.7.2, `@ant-design/icons` 6.3.4,
+  `lucide-react` 1.81.0, `react-router` **8.5.3** (в ТЗ указан 7 — устарел, 8
+  требует React ≥ 19.2.7, у нас 19.3.1), `@tanstack/react-query` 5.108.4,
+  `recharts` 3.11.1, `@svar-ui/react-gantt` 2.8.3, `@svar-ui/react-kanban` 2.7.0,
+  `@fullcalendar/*` 6.1.22.
+- Задача — единственный владелец `viewer/package.json`, `viewer/src/shared/ui` и
+  `viewer/src/shared/api`: все зависимости и базовые примитивы ставятся здесь,
+  параллельные задачи их не трогают.
+
+## Шаги
+
+1. Зависимости: поставить всё из списка выше одним изменением `package.json` +
+   lock. Проверить, что `npm run build` не растёт по времени больше чем втрое.
+2. Роутер: `app/router.tsx` с маршрутами ТЗ §2. Старые экраны подключаются к
+   своим адресам (`/chat`, `/calendar`, `/tasks`, `/people`, `/files` → текущие
+   компоненты), для новых (`/`, `/profile`, `/interests`, `/projects`,
+   `/notifications`) — заглушки `PageHeader` + пустое состояние. Редиректы
+   `/today` → `/`, `/documents` → `/files`, `/spheres` → `/interests`.
+   `App.tsx` перестаёт держать табы и превращается в `AppShell` + `Outlet`.
+3. Тема и токены: `app/theme/tokens.css` (`--bg/--surface/--surface-glass/--text/
+   --muted/--border/--accent/--accent-contrast/--ok/--warn/--danger/--glass-*/
+   --bg-image/--bg-scrim/--radius/--font`), `:root[data-theme='dark']`,
+   `prefers-color-scheme`, `color-scheme`. `ThemeProvider` на `ConfigProvider`
+   antd: `algorithm`, `token.colorPrimary`, `token.fontFamily` (системный стек),
+   `colorPrimary` из пикера, `--accent-contrast` по яркости, фокус-кольцо из
+   акцента. Выбор темы/акцента/фона — localStorage для первого кадра +
+   `GET/PUT /api/profile` (`UserProfile.data`), контраст проверяется расчётом.
+4. Фон: пресеты-градиенты и `--bg-scrim`; загрузка своей картинки появится после
+   S1 (эндпоинт), в S0 — только пресеты, точка расширения готова.
+5. LiquidGlass: слой `.surface-glass` с `backdrop-filter`, fallback по
+   `@supports`, `prefers-contrast`, выключатель «меньше эффектов» (класс на
+   `data-effects`), скрим под текстом. Стекло — только хром, не тело списков.
+6. AppShell: шапка (логотип-вордморк, поиск с `⌘K`, аватар-инициалы с бейджем
+   непрочитанных, меню профиля с переключателем темы), левое меню из 9 пунктов
+   (сворачивание), нижние табы Home/Chat/Space/Profile с safe-area, `PageHeader`,
+   адаптив 700/1100.
+7. Базовые примитивы в `shared/ui`: `PageHeader`, `EmptyState`, `Skeleton`,
+   `WidgetHost` (реестр `{type, props}`), `TreeList` (группы, свёртка, поиск),
+   `Avatar` (фото или инициалы), `SearchOverlay` (пока по `/api/search`).
+8. Порядок CSS: `@layer antd, atlas` — antd ниже наших токенов; старый
+   `styles.css` разбить на `app/styles/base.css` + `tokens.css`, не удаляя классы,
+   которые ещё используют старые страницы.
+9. `theme-color` в `index.html` и `manifest` обновлять при смене акцента.
+10. Проверки и доказательства: `web-build`, `typecheck-web`, `lint-web`,
+    `arch-web`, `format-web`, `unit-tests`; grep-проверка, что antd импортируется
+    только в `shared/ui` и `app`.
+
+## Acceptance
+
+- Все маршруты ТЗ §2 открываются; старые экраны работают через роутер, прямые
+  ссылки и «назад» не ломаются.
+- Широкий каркас: шапка + 9 пунктов меню; мобильный: поиск сверху, 4 таба снизу,
+  safe-area, таргеты ≥ 44px.
+- Тема light/dark/system, акцент из палитры, контраст текста на акценте,
+  фон-пресет с затемнением, стекло с fallback и выключателем.
+- Базовые примитивы экспортируются из `shared/ui` и используются заглушками.
+- Проверки профиля зелёные, antd не протёк в `pages/*`.
+
+## Проверки
+
+- `web-build`, `typecheck-web`, `lint-web`, `arch-web`, `format-web`,
+  `unit-tests` — с выводом и exit code в отчёт.
+- Дополнительно: `Select-String -Path viewer/src -Pattern "from 'antd'"` —
+  только `shared/ui`, `app`.
+
+## Scope
+
+`viewer/src/app`, `viewer/src/shared/api`, `viewer/src/shared/ui`,
+`viewer/src/shared/lib`, `viewer/package.json`, `viewer/index.html`,
+`viewer/vite.config.ts`. Вне scope: `viewer/src/pages/*` (кроме заглушек внутри
+`pages/<new>/`), бэкенд, тесты Python.
+
+## Риски
+
+- **antd 6 + `exactOptionalPropertyTypes`**: пропсы `prop={undefined}` будут
+  ругаться. Лечится явными условиями в обёртках, не `any` и не disable.
+- **Слои CSS**: antd 6 на CSS-переменных, но порядок слоёв и `:where()` нужно
+  проверить на форме и таблице; при конфликте — наши токены в `@layer atlas`
+  выше antd.
+- **Service worker**: `public/sw.js` кэширует навигацию по старым адресам —
+  проверить fallback и префиксы после смены маршрутов.
+- **Размер задачи**: shell — L, всё сразу не влезет. Если после шагов 1–6 останется
+  больше трети — эскалация с предложением вынести примитивы (шаг 7) в отдельную
+  задачу, без молчаливого расширения.
+- **react-router 8** требует React ≥ 19.2.7 — ок, но проверить, что установленная
+  версия действительно 19.3.1 и типы совпадают.
