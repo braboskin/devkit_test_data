@@ -26,7 +26,7 @@ profile:
           windows: npm run build
           darwin: npm run build
           linux: npm run build
-        cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas\web
         timeoutSec: 600
       - name: typecheck-web
         required: true
@@ -34,7 +34,7 @@ profile:
           windows: npx tsc --noEmit
           darwin: npx tsc --noEmit
           linux: npx tsc --noEmit
-        cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas\web
         timeoutSec: 300
       - name: lint-web
         required: true
@@ -42,7 +42,7 @@ profile:
           windows: npx eslint .
           darwin: npx eslint .
           linux: npx eslint .
-        cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas\web
         timeoutSec: 300
       - name: arch-web
         required: true
@@ -50,7 +50,7 @@ profile:
           windows: npx steiger ./src
           darwin: npx steiger ./src
           linux: npx steiger ./src
-        cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas\web
         timeoutSec: 300
       - name: e2e
         required: true
@@ -58,7 +58,7 @@ profile:
           windows: npx playwright install chromium && npx playwright test --grep-invert "axe:"
           darwin: npx playwright install chromium && npx playwright test --grep-invert "axe:"
           linux: npx playwright install chromium && npx playwright test --grep-invert "axe:"
-        cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas\web
         timeoutSec: 900
       - name: a11y
         required: true
@@ -66,7 +66,7 @@ profile:
           windows: npx playwright test a11y.spec.ts
           darwin: npx playwright test a11y.spec.ts
           linux: npx playwright test a11y.spec.ts
-        cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas\web
         timeoutSec: 900
       - name: unit-tests
         required: true
@@ -106,7 +106,7 @@ profile:
           windows: npx prettier --check .
           darwin: npx prettier --check .
           linux: npx prettier --check .
-        cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas\web
         timeoutSec: 300
       - name: schema-check
         required: false
@@ -141,13 +141,13 @@ profile:
           linux: .venv/bin/python -m pip install -r requirements-dev.txt
         cwd: X:\devkit_projects\projects\atlas\repo\atlas
         timeoutSec: 600
-      - name: install-viewer
+      - name: install-web
         required: false
         run:
           windows: npm ci
           darwin: npm ci
           linux: npm ci
-        cwd: X:\devkit_projects\projects\atlas\repo\atlas\viewer
+        cwd: X:\devkit_projects\projects\atlas\repo\atlas\web
         timeoutSec: 900
   docs:
     readme: repo/atlas/README.md
