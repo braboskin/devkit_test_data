@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>Atlas Graphite — макеты v2</title>
+<style>
+  :root {
+    --bg0: #07080a;
+    --bg1: #101218;
+    --surface: rgba(24, 27, 33, 0.55);
+    --raised: rgba(30, 34, 41, 0.82);
+    --sunken: rgba(9, 10, 12, 0.88);
+    --menu: rgba(26, 30, 36, 0.97);
+    --border: rgba(255, 255, 255, 0.07);
+    --border-strong: rgba(255, 255, 255, 0.15);
+    --text: #e6e8eb;
+    --muted: #98a2b3;
+    --faint: #6b7280;
+    --accent: #3b82f6;
+    --accent-soft: rgba(59, 130, 246, 0.16);
+    --on-accent: #ffffff;
+    --ok: #34d399;
+    --warn: #fbbf24;
+    --danger: #f87171;
+    --r-lg: 18px;
+    --r-md: 12px;
+    --r-sm: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background:
+      radial-gradient(60% 45% at 82% -6%, rgba(59, 130, 246, 0.16), transparent 68%),
+      radial-gradient(45% 40% at 8% 108%, rgba(59, 130, 246, 0.09), transparent 70%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    color: var(--text);
+    font: 400 14px/1.45 "Roboto Condensed", "Segoe UI", system-ui, sans-serif;
+    letter-spacing: 0.01em;
+  }
+  .page { display: none; height: 100%; }
+  .page:target { display: block; }
+  .page.default { display: none; }
+  .app { display: grid; grid-template-columns: 264px minmax(0, 1fr); height: 100%; }
+
+  /* ---------- sidebar ---------- */
+  .sidebar {
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 18px 14px; border-right: 1px solid var(--border);
+    background: rgba(10, 11, 14, 0.42);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px 14px; }
+  .brand-logo {
+    width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center;
+    background: linear-gradient(160deg, #3b82f6, #1d4ed8); color: #fff; font-weight: 700;
+  }
+  .brand-name { font-size: 18px; font-weight: 600; }
+  .brand-ver { margin-left: auto; color: var(--faint); font-size: 11px; }
+  .nav-group { margin-top: 10px; color: var(--faint); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; padding: 0 10px 4px; }
+  .nav { display: flex; flex-direction: column; gap: 2px; }
+  .nav a {
+    display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 0 10px;
+    border-radius: var(--r-sm); color: var(--muted); text-decoration: none; font-size: 13.5px;
+  }
+  .nav a svg { width: 17px; height: 17px; opacity: 0.9; }
+  .nav a.active { color: var(--text); background: var(--accent-soft); box-shadow: inset 2px 0 var(--accent); }
+  .nav .count { margin-left: auto; font-size: 11px; color: var(--faint); background: var(--sunken); border: 1px solid var(--border); border-radius: 999px; padding: 1px 7px; }
+  .sidebar-foot { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
+  .index-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); padding: 11px 12px; }
+  .index-card b { display: block; font-size: 12.5px; }
+  .index-card span { color: var(--muted); font-size: 11.5px; }
+
+  /* ---------- topbar ---------- */
+  .main { display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+  .topbar { display: flex; align-items: center; gap: 16px; height: 60px; padding: 0 22px; border-bottom: 1px solid var(--border); }
+  .search {
+    display: flex; align-items: center; gap: 9px; width: 420px; height: 36px; padding: 0 12px;
+    border: 1px solid var(--border); border-radius: 999px; background: var(--sunken); color: var(--faint); font-size: 13px;
+  }
+  .kbd { margin-left: auto; border: 1px solid var(--border-strong); border-radius: 6px; padding: 1px 6px; font-size: 10.5px; color: var(--muted); }
+  .top-right { margin-left: auto; display: flex; align-items: center; gap: 12px; color: var(--muted); }
+  .icon-btn { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 9px; border: 1px solid var(--border); background: var(--surface); }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(160deg, #475569, #1f2937); color: #e2e8f0; font-size: 12.5px; }
+  .bell { position: relative; }
+  .bell::after { content: "2"; position: absolute; top: -4px; right: -4px; background: var(--accent); color: #fff; font-size: 10px; border-radius: 999px; padding: 0 5px; }
+
+  /* ---------- content ---------- */
+  .content { padding: 22px 24px 32px; overflow: auto; }
+  .eyebrow { color: var(--faint); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .page-head { display: flex; align-items: flex-end; gap: 18px; flex-wrap: wrap; margin-bottom: 18px; }
+  h1 { margin: 2px 0 4px; font-size: 30px; font-weight: 600; letter-spacing: -0.01em; }
+  .lead { margin: 0; color: var(--muted); font-size: 13.5px; }
+  .head-actions { margin-left: auto; display: flex; gap: 10px; }
+
+  .btn { display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 15px; border-radius: 10px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); font: inherit; font-size: 13px; }
+  .btn svg { width: 15px; height: 15px; }
+  .btn.primary { background: var(--accent); border-color: transparent; color: var(--on-accent); font-weight: 500; }
+  .btn.ghost { background: transparent; border-color: transparent; color: var(--muted); }
+  .btn.sm { height: 30px; padding: 0 11px; font-size: 12.5px; border-radius: 8px; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 16px; }
+  .card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .card-head h2 { margin: 0; font-size: 15px; font-weight: 600; }
+  .card-head .more { margin-left: auto; color: var(--muted); font-size: 12px; }
+  .grid { display: grid; gap: 16px; }
+  .kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 16px; }
+  .kpi { display: flex; flex-direction: column; gap: 8px; }
+  .kpi-top { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; }
+  .kpi-val { display: flex; align-items: baseline; gap: 6px; font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .kpi-val small { font-size: 12px; color: var(--muted); font-weight: 400; }
+  .kpi-delta { color: var(--ok); font-size: 12px; }
+  .spark { display: flex; align-items: flex-end; gap: 3px; height: 26px; }
+  .spark i { width: 7px; border-radius: 2px; background: color-mix(in srgb, var(--accent) 55%, transparent); }
+  .spark i.on { background: var(--accent); }
+  .two-col { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); align-items: start; }
+
+  /* task rows */
+  .rows { display: flex; flex-direction: column; }
+  .row { display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 8px 4px; border-top: 1px solid var(--border); }
+  .row:first-of-type { border-top: 0; }
+  .check { width: 18px; height: 18px; border-radius: 6px; border: 1.5px solid var(--border-strong); flex: 0 0 auto; }
+  .check.on { background: var(--accent); border-color: var(--accent); position: relative; }
+  .check.on::after { content: ""; position: absolute; inset: 3px 4px 5px 4px; border: 2px solid #fff; border-top: 0; border-right: 0; transform: rotate(-45deg); }
+  .row .title { font-size: 13.5px; }
+  .row .done { text-decoration: line-through; color: var(--muted); }
+  .row .meta { margin-left: auto; display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .tag { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: var(--sunken); border: 1px solid var(--border); color: var(--muted); font-size: 11.5px; }
+  .tag.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 35%, transparent); background: color-mix(in srgb, var(--ok) 12%, transparent); }
+  .tag.info { color: #bfdbfe; border-color: color-mix(in srgb, var(--accent) 35%, transparent); background: var(--accent-soft); }
+  .tag.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 35%, transparent); background: color-mix(in srgb, var(--warn) 12%, transparent); }
+
+  /* habits matrix */
+  .habits { display: flex; flex-direction: column; gap: 10px; }
+  .habit { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; font-size: 12.5px; }
+  .cells { display: flex; gap: 5px; }
+  .cells i { width: 16px; height: 16px; border-radius: 5px; border: 1px solid var(--border); background: var(--sunken); }
+  .cells i.on { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+  .cells i.today { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+
+  /* documents */
+  .doc { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--border); }
+  .doc:first-of-type { border-top: 0; }
+  .doc-ico { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: var(--sunken); border: 1px solid var(--border); color: var(--muted); }
+  .doc b { display: block; font-size: 13px; font-weight: 500; }
+  .doc span { color: var(--muted); font-size: 11.5px; }
+  .doc .meta { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+  /* spheres */
+  .sphere { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; align-items: center; padding: 9px 0; border-top: 1px solid var(--border); }
+  .sphere:first-of-type { border-top: 0; }
+  .sphere b { font-size: 12.5px; font-weight: 500; }
+  .sphere small { color: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+  .bar { grid-column: 1 / -1; height: 5px; border-radius: 999px; background: var(--sunken); overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+
+  /* signal */
+  .signal { display: flex; gap: 12px; }
+  .signal .body { font-size: 12.5px; color: var(--muted); }
+  .signal .body b { display: block; color: var(--text); font-size: 13px; margin-bottom: 4px; }
+
+  /* chat */
+  .chat { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 16px; height: calc(100vh - 150px); min-height: 540px; }
+  .chat-col { display: flex; flex-direction: column; min-height: 0; }
+  .chat-list-head { padding: 14px 14px 10px; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid var(--border); }
+  .agent-pick { display: flex; align-items: center; gap: 9px; height: 38px; padding: 0 11px; border: 1px solid var(--border); border-radius: 10px; background: var(--sunken); font-size: 13px; }
+  .agent-pick .caret { margin-left: auto; color: var(--muted); }
+  .new-chat { height: 38px; }
+  .chat-items { overflow: auto; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+  .chat-item { padding: 10px 11px; border-radius: var(--r-sm); border: 1px solid transparent; }
+  .chat-item.active { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 40%, transparent); box-shadow: inset 2px 0 var(--accent); }
+  .chat-item b { display: block; font-size: 13px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chat-item span { color: var(--muted); font-size: 11.5px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chat-item .when { float: right; color: var(--faint); font-size: 11px; margin-left: 8px; }
+  .thread { display: flex; flex-direction: column; min-height: 0; }
+  .thread-head { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-bottom: 1px solid var(--border); }
+  .thread-head h2 { margin: 0; font-size: 15px; font-weight: 600; }
+  .thread-head .meta { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .messages { flex: 1; overflow: auto; padding: 18px 16px; display: flex; flex-direction: column; gap: 14px; }
+  .msg { display: flex; flex-direction: column; gap: 6px; max-width: 86%; }
+  .msg .who { color: var(--muted); font-size: 11.5px; display: flex; gap: 6px; align-items: center; }
+  .bubble { background: var(--raised); border: 1px solid var(--border); border-radius: 14px; padding: 11px 13px; font-size: 13.5px; }
+  .msg.own { align-self: flex-end; align-items: flex-end; }
+  .msg.own .bubble { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+  .tool { display: flex; gap: 8px; align-items: center; color: var(--muted); font-size: 12px; }
+  .tool .mark-ok { color: var(--ok); }
+  .composer { border-top: 1px solid var(--border); background: var(--sunken); padding: 12px 14px 14px; }
+  .composer .box {
+    border: 1px solid var(--border); border-radius: 14px; background: rgba(12, 13, 16, 0.72); padding: 10px 12px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .composer .box:focus-within { border-color: color-mix(in srgb, var(--accent) 60%, transparent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .composer .ph { color: var(--faint); font-size: 13.5px; min-height: 38px; }
+  .composer .tools { display: flex; align-items: center; gap: 8px; }
+  .tool-btn { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 9px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); }
+  .chip { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 9px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); font-size: 11.5px; }
+  .send { margin-left: auto; display: flex; align-items: center; gap: 9px; color: var(--faint); font-size: 11.5px; }
+  .send .round { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; }
+
+  /* settings */
+  .settings { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+  .section-label { color: var(--faint); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { color: var(--muted); font-size: 12px; }
+  .input, .select {
+    display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 11px;
+    border: 1px solid var(--border); border-radius: 9px; background: var(--sunken); color: var(--text); font-size: 13px;
+  }
+  .input.muted { color: var(--faint); }
+  .select .caret { margin-left: auto; color: var(--muted); }
+  .hint { color: var(--faint); font-size: 11.5px; }
+  .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 14px; }
+  .form-grid .wide { grid-column: 1 / -1; }
+  .profile-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .avatar-lg { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; background: linear-gradient(160deg, #475569, #1f2937); color: #e2e8f0; font-size: 18px; position: relative; }
+  .avatar-lg::after { content: ""; position: absolute; right: -3px; bottom: -3px; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); border: 3px solid var(--bg0); }
+  .kv { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 6px 12px; font-size: 12.5px; }
+  .kv span { color: var(--muted); }
+  .swatches { display: flex; gap: 7px; align-items: center; }
+  .swatch { width: 26px; height: 26px; border-radius: 50%; border: 2px solid transparent; }
+  .swatch.sel { border-color: var(--text); box-shadow: 0 0 0 2px var(--surface); }
+  .segmented { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--sunken); border: 1px solid var(--border); border-radius: 10px; padding: 3px; gap: 3px; }
+  .segmented span { text-align: center; height: 28px; display: grid; place-items: center; border-radius: 8px; color: var(--muted); font-size: 12.5px; }
+  .segmented span.on { background: var(--raised); color: var(--text); }
+  .switch { width: 38px; height: 20px; border-radius: 999px; background: var(--accent); position: relative; }
+  .switch::after { content: ""; position: absolute; top: 2px; right: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; }
+
+  /* controls sheet */
+  .sheet { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .demo-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .open-select { position: relative; }
+  .dropdown {
+    position: absolute; left: 0; right: 0; top: 38px; z-index: 2;
+    background: var(--menu); border: 1px solid var(--border-strong); border-radius: 10px; padding: 5px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  }
+  .opt { display: flex; align-items: center; height: 32px; padding: 0 9px; border-radius: 8px; font-size: 13px; color: var(--text); }
+  .opt small { margin-left: auto; color: var(--muted); font-size: 11.5px; }
+  .opt.sel { background: var(--accent-soft); }
+  .note { color: var(--muted); font-size: 12px; }
+  .note b { color: var(--text); font-weight: 500; }
+  .divider { height: 1px; background: var(--border); margin: 14px 0; }
+  .tabs { display: flex; gap: 18px; border-bottom: 1px solid var(--border); }
+  .tabs span { padding: 8px 0 9px; color: var(--muted); font-size: 13px; }
+  .tabs span.on { color: var(--text); box-shadow: inset 0 -2px var(--accent); font-weight: 500; }
+  .progress { height: 6px; border-radius: 999px; background: var(--sunken); overflow: hidden; }
+  .progress i { display: block; height: 100%; background: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- ============ HOME ============ -->
+<div class="page" id="home">
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-logo">A</div><div class="brand-name">Atlas</div><div class="brand-ver">v0.1</div></div>
+      <div class="nav">
+        <a class="active" href="#home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Главная</a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l2.4 5.6L20 11l-5.6 2.4L12 19l-2.4-5.6L4 11l5.6-2.4z"/></svg>Развитие</a>
+        <a href="#chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12a8 8 0 1 1-3.2-6.4L21 4l-1.2 3.4A8 8 0 0 1 21 12z"/></svg>Чат<span class="count">3</span></a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>Календарь</a>
+      </div>
+      <div class="nav-group">Система</div>
+      <div class="nav">
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M9 15l6-6M9 9h.01M15 15h.01"/></svg>Сферы</a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="9" rx="1.5"/></svg>Проекты</a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg>Задачи<span class="count">7</span></a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0M17 11a3 3 0 1 0 0-6M18 20a5.5 5.5 0 0 0-2-4.3"/></svg>Люди</a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/></svg>Файлы</a>
+      </div>
+      <div class="sidebar-foot">
+        <div class="index-card"><b>Индекс знаний</b><span>128 документов · 4 820 фрагментов</span></div>
+        <div class="nav"><a href="#settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.4-2-3.4-2.3 1a7 7 0 0 0-1.7-1L14.5 3h-4l-.4 2.2a7 7 0 0 0-1.7 1l-2.3-1-2 3.4 2 1.4a7 7 0 0 0 0 2l-2 1.4 2 3.4 2.3-1a7 7 0 0 0 1.7 1l.4 2.2h4l.4-2.2a7 7 0 0 0 1.7-1l2.3 1 2-3.4-2-1.4a7 7 0 0 0 .1-1z"/></svg>Настройки</a></div>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>Поиск по Atlas<span class="kbd">Ctrl K</span></div>
+        <div class="top-right"><div class="icon-btn bell"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div><div class="avatar">М</div></div>
+      </header>
+
+      <div class="content">
+        <div class="page-head">
+          <div>
+            <div class="eyebrow">Четверг · 27 ноября</div>
+            <h1>Доброе утро, Михаил</h1>
+            <p class="lead">Три задачи в фокусе, одна привычка под угрозой — и 40 минут свободного времени до встречи.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>Задача</button>
+            <button class="btn primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12a8 8 0 1 1-3.2-6.4L21 4l-1.2 3.4A8 8 0 0 1 21 12z"/></svg>Спросить Atlas</button>
+          </div>
+        </div>
+
+        <div class="grid kpis">
+          <div class="card kpi"><div class="kpi-top">Задачи на сегодня</div><div class="kpi-val">3<small>из 7</small></div><div class="spark"><i class="on" style="height:8px"></i><i class="on" style="height:13px"></i><i class="on" style="height:17px"></i><i style="height:21px"></i><i style="height:24px"></i><i style="height:26px"></i><i style="height:19px"></i></div></div>
+          <div class="card kpi"><div class="kpi-top">Привычки</div><div class="kpi-val">4<small>из 5</small></div><div class="spark"><i class="on" style="height:9px"></i><i class="on" style="height:15px"></i><i class="on" style="height:20px"></i><i class="on" style="height:24px"></i><i style="height:26px"></i><i style="height:22px"></i><i style="height:18px"></i></div></div>
+          <div class="card kpi"><div class="kpi-top">Документы</div><div class="kpi-val">128<small class="kpi-delta">+6 за неделю</small></div><div class="spark"><i class="on" style="height:7px"></i><i class="on" style="height:12px"></i><i class="on" style="height:16px"></i><i class="on" style="height:19px"></i><i class="on" style="height:23px"></i><i style="height:26px"></i><i style="height:21px"></i></div></div>
+          <div class="card kpi"><div class="kpi-top">Фокус за неделю</div><div class="kpi-val">11,5<small>часов</small></div><div class="spark"><i class="on" style="height:10px"></i><i style="height:14px"></i><i class="on" style="height:18px"></i><i class="on" style="height:21px"></i><i class="on" style="height:26px"></i><i style="height:16px"></i><i class="on" style="height:12px"></i></div></div>
+        </div>
+
+        <div class="grid two-col">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card">
+              <div class="card-head"><h2>Фокус дня</h2><span class="tag info">3 в работе</span><span class="more">Все задачи →</span></div>
+              <div class="rows">
+                <div class="row"><div class="check on"></div><div class="title done">Утренний обзор дня</div><div class="meta"><span class="tag">Ритм</span>08:10</div></div>
+                <div class="row"><div class="check"></div><div class="title">Свести прототип чата с агентом</div><div class="meta"><span class="tag info">Atlas</span>10:00</div></div>
+                <div class="row"><div class="check"></div><div class="title">Разобрать входящие документы</div><div class="meta"><span class="tag">Знания</span>12:30</div></div>
+                <div class="row"><div class="check"></div><div class="title">Тренировка · ноги</div><div class="meta"><span class="tag">Здоровье</span>19:00</div></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h2>Последние документы</h2><span class="more">Все файлы →</span></div>
+              <div class="doc"><div class="doc-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/></svg></div><div><b>Стратегия Atlas на Q1</b><span>docs · 24 страницы · обработан</span></div><div class="meta"><span class="tag ok">индекс</span></div></div>
+              <div class="doc"><div class="doc-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/></svg></div><div><b>Заметки встречи с командой</b><span>inbox · 3 минуты назад</span></div><div class="meta"><span class="tag">обработка</span></div></div>
+              <div class="doc"><div class="doc-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/></svg></div><div><b>Черновик статьи про личную ОС знаний</b><span>writing · вчера</span></div><div class="meta"><span class="tag">черновик</span></div></div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card">
+              <div class="card-head"><h2>Ритм</h2><span class="more">4 дня подряд</span></div>
+              <div class="habits">
+                <div class="habit"><span>Сон 7–8 часов</span><span class="cells"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on today"></i><i></i></span></div>
+                <div class="habit"><span>Вода 2 л</span><span class="cells"><i class="on"></i><i></i><i class="on"></i><i class="on"></i><i></i><i class="on today"></i><i></i></span></div>
+                <div class="habit"><span>8k шагов</span><span class="cells"><i></i><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i class="on today"></i><i></i></span></div>
+                <div class="habit"><span>Чтение 20 минут</span><span class="cells"><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i class="on"></i><i class="on today"></i><i></i></span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h2>Сферы</h2><span class="more">6</span></div>
+              <div class="sphere"><b>Здоровье</b><small>78%</small><div class="bar"><i style="width:78%"></i></div></div>
+              <div class="sphere"><b>Работа</b><small>64%</small><div class="bar"><i style="width:64%"></i></div></div>
+              <div class="sphere"><b>Развитие</b><small>52%</small><div class="bar"><i style="width:52%"></i></div></div>
+              <div class="sphere"><b>Отношения</b><small>41%</small><div class="bar"><i style="width:41%"></i></div></div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h2>Агент заметил</h2><span class="tag info">3 сигнала</span></div>
+              <div class="signal"><div class="avatar" style="flex:0 0 auto">A</div><div class="body"><b>Проект «Atlas»: три задачи просрочены</b>Два — из сферы «Работа». Предлагаю перенести на завтра и убрать одну из фокуса.<div style="margin-top:10px"><button class="btn sm">Разобрать →</button></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SETTINGS ============ -->
+<div class="page" id="settings">
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-logo">A</div><div class="brand-name">Atlas</div><div class="brand-ver">v0.1</div></div>
+      <div class="nav">
+        <a href="#home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Главная</a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l2.4 5.6L20 11l-5.6 2.4L12 19l-2.4-5.6L4 11l5.6-2.4z"/></svg>Развитие</a>
+        <a href="#chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12a8 8 0 1 1-3.2-6.4L21 4l-1.2 3.4A8 8 0 0 1 21 12z"/></svg>Чат<span class="count">3</span></a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>Календарь</a>
+      </div>
+      <div class="nav-group">Система</div>
+      <div class="nav">
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M9 15l6-6M9 9h.01M15 15h.01"/></svg>Сферы</a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="9" rx="1.5"/></svg>Проекты</a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg>Задачи<span class="count">7</span></a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0M17 11a3 3 0 1 0 0-6M18 20a5.5 5.5 0 0 0-2-4.3"/></svg>Люди</a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/></svg>Файлы</a>
+      </div>
+      <div class="sidebar-foot">
+        <div class="index-card"><b>Индекс знаний</b><span>128 документов · 4 820 фрагментов</span></div>
+        <div class="nav"><a class="active" href="#settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.4-2-3.4-2.3 1a7 7 0 0 0-1.7-1L14.5 3h-4l-.4 2.2a7 7 0 0 0-1.7 1l-2.3-1-2 3.4 2 1.4a7 7 0 0 0 0 2l-2 1.4 2 3.4 2.3-1a7 7 0 0 0 1.7 1l.4 2.2h4l.4-2.2a7 7 0 0 0 1.7-1l2.3 1 2-3.4-2-1.4a7 7 0 0 0 .1-1z"/></svg>Настройки</a></div>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>Поиск по Atlas<span class="kbd">Ctrl K</span></div>
+        <div class="top-right"><div class="icon-btn bell"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div><div class="avatar">М</div></div>
+      </header>
+
+      <div class="content">
+        <div class="page-head">
+          <div>
+            <div class="eyebrow">Настройки</div>
+            <h1>Аккаунт и интерфейс</h1>
+            <p class="lead">Модель, оформление и подключённые сервисы.</p>
+          </div>
+        </div>
+
+        <div class="settings">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card">
+              <div class="card-head"><h2>Профиль</h2><span class="more">виден только вам</span></div>
+              <div class="profile-head">
+                <div class="avatar-lg">М</div>
+                <div>
+                  <div style="font-size:13px">Фото профиля</div>
+                  <div class="hint">JPG или PNG, до 10 МБ. Используется в шапке и чате.</div>
+                  <div style="margin-top:8px;display:flex;gap:8px"><button class="btn sm">Загрузить</button><button class="btn sm ghost">Удалить</button></div>
+                </div>
+              </div>
+              <div class="form-grid">
+                <div class="field"><label>Логин</label><div class="input muted">mikhail</div><div class="hint">Меняется в отдельном диалоге — логин используется для входа.</div></div>
+                <div class="field"><label>Пароль</label><button class="btn" style="justify-content:flex-start">Изменить пароль</button><div class="hint">Последнее изменение: 3 недели назад.</div></div>
+                <div class="field"><label>Имя</label><div class="input">Михаил</div></div>
+                <div class="field"><label>Возраст</label><div class="input">34</div></div>
+                <div class="field"><label>Город</label><div class="input">Москва</div></div>
+                <div class="field"><label>Род деятельности</label><div class="input">Продуктовый дизайнер</div></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h2>Модель</h2><span class="tag ok">ключ работает</span><span class="more">deepseek-chat</span></div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div class="field"><label>Провайдер</label><div class="select"><span style="width:18px;height:18px;border-radius:6px;background:#1e3a8a;display:grid;place-items:center;font-size:10px">D</span>DeepSeek<span class="caret">▾</span></div></div>
+                <div class="field"><label>API-ключ</label><div class="input" style="justify-content:space-between"><span>sk-··················7f3a</span><span style="color:var(--accent);font-size:12px">Заменить</span></div><div class="hint">Хранится на сервере зашифрованным и маскируется в API.</div></div>
+                <div class="field"><label>Модель</label><div class="select">deepseek-chat<span class="caret">▾</span></div></div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm">Загрузить модели</button><button class="btn sm">Проверить подключение</button><button class="btn sm primary">Сохранить</button></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h2>Яндекс.Диск</h2><span class="tag ok">подключён</span><span class="more">Отключить</span></div>
+              <div class="doc" style="border-top:0;padding-top:0"><div class="doc-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></div><div><b>Личный диск</b><span>Оригиналы больше 20 МБ и бэкапы · 24 ГБ свободно</span></div><div class="meta"><button class="btn sm">Проверить доступ</button></div></div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card">
+              <div class="card-head"><h2>Оформление</h2><span class="more">применяется сразу</span></div>
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <div><div class="section-label">Тема</div><div class="segmented"><span>Светлая</span><span class="on">Тёмная</span><span>Системная</span></div></div>
+                <div><div class="section-label">Акцент</div><div class="swatches"><i class="swatch sel" style="background:#3b82f6"></i><i class="swatch" style="background:#22d3ee"></i><i class="swatch" style="background:#34d399"></i><i class="swatch" style="background:#a78bfa"></i><i class="swatch" style="background:#f472b6"></i><i class="swatch" style="background:#fb923c"></i><i class="swatch" style="background:#f87171"></i><i class="swatch" style="background:#334155"></i></div></div>
+                <div style="display:flex;align-items:center;gap:10px"><div><div style="font-size:13px">Эффекты и прозрачность</div><div class="hint">Стекло, размытие, анимации</div></div><div class="switch" style="margin-left:auto"></div></div>
+                <div><div class="section-label">Фон</div><div class="segmented"><span class="on">Нет</span><span>Aurora</span><span>Mist</span><span>Night</span></div></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h2>Уведомления</h2><span class="more">push на этом устройстве</span></div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;align-items:center;gap:10px"><div><div style="font-size:13px">Напоминания</div><div class="hint">Задачи и привычки</div></div><div class="switch" style="margin-left:auto"></div></div>
+                <div class="row" style="border-top:1px solid var(--border)"><div><div style="font-size:13px">Тихие часы</div><div class="hint">23:00 — 08:00</div></div><button class="btn sm" style="margin-left:auto">Изменить</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CHAT ============ -->
+<div class="page" id="chat">
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-logo">A</div><div class="brand-name">Atlas</div><div class="brand-ver">v0.1</div></div>
+      <div class="nav">
+        <a href="#home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Главная</a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l2.4 5.6L20 11l-5.6 2.4L12 19l-2.4-5.6L4 11l5.6-2.4z"/></svg>Развитие</a>
+        <a class="active" href="#chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12a8 8 0 1 1-3.2-6.4L21 4l-1.2 3.4A8 8 0 0 1 21 12z"/></svg>Чат<span class="count">3</span></a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>Календарь</a>
+      </div>
+      <div class="nav-group">Система</div>
+      <div class="nav">
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M9 15l6-6M9 9h.01M15 15h.01"/></svg>Сферы</a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="9" rx="1.5"/></svg>Проекты</a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg>Задачи<span class="count">7</span></a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0M17 11a3 3 0 1 0 0-6M18 20a5.5 5.5 0 0 0-2-4.3"/></svg>Люди</a>
+        <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/></svg>Файлы</a>
+      </div>
+      <div class="sidebar-foot">
+        <div class="index-card"><b>Индекс знаний</b><span>128 документов · 4 820 фрагментов</span></div>
+        <div class="nav"><a href="#settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.4-2-3.4-2.3 1a7 7 0 0 0-1.7-1L14.5 3h-4l-.4 2.2a7 7 0 0 0-1.7 1l-2.3-1-2 3.4 2 1.4a7 7 0 0 0 0 2l-2 1.4 2 3.4 2.3-1a7 7 0 0 0 1.7 1l.4 2.2h4l.4-2.2a7 7 0 0 0 1.7-1l2.3 1 2-3.4-2-1.4a7 7 0 0 0 .1-1z"/></svg>Настройки</a></div>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>Поиск по Atlas<span class="kbd">Ctrl K</span></div>
+        <div class="top-right"><div class="icon-btn bell"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div><div class="avatar">М</div></div>
+      </header>
+
+      <div class="content" style="padding:18px 22px 22px">
+        <div class="chat">
+          <div class="card chat-col" style="padding:0">
+            <div class="chat-list-head">
+              <div class="agent-pick"><span class="avatar" style="width:22px;height:22px;font-size:10px">A</span>Универсальный помощник<span class="caret">▾</span></div>
+              <button class="btn primary new-chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>Новый чат</button>
+            </div>
+            <div class="chat-items">
+              <div class="chat-item active"><b>Прототип чата с агентом<span class="when">только что</span></b><span>Покажу три варианта компоновки сообщений…</span></div>
+              <div class="chat-item"><b>Разбор входящих документов<span class="when">11:40</span></b><span>Нашёл 12 дублей в папке inbox…</span></div>
+              <div class="chat-item"><b>Итоги недели<span class="when">вчера</span></b><span>Фокус 11,5 ч, три сферы без движения…</span></div>
+              <div class="chat-item"><b>Книга: «Личная ОС знаний»<span class="when">пн</span></b><span>Конспект по главам 3–5 готов…</span></div>
+            </div>
+          </div>
+
+          <div class="card thread" style="padding:0">
+            <div class="thread-head">
+              <h2>Прототип чата с агентом</h2>
+              <span class="tag">deepseek-chat</span><span class="tag ok">контекст: проект Atlas</span>
+              <div class="meta"><button class="icon-btn" title="Настройки агентов"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.4-2-3.4-2.3 1a7 7 0 0 0-1.7-1L14.5 3h-4l-.4 2.2a7 7 0 0 0-1.7 1l-2.3-1-2 3.4 2 1.4a7 7 0 0 0 0 2l-2 1.4 2 3.4 2.3-1a7 7 0 0 0 1.7 1l.4 2.2h4l.4-2.2a7 7 0 0 0 1.7-1l2.3 1 2-3.4-2-1.4a7 7 0 0 0 .1-1z"/></svg></button></div>
+            </div>
+            <div class="messages">
+              <div class="msg"><div class="who"><span class="avatar" style="width:20px;height:20px;font-size:9px">A</span>Atlas<span class="tag" style="height:19px">deepseek-chat</span></div><div class="bubble">Посмотрел три документа по проекту. Предлагаю такой каркас чата: слева — список диалогов и выбор агента, в центре — лента сообщений, снизу — композер. Покажу варианты компоновки сообщений?</div><div class="tool"><span class="mark-ok">✓</span>search_knowledge → 4 документа · Стратегия Atlas на Q1 · Заметки встречи · Черновик статьи</div></div>
+              <div class="msg own"><div class="who">Михаил · 12:04</div><div class="bubble">Да, покажи варианты и сразу подбери типографику под Roboto Condensed.</div></div>
+              <div class="msg"><div class="who"><span class="avatar" style="width:20px;height:20px;font-size:9px">A</span>Atlas</div><div class="bubble">Готово: три компоновки с плотностью 14px и <span style="font-variant-numeric:tabular-nums">tabular-nums</span> для метрик. В каждой сохранены роли, фокус-рамка идёт по 2px акценту.</div></div>
+            </div>
+            <form class="composer">
+              <div class="box">
+                <div class="ph">Спросить у Atlas…</div>
+                <div class="tools">
+                  <button type="button" class="tool-btn" title="Прикрепить"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg></button>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 3h8l4 4v14H6z"/></svg>@документы</span>
+                  <span class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="9" rx="1.5"/></svg>проект Atlas</span>
+                  <div class="send">Enter — отправить<button type="button" class="round" aria-label="Отправить"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button></div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CONTROLS SHEET ============ -->
+<div class="page" id="fields">
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-logo">A</div><div class="brand-name">Atlas</div><div class="brand-ver">v0.1</div></div>
+      <div class="nav">
+        <a href="#home">Главная</a><a href="#settings">Настройки</a><a href="#chat">Чат</a>
+      </div>
+      <div class="sidebar-foot"><div class="index-card"><b>Контролы Graphite</b><span>высота 34, радиус 9, отступы 12/8</span></div></div>
+    </aside>
+    <div class="main">
+      <header class="topbar"><div class="search">Спецификация контролов<span class="kbd">v2</span></div></header>
+      <div class="content">
+        <div class="page-head"><div><div class="eyebrow">Геометрия</div><h1>Поля, списки и сетка секций</h1><p class="lead">Единая высота 34px, вертикальное центрирование в строке, одинаковые отступы в секциях.</p></div></div>
+        <div class="sheet">
+          <div class="card">
+            <div class="card-head"><h2>Поля</h2><span class="more">default · focus · error · disabled</span></div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div class="field"><label>Обычное</label><div class="input">Значение поля</div></div>
+              <div class="field"><label>Фокус</label><div class="input" style="border-color:color-mix(in srgb,var(--accent) 60%,transparent);box-shadow:0 0 0 3px var(--accent-soft)">Ввод…</div></div>
+              <div class="field"><label>Ошибка</label><div class="input" style="border-color:color-mix(in srgb,var(--danger) 55%,transparent)">Некорректное значение</div><div class="hint" style="color:var(--danger)">Проверьте формат даты</div></div>
+              <div class="field"><label>Disbled</label><div class="input muted">Недоступно</div></div>
+              <div class="field"><label>Многострочное</label><div class="input" style="height:74px;align-items:flex-start;padding-top:8px">Контекст для агента…</div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h2>Список</h2><span class="more">закрыт · открыт · выбран</span></div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div class="field"><label>Закрыт</label><div class="select">Все проекты<span class="caret">▾</span></div></div>
+              <div class="field"><label>Открыт</label>
+                <div class="open-select">
+                  <div class="select">deepseek-chat<span class="caret">▴</span></div>
+                  <div class="dropdown">
+                    <div class="opt sel">deepseek-chat<small>быстрая</small></div>
+                    <div class="opt">deepseek-reasoner<small>рассуждения</small></div>
+                  </div>
+                </div>
+                <div class="hint" style="margin-top:56px">Высота пункта 32, выбранный — accent-soft с галочкой.</div>
+              </div>
+              <div class="field"><label>Мультивыбор</label><div class="select" style="gap:6px;flex-wrap:wrap;height:auto;min-height:34px;padding:5px 8px"><span class="chip" style="height:22px">Atlas</span><span class="chip" style="height:22px">Знания</span><span class="caret">▾</span></div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h2>Строка формы</h2><span class="more">выравнивание по базовой линии</span></div>
+            <div class="demo-row">
+              <div class="field" style="flex:1"><label>Проект</label><div class="select">Без проекта<span class="caret">▾</span></div></div>
+              <div class="field" style="flex:1"><label>Срок</label><div class="input">27.11.2026<span style="margin-left:auto;color:var(--muted)">▾</span></div></div>
+              <div class="field" style="flex:0 0 auto;justify-content:flex-end"><button class="btn primary">Создать</button></div>
+            </div>
+            <div class="divider"></div>
+            <div class="note"><b>Правило:</b> подписи над полем, высота контролов 34px, в строке — <b>align-items: end</b> при кнопке, <b>center</b> у чекбоксов и переключателей. Секция: padding 16, gap 14, заголовок с отступом 6.</div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h2>Выбор и статусы</h2></div>
+            <div class="demo-row" style="margin-bottom:14px"><span class="tag">нейтральный</span><span class="tag ok">готово</span><span class="tag warn">ждёт</span><span class="tag info">в работе</span></div>
+            <div class="tabs" style="margin-bottom:14px"><span class="on">Список</span><span>Доска</span><span>Гант</span></div>
+            <div class="segmented" style="max-width:340px;margin-bottom:14px"><span>Месяц</span><span class="on">Неделя</span><span>День</span><span>Год</span></div>
+            <div class="progress"><i style="width:64%"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const pages = ['home', 'settings', 'chat', 'fields'];
+  function show() {
+    const id = (location.hash || '#home').slice(1);
+    const target = pages.includes(id) ? id : 'home';
+    pages.forEach((page) => {
+      const el = document.getElementById(page);
+      el.style.display = page === target ? 'block' : 'none';
+    });
+  }
+  window.addEventListener('hashchange', show);
+  show();
+</script>
+</body>
+</html>
