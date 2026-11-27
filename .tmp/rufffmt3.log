@@ -1,0 +1,47 @@
+unformatted: File would be reformatted
+   --> app\backend\features\tasks\repository.py:116:1
+    |
+115 |     ).delete()
+    -
+    -
+    - def dependencies(
+    -     db: Session, owner_id: str, project_id: int
+    - ) -> list[tuple[int, int]]:
+    -     """Пары (blocked_by_id, task_id) для задач проекта."""
+    -     return (
+    -         db.query(TaskDependency.blocked_by_id, TaskDependency.task_id)
+    -         .join(Task, TaskDependency.task_id == Task.id)
+    -         .filter(Task.owner_id == owner_id, Task.project_id == project_id)
+    -         .all()
+    -     )
+116 +
+117 +
+118 + def dependencies(db: Session, owner_id: str, project_id: int) -> list[tuple[int, int]]:
+119 +     """Пары (blocked_by_id, task_id) для задач проекта."""
+120 +     return (
+121 +         db.query(TaskDependency.blocked_by_id, TaskDependency.task_id)
+122 +         .join(Task, TaskDependency.task_id == Task.id)
+123 +         .filter(Task.owner_id == owner_id, Task.project_id == project_id)
+124 +         .all()
+125 +     )
+    |
+
+unformatted: File would be reformatted
+   --> app\backend\features\tasks\service.py:269:1
+    |
+268 |     db.commit()
+    -
+    -
+    - def dependencies(
+    -     db: Session, user: User, project_id: int
+    - ) -> list[tuple[int, int]]:
+    -     """Зависимости проекта одним запросом."""
+    -     return repository.dependencies(db, user.id, project_id)
+269 +
+270 +
+271 + def dependencies(db: Session, user: User, project_id: int) -> list[tuple[int, int]]:
+272 +     """Зависимости проекта одним запросом."""
+273 +     return repository.dependencies(db, user.id, project_id)
+    |
+
+2 files would be reformatted, 282 files already formatted

@@ -1,0 +1,6 @@
+app\backend\features\tasks\repository.py:123: error: Incompatible return value type (got "list[Row[int, int]]", expected "list[tuple[int, int]]")  [return-value]
+app\backend\features\tasks\repository.py:123: note: "list" is invariant -- see https://mypy.readthedocs.io/en/stable/common_issues.html#variance
+app\backend\features\tasks\repository.py:123: note: Consider using "Sequence" instead, which is covariant
+app\backend\features\documents\service.py:424: error: Unsupported operand types for + ("int" and "None")  [operator]
+app\backend\features\documents\service.py:424: note: Right operand is of type "int | None"
+Found 2 errors in 2 files (checked 145 source files)
