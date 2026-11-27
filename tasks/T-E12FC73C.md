@@ -26,11 +26,11 @@ verification:
   - typecheck-python
   - arch-python
 depends_on: []
-plan_version: 0
+plan_version: 2
 report: docs/reports/T-E12FC73C.md
 assignee: null
 created_at: 2026-11-27T21:18:19.616Z
-updated_at: 2026-11-27T21:18:19.616Z
+updated_at: 2026-11-27T23:30:18.034Z
 ---
 
 # Календарь: показ событий и кнопка добавления рядом с «Сегодня»
