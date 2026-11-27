@@ -49,6 +49,10 @@ Condensed, Emotion, LazyMotion), рабочий deep link и страница 40
 | T-7E446096 | Экраны: Настройки, Агенты, Уведомления, Задания, Поиск, Space | feature | L | T-4FC8A97B, T-D24FD0BF |
 | T-EAD5B055 | Переименование `viewer/` в `web/` | chore | L | все задачи эпика |
 
+Scope в задачах указан относительно `repo/atlas/`; единственное исключение —
+`devkit.yaml` (корень data-репозитория). Так `AGENTS.md`, `README.md` и
+`docs/DESIGN.md` однозначно означают файлы приложения.
+
 ### Порядок и параллельность
 
 ```
