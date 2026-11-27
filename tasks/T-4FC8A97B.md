@@ -30,11 +30,11 @@ verification:
   - a11y
   - format-web
 depends_on: []
-plan_version: 0
+plan_version: 1
 report: docs/reports/T-4FC8A97B.md
 assignee: null
 created_at: 2026-11-27T16:09:29.548Z
-updated_at: 2026-11-27T16:09:29.548Z
+updated_at: 2026-11-27T16:32:59.008Z
 ---
 
 # Дизайн-система: токены, Emotion, шрифт, motion, примитивы, каркас
