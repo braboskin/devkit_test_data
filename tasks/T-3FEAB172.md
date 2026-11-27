@@ -3,7 +3,7 @@ id: T-3FEAB172
 project: atlas
 epic: E-AA7F23F1
 title: "Настройки и Задания: рестайл на дизайн-системе"
-status: inbox
+status: planned
 type: feature
 size: M
 priority: medium
@@ -21,7 +21,7 @@ plan_version: 1
 report: docs/reports/T-3FEAB172.md
 assignee: null
 created_at: 2026-11-27T13:37:42.524Z
-updated_at: 2026-11-27T15:10:52.343Z
+updated_at: 2026-11-27T15:11:30.942Z
 ---
 
 # Настройки и Задания: рестайл на дизайн-системе
