@@ -17,11 +17,11 @@ verification:
   - arch-web
 depends_on:
   - T-AC2A5666
-plan_version: 0
+plan_version: 1
 report: docs/reports/T-E4E99EF8.md
 assignee: null
 created_at: 2026-11-27T13:37:41.767Z
-updated_at: 2026-11-27T13:37:41.767Z
+updated_at: 2026-11-27T14:42:56.355Z
 ---
 
 # Уведомления: автообновление списка и счётчика
