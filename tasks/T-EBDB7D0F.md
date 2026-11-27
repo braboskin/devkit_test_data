@@ -24,11 +24,11 @@ verification:
   - typecheck-python
   - arch-python
 depends_on: []
-plan_version: 0
+plan_version: 3
 report: docs/reports/T-EBDB7D0F.md
 assignee: null
 created_at: 2026-11-27T21:18:18.802Z
-updated_at: 2026-11-27T21:18:18.802Z
+updated_at: 2026-11-27T23:30:12.660Z
 ---
 
 # Тосты ошибок и локальная панель уведомлений (без серверного хранения)
