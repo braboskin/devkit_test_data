@@ -41,7 +41,7 @@ plan_version: 1
 report: docs/reports/T-EAD5B055.md
 assignee: agent
 created_at: 2026-11-27T16:10:14.649Z
-updated_at: 2026-11-27T20:37:21.953Z
+updated_at: 2026-11-27T20:54:33.430Z
 ---
 
 # Переименование viewer/ в web/
