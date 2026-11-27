@@ -1,4 +1,4 @@
-import { createRequire } from 'node:module';
+﻿import { createRequire } from 'node:module';
 import { mkdirSync } from 'node:fs';
 
 const require = createRequire(
@@ -109,7 +109,9 @@ const report = await page.evaluate(
     const row = account.querySelector('.row');
     const avatar = row.children[0];
     const stack = row.children[1];
-    const fieldSource = form.querySelector('.field');
+    const fieldRow = form.querySelector('.row');
+    const fieldSource = fieldRow ? fieldRow.children[0] : null;
+    if (!fieldSource) return { ok: false, reason: 'field source not found' };
 
     Object.assign(row.style, {
       display: 'grid',
@@ -151,6 +153,18 @@ const report = await page.evaluate(
       cursor: 'pointer',
     });
     avatar.append(removeButton);
+    const uploadHint = document.createElement('p');
+    uploadHint.className = 'muted';
+    uploadHint.style.margin = '10px 0 0';
+    uploadHint.style.fontSize = '12px';
+    uploadHint.textContent = 'Нажмите на фото, чтобы загрузить другое';
+    const avatarColumn = document.createElement('div');
+    avatar.replaceWith(avatarColumn);
+    avatarColumn.append(avatar, uploadHint);
+    avatarColumn.style.display = 'flex';
+    avatarColumn.style.flexDirection = 'column';
+    avatarColumn.style.alignItems = 'center';
+    avatarColumn.style.width = '220px';
 
     // Поля профиля — одним столбцом справа.
     stack.replaceChildren();
@@ -175,6 +189,7 @@ const report = await page.evaluate(
     stack.append(hint);
     const save = form.querySelector('button[type="submit"]');
     save.textContent = 'Сохранить';
+    save.style.alignSelf = 'flex-start';
     stack.append(save);
     form.remove();
 
@@ -222,3 +237,5 @@ await page.screenshot({ path: `${OUT}/profile-v2-mobile.png`, fullPage: true });
 
 await context.close();
 await browser.close();
+
+
