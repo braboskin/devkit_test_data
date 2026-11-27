@@ -32,11 +32,11 @@ verification:
   - arch-python
 depends_on:
   - T-4FC8A97B
-plan_version: 0
+plan_version: 1
 report: docs/reports/T-D24FD0BF.md
 assignee: null
 created_at: 2026-11-27T16:09:38.110Z
-updated_at: 2026-11-27T16:09:38.110Z
+updated_at: 2026-11-27T16:32:59.839Z
 ---
 
 # Подключение LLM: провайдер, ключ, список моделей
