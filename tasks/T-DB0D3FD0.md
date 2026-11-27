@@ -22,11 +22,11 @@ verification:
   - typecheck-python
 depends_on:
   - T-6E58E324
-plan_version: 0
+plan_version: 1
 report: docs/reports/T-DB0D3FD0.md
 assignee: null
 created_at: 2026-11-27T13:37:41.027Z
-updated_at: 2026-11-27T13:37:41.027Z
+updated_at: 2026-11-27T15:10:48.004Z
 ---
 
 # Онбординг: маршруты /setup/*, deep links, баннер пропуска и серверная идемпотентность
