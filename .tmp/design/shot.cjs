@@ -6,28 +6,33 @@ const root = path.resolve(__dirname);
 const file = 'file:///' + path.join(root, 'mockup.html').replace(/\\/g, '/');
 const out = path.join(root, 'out');
 fs.mkdirSync(out, { recursive: true });
+for (const name of fs.readdirSync(out)) {
+  fs.rmSync(path.join(out, name));
+}
 
-const palettes = ['navy', 'graphite', 'violet'];
-const screens = [
-  { name: 'home', height: 1000 },
-  { name: 'chat', height: 900 },
+const shots = [
+  { name: 'graphite-home-dark', screen: 'home', mode: 'dark', accent: '#1d4ed8', height: 1000 },
+  { name: 'graphite-home-dark-emerald', screen: 'home', mode: 'dark', accent: '#059669', height: 1000 },
+  { name: 'graphite-chat-dark', screen: 'chat', mode: 'dark', accent: '#1d4ed8', height: 900 },
+  { name: 'graphite-settings-dark', screen: 'settings', mode: 'dark', accent: '#1d4ed8', height: 940 },
+  { name: 'graphite-home-light', screen: 'home', mode: 'light', accent: '#1d4ed8', height: 1000 },
+  { name: 'graphite-settings-light', screen: 'settings', mode: 'light', accent: '#1d4ed8', height: 940 },
 ];
 
 (async () => {
   const browser = await chromium.launch();
-  for (const palette of palettes) {
-    for (const screen of screens) {
-      const page = await browser.newPage({
-        viewport: { width: 1440, height: screen.height },
-        deviceScaleFactor: 1.5,
-      });
-      await page.goto(`${file}?palette=${palette}&screen=${screen.name}`);
-      await page.waitForTimeout(300);
-      const target = path.join(out, `${palette}-${screen.name}.png`);
-      await page.screenshot({ path: target });
-      await page.close();
-      console.log('ok', target);
-    }
+  for (const shot of shots) {
+    const page = await browser.newPage({
+      viewport: { width: 1440, height: shot.height },
+      deviceScaleFactor: 1.5,
+    });
+    const query = `screen=${shot.screen}&mode=${shot.mode}&accent=${encodeURIComponent(shot.accent)}`;
+    await page.goto(`${file}?${query}`);
+    await page.waitForTimeout(300);
+    const target = path.join(out, `${shot.name}.png`);
+    await page.screenshot({ path: target });
+    await page.close();
+    console.log('ok', target);
   }
   await browser.close();
 })().catch((error) => {
