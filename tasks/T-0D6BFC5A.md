@@ -28,11 +28,11 @@ verification:
   - typecheck-python
   - arch-python
 depends_on: []
-plan_version: 0
+plan_version: 1
 report: docs/reports/T-0D6BFC5A.md
 assignee: null
 created_at: 2026-11-27T22:40:55.824Z
-updated_at: 2026-11-27T22:40:55.824Z
+updated_at: 2026-11-27T22:43:34.146Z
 ---
 
 # Чат: сохранять meta (deep/model) в истории и выбор модели в композере
