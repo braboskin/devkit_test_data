@@ -79,8 +79,8 @@ profile:
       - name: lint-python
         required: true
         run:
-          windows: .venv\Scripts\python.exe -m ruff check .
-          darwin: .venv/bin/python -m ruff check .
+          windows: .venv\Scripts\python.exe -m ruff check . && .venv\Scripts\python.exe -m ruff format --check .
+          darwin: .venv/bin/python -m ruff check . && .venv/bin/python -m ruff format --check .
           linux: .venv/bin/python -m ruff check .
         cwd: X:\devkit_projects\projects\atlas\repo\atlas
         timeoutSec: 300
