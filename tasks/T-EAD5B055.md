@@ -3,7 +3,7 @@ id: T-EAD5B055
 project: atlas
 epic: E-710FC7ED
 title: Переименование viewer/ в web/
-status: inbox
+status: planned
 type: chore
 size: L
 priority: high
@@ -41,7 +41,7 @@ plan_version: 1
 report: docs/reports/T-EAD5B055.md
 assignee: null
 created_at: 2026-11-27T16:10:14.649Z
-updated_at: 2026-11-27T16:33:01.847Z
+updated_at: 2026-11-27T20:37:21.521Z
 ---
 
 # Переименование viewer/ в web/
