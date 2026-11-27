@@ -23,11 +23,11 @@ verification:
   - typecheck-python
   - arch-python
 depends_on: []
-plan_version: 0
+plan_version: 2
 report: docs/reports/T-20ECAACF.md
 assignee: null
 created_at: 2026-11-27T21:18:19.247Z
-updated_at: 2026-11-27T21:18:19.247Z
+updated_at: 2026-11-27T23:30:31.127Z
 ---
 
 # Проекты: дерево по сферам с колонковыми фильтрами и сортировкой
