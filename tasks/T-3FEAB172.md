@@ -21,7 +21,7 @@ plan_version: 1
 report: docs/reports/T-3FEAB172.md
 assignee: agent
 created_at: 2026-11-27T13:37:42.524Z
-updated_at: 2026-11-27T15:29:21.846Z
+updated_at: 2026-11-27T15:34:39.956Z
 ---
 
 # Настройки и Задания: рестайл на дизайн-системе
