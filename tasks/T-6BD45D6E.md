@@ -24,11 +24,11 @@ verification:
   - typecheck-python
   - arch-python
 depends_on: []
-plan_version: 0
+plan_version: 2
 report: docs/reports/T-6BD45D6E.md
 assignee: null
 created_at: 2026-11-27T21:18:20.786Z
-updated_at: 2026-11-27T21:18:20.786Z
+updated_at: 2026-11-27T23:30:38.851Z
 ---
 
 # Навигация-острова LiquidGlass и верхняя панель из двух островов
