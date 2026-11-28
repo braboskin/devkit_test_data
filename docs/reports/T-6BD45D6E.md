@@ -1,3 +1,13 @@
+---
+id: R-988ddf7416
+type: report
+title: Отчёт T-6BD45D6E
+task: T-6BD45D6E
+status: final
+created_at: 2026-11-28T11:44:23.799Z
+updated_at: 2026-11-28T11:44:23.799Z
+---
+
 # Отчёт T-6BD45D6E — Навигация-острова LiquidGlass и верхняя панель из двух островов
 
 - Эпик: **E-47FF66EB** (Graphite v2), ТЗ `docs/tz/TZ-9E3B177B.md` (R6, R0.1–R0.7)
@@ -65,10 +75,10 @@ Diff: `git -C repo/atlas diff 485430f2..b8564703 --stat` — 5 файлов.
 | arch-web | CH-023b6f214e85 | passed — `steiger ./src` |
 | e2e | CH-f9c726e5e4f1 | passed — 22 passed (25.8 s) |
 | a11y | CH-48a1a8bba26f | passed — 11 passed (15.4 s), axe serious/critical = 0 |
-| unit-tests | см. `devkit task show` | passed — Ran 468 tests, OK |
-| lint-python | см. `devkit task show` | passed — ruff check + format --check |
-| typecheck-python | см. `devkit task show` | passed — mypy, 146 файлов |
-| arch-python | см. `devkit task show` | passed — тест архитектуры |
+| unit-tests | CH-c4d4c9cd81df | passed — Ran 468 tests, OK |
+| lint-python | CH-cadb43960290 | passed — ruff check + format --check |
+| typecheck-python | CH-b468efc78a49 | passed — mypy, 146 файлов |
+| arch-python | CH-70a824437e26 | passed — тест архитектуры |
 
 Дополнительно: замер зазоров между островами на 900/940/1039/1040/1280/1440 px —
 положительные (минимум 14 px); горизонтальный overflow на 390 px проверен на
