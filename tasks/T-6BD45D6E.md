@@ -28,7 +28,7 @@ plan_version: 2
 report: docs/reports/T-6BD45D6E.md
 assignee: agent
 created_at: 2026-11-27T21:18:20.786Z
-updated_at: 2026-11-28T10:44:34.499Z
+updated_at: 2026-11-28T11:07:09.299Z
 ---
 
 # Навигация-острова LiquidGlass и верхняя панель из двух островов
