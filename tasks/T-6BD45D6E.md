@@ -3,7 +3,7 @@ id: T-6BD45D6E
 project: atlas
 epic: E-47FF66EB
 title: Навигация-острова LiquidGlass и верхняя панель из двух островов
-status: needs_review
+status: in_progress
 type: feature
 size: L
 priority: medium
@@ -26,9 +26,9 @@ verification:
 depends_on: []
 plan_version: 2
 report: docs/reports/T-6BD45D6E.md
-assignee: agent
+assignee: owner
 created_at: 2026-11-27T21:18:20.786Z
-updated_at: 2026-11-28T11:27:48.542Z
+updated_at: 2026-11-28T11:41:04.194Z
 ---
 
 # Навигация-острова LiquidGlass и верхняя панель из двух островов
